@@ -63,7 +63,7 @@ class VirtualMemoryFS:
             dir_path = self.base_path / f"{dir_addr:02x}"
             dir_path.mkdir(exist_ok=True)
             
-            # Create __init__.py for the directory
+            # Create __init__.py for the directory // replace this with an imported submodule itself, as a SimpleNamespace?
             init_content = f"""
 # Auto-generated __init__.py for virtual memory directory 0x{dir_addr:02x}
 from dataclasses import dataclass, field
