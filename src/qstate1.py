@@ -18,13 +18,14 @@ V = TypeVar('V')  # Bulk state (runtime value)
 C = TypeVar('C', bound=Callable[..., Any])  # Observable (computation)
 
 class QuantumState(Protocol[T, V]):
-    """Protocol defining quantum state transformations."""
+    """Protocol defining quantum state transformations for simulation on classical
+    hardware. 'WaveFunction' is a concrete implementation of this protocol."""
     def superpose(self) -> 'WaveFunction[T, V]': ...
     def collapse(self) -> V: ...
     def measure(self) -> T: ...
 
 @dataclass
-class WaveFunction(Generic[T, V]):
+class WaveFunction(Generic[T, V], QuantumState[T, V]):
     """
     Represents a quantum superposition of code and data.
     
