@@ -10,7 +10,6 @@
 *.old/
 .old/*
 /test_env/*
-scoop_log.txt
 logs/*
 .pdm.python
 pdm.lock
