@@ -21,7 +21,6 @@ import json
 import struct
 import time
 import hashlib
-import msgpack
 import dis
 import inspect
 import threading
