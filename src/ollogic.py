@@ -301,7 +301,7 @@ class InferenceHead(MemoryHead):
         for addr in range(0x100):
             self.vmem._segments[addr] = EmbeddingSegment()
 
-    async def generate_embedding(self, text: str, model: str = "llama3.1") -> array:
+    async def generate_embedding(self, text: str, model: str = "nomic-embed-text") -> array:
         """Generate embedding using Ollama API"""
         conn = http.client.HTTPConnection(self.ollama_host, self.ollama_port)
         headers = {'Content-Type': 'application/json'}
@@ -315,7 +315,7 @@ class InferenceHead(MemoryHead):
         # Convert to standard library array instead of numpy
         return array('f', embedding_data['embedding'])
 
-    async def infer(self, prompt: str, model: str = "llama3.1", context: Optional[List[bytes]] = None) -> str:
+    async def infer(self, prompt: str, model: str = "gemma2", context: Optional[List[bytes]] = None) -> str:
         """Run inference using Ollama API with optional context"""
         context_text = ""
         if context:
