@@ -49,7 +49,7 @@ class InferenceModel:
 def main():
     model = InferenceModel()
 
-    test_inputs = [40, 400, 400_000, 4_000_000]
+    test_inputs = [40, 400, 400_000, 4_000_000, 40_000_000, 400_000_000]
 
     print("\n🕒 Computation Tracking Demonstration")
     print("=" * 50)

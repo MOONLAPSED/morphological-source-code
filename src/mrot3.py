@@ -58,13 +58,16 @@ def temporal_mro_decorator(cls):
 @temporal_mro_decorator
 class InferenceModel:
     def process(self, input_size):
-        """Simulate processing workload."""
-        return input_size * 2  # Modified to return based on input size
+        """Simulate a workload by incrementing a counter."""
+        result = 0
+        for _ in range(input_size):
+            result += 1
+        return result
 
 def main():
     model = InferenceModel()
     
-    test_inputs = [40, 400, 400_000, 4_000_000, 400_000_000, 4_000_000_000]
+    test_inputs = [40, 400, 400_000, 4_000_000, 40_000_000, 400_000_000]
 
     print("\n🕒 Temporal MRO Demonstration")
     print("=" * 50)
