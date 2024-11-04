@@ -23,11 +23,10 @@ import importlib.util
 from array import array
 from pathlib import Path
 from struct import calcsize
-from collections import deque
-from collections import OrderedDict
 from contextlib import contextmanager
 from functools import lru_cache, partial
 from dataclasses import dataclass, field
+from collections import OrderedDict, deque, defaultdict
 from concurrent.futures import Future, ThreadPoolExecutor
 from typing import Dict, Optional, Tuple, List, Callable, Deque, Any, Set
 
