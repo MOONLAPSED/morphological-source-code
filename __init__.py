@@ -29,7 +29,11 @@ from dataclasses import dataclass, field
 from concurrent.futures import Future, ThreadPoolExecutor
 from typing import Dict, Optional, Tuple, List, Callable, Deque, Any, Set
 
-from src.__init__ import *
+from src.__init__ import __all__
+
+vers = '0.4.20' # hard-coded versioning for deprecation etc.
+print(f'ADMIN.src.version.{vers}') 
+# NYE MUST agree with USER's read of pyproject.toml or RAISE, MUST hash.
 
 class Task:
     def __init__(self, task_id: int, func: Callable, args=(), kwargs=None):

@@ -10,5 +10,7 @@ from .runtime import *
 from .temporal import *
 from .version import __all__
 
-__all__ = []
-
+if not __all__:
+    __all__ = []
+else:
+    __all__ += __file__
