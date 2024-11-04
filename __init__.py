@@ -14,6 +14,7 @@ import logging
 import asyncio
 import pathlib
 import hashlib
+import tomllib
 import threading
 import http.client
 import urllib.parse
@@ -30,10 +31,20 @@ from concurrent.futures import Future, ThreadPoolExecutor
 from typing import Dict, Optional, Tuple, List, Callable, Deque, Any, Set
 
 from src.__init__ import __all__
-
-vers = '0.4.20' # hard-coded versioning for deprecation etc.
-print(f'ADMIN.src.version.{vers}') 
-# NYE MUST agree with USER's read of pyproject.toml or RAISE, MUST hash.
+from src.version.__init__ import __all__, get_version, hash_directory, hash_file
+__version__ = get_version
+__name__ + '.' + str(__version__)  # Update ADMIN module name with version
+print(f"ADMIN module name updated to: {__name__}") 
+project_directory = Path(".")
+hash_value = hash_directory(project_directory)
+print(f"Combined hash for the project: {hash_value}")
+__all__ = [
+    'get_version',
+    'hash_directory',
+    'hash_file',
+    f'ADMIN.{__name__}',
+]
+print(f'ADMIN-scoped classes and methods exposed via "__all__": {__all__}')
 
 class Task:
     def __init__(self, task_id: int, func: Callable, args=(), kwargs=None):

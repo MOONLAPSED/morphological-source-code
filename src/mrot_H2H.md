@@ -1,4 +1,5 @@
 ```mrot1
+PS C:\Users\DEV\Desktop\cognOS> python .\src\mrot1.py
 🕒 High Precision Computation Tracking Demonstration
 ==================================================
 📊 Test: Processing input size 40
@@ -29,6 +30,7 @@ PS C:\Users\DEV\Desktop\cognOS> python .\src\mrot2.py
 ```
 
 ```mrot2
+PS C:\Users\DEV\Desktop\cognOS> python .\src\mrot2.py
 🕒 Computation Tracking Demonstration
 ==================================================
 📊 Test: Processing input size 40
@@ -55,9 +57,11 @@ PS C:\Users\DEV\Desktop\cognOS> python .\src\mrot2.py
 ⮑ Result: 400000000
 ⮑ Time elapsed: 10.200118s
 ⮑ Processing rate: 43568166.99 units/second
+PS C:\Users\DEV\Desktop\cognOS> python .\src\mrot3.py
 ```
 
 ```mrot3
+PS C:\Users\DEV\Desktop\cognOS> python .\src\mrot3.py
 🕒 Temporal MRO Demonstration
 ==================================================
 📊 Test: Processing input size 40
