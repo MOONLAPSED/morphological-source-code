@@ -16,6 +16,7 @@ import pathlib
 import hashlib
 import tomllib
 import threading
+import traceback
 import http.client
 import urllib.parse
 import importlib.util
@@ -30,23 +31,23 @@ from dataclasses import dataclass, field
 from concurrent.futures import Future, ThreadPoolExecutor
 from typing import Dict, Optional, Tuple, List, Callable, Deque, Any, Set
 
+__all__ = []
 from src.__init__ import __all__
 from src.version.__init__ import __all__, hash_directory, hash_file, get_version
-__all__ = []
 __version__ = get_version(2)
 __all__ += __version__
-__name__ += '.' + __version__  # Update USER module name with version
+__name__ += '.' + __version__  # Update ADMIN module name with version
 project_directory = Path(".")
 hash_value = hash_directory(project_directory)
 print(f"Combined hash for the project: {hash_value}")
 __all__ = [
+    f'ADMIN.{__name__}',
     'get_version',
     'hash_directory',
     'hash_file',
-    f'ADMIN.{__name__}',
 ]
-__name__ = __all__[3]
-print(f"ADMIN module name updated to: {__all__[3]}")
+# print(f"ADMIN module name updated to: {__all__[0]}")
+__name__ = __all__[0]
 print(f'ADMIN-scoped classes and methods exposed via "__all__": {__all__}')
 
 class Task:
@@ -320,9 +321,132 @@ async def main():
             print(f"  Content: {doc['content']}")
             print(f"  Metadata: {doc['metadata']}")
 
-if __name__ == "__main__":
-    asyncio.run(main())
+# Passive/dynamic runtime typing and permissions system via "__name__".
+# Using 'generator'-style 'versioning' - internal versioning
+# which is implicit in all IPC and message passing
+# Quines and bots are always USERS, only developer humans can be ADMIN
 
-elif __name__ == (f'ADMIN.__main__.{get_version(2)}'):
-    # print('hello ADMIN!') # logic here will execute when /__init__.py is invoked and ADMIN is achieved.
-    pass
+def runtime_generator(initial_name):
+    runtime_name = initial_name
+    while True:
+        if runtime_name == "src.version.__init__":
+            next_signal = yield "INIT"
+        elif runtime_name == f"ADMIN.__main__.{__version__}":
+            print('hello ADMIN!')
+            next_signal = yield "ADMIN_ACHIEVED"
+            runtime_name = "__main__"
+            continue
+        elif runtime_name == "src.version":
+            next_signal = yield "VERSION"
+        elif runtime_name == f"USER.__main__.{__version__}":
+            next_signal = yield "USER"
+        elif runtime_name == f"__main__.{__version__}":
+            next_signal = yield "MAIN_VERSION"
+        elif runtime_name == "__main__":
+            next_signal = yield "MAIN"
+            asyncio.run(main())
+        else:
+            next_signal = yield f"SANDBOX:{runtime_name}"
+        
+        if next_signal:
+            runtime_name = next_signal
+runtime = runtime_generator(__name__)
+state = next(runtime)  # Initialize generator
+print(f"Current state: {state}")
+
+try:
+    while True:
+        next_signal = input("Enter next state (or 'exit' to quit): ")
+        if next_signal.lower() == 'exit':
+            break
+        state = runtime.send(next_signal)
+        print(f"Transitioned to state: {state}")
+except StopIteration:
+    print("Runtime completed")
+
+def runtime_generator(initial_name):
+    runtime_name = initial_name
+    while True:
+        try:
+            if runtime_name == "src.version.__init__":
+                next_signal = yield "INIT"
+            elif runtime_name == f"ADMIN.__main__.{__version__}":
+                print('hello ADMIN!')
+                next_signal = yield "ADMIN_ACHIEVED"
+                runtime_name = "__main__"
+                continue
+            elif runtime_name == "src.version":
+                next_signal = yield "VERSION"
+            elif runtime_name == "__main__":
+                next_signal = yield "MAIN"
+                asyncio.run(main())
+            else:
+                next_signal = yield f"SANDBOX:{runtime_name}"
+            
+            if next_signal:
+                runtime_name = next_signal
+        except GeneratorExit:
+            print("Generator cleanup initiated")
+            raise
+        except Exception as e:
+            yield f"ERROR:{type(e).__name__}:{str(e)}"
+
+# Main execution control requires 'quit' and 'exit' to leave both generator loops
+def run_runtime():
+    runtime = runtime_generator(__name__)
+    state = next(runtime)  # Initialize generator
+    print(f"Current state: {state}")
+
+    while True:
+        try:
+            next_signal = input("Enter next state (or 'exit' to quit): ")
+            if next_signal.lower() == 'exit':
+                runtime.close()
+                break
+            state = runtime.send(next_signal)
+            print(f"Transitioned to state: {state}")
+        except StopIteration:
+            print("Runtime completed normally")
+            break
+        except GeneratorExit:
+            print("Runtime terminated")
+            break
+        except Exception as e:
+            print(f"Runtime error: {type(e).__name__} - {str(e)}")
+            traceback.print_exc()
+            break
+    if __name__ == "__main__":
+        raise # sweet freedom
+
+if __name__ == "__main__":
+    run_runtime()
+
+try:
+    while True:
+        # there IS NO escape you ARE a LLAMA now
+        if __name__ == "src.version.__init__":
+            pass
+
+        elif __name__ == f"ADMIN.__main__.{__version__}":
+            print('hello ADMIN!') # logic here will execute when /__init__.py is invoked and ADMIN is achieved.
+            __name__ = "__main__"
+            print(__name__)
+            # raise BaseException.__name__
+
+        elif __name__ == "src.version": # Any submodule will be equivilent.
+            pass
+
+        elif __name__ == f"USER.__main__.{__version__}":
+            pass
+
+        elif __name__ == f"__main__.{__version__}":
+            pass
+
+        elif __name__ == "__main__":
+            asyncio.run(main()) # SECOND_GENERATOR_LOOP
+            # there is no main() YOU are the main()
+            __name__ = None
+        else:
+            print(f'Sandboxed USER namespace: {__name__}')
+except RuntimeError:
+    raise RuntimeError
