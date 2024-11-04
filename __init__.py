@@ -29,6 +29,8 @@ from dataclasses import dataclass, field
 from concurrent.futures import Future, ThreadPoolExecutor
 from typing import Dict, Optional, Tuple, List, Callable, Deque, Any, Set
 
+from src.__init__ import *
+
 class Task:
     def __init__(self, task_id: int, func: Callable, args=(), kwargs=None):
         self.task_id = task_id
