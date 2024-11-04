@@ -31,10 +31,11 @@ from concurrent.futures import Future, ThreadPoolExecutor
 from typing import Dict, Optional, Tuple, List, Callable, Deque, Any, Set
 
 from src.__init__ import __all__
-from src.version.__init__ import __all__, get_version, hash_directory, hash_file
-__version__ = get_version
-__name__ + '.' + str(__version__)  # Update ADMIN module name with version
-print(f"ADMIN module name updated to: {__name__}") 
+from src.version.__init__ import __all__, hash_directory, hash_file, get_version
+__all__ = []
+__version__ = get_version(2)
+__all__ += __version__
+__name__ += '.' + __version__  # Update USER module name with version
 project_directory = Path(".")
 hash_value = hash_directory(project_directory)
 print(f"Combined hash for the project: {hash_value}")
@@ -44,6 +45,8 @@ __all__ = [
     'hash_file',
     f'ADMIN.{__name__}',
 ]
+__name__ = __all__[3]
+print(f"ADMIN module name updated to: {__all__[3]}")
 print(f'ADMIN-scoped classes and methods exposed via "__all__": {__all__}')
 
 class Task:
@@ -319,3 +322,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+elif __name__ == (f'ADMIN.__main__.{get_version(2)}'):
+    # print('hello ADMIN!') # logic here will execute when /__init__.py is invoked and ADMIN is achieved.
+    pass
