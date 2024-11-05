@@ -21,3 +21,11 @@ ____
 ### how: cognosis
 navigate to the cognosis folder
 run `python3 -m venv venv` or simply `python .\__init__.py` or `python ./__init__.py -h`
+
+____
+
+current experiment:
+
+`quimetime.py` at runtime makes a stateful quine json that, after 5 iterations, googles something, or something.
+
+No further explanation nor rationalization shall be provided. Ever. In-general.
