@@ -64,7 +64,6 @@ class Atom(Generic[T, V, C]):
     def __hash__(self) -> int:
         return int(self.hash, 16)
 
-    # Implement buffer protocol
     def __buffer__(self, flags: int) -> memoryview:
         return memoryview(self.value)
 
@@ -77,7 +76,7 @@ class Atom(Generic[T, V, C]):
     __contains__ = lambda self, item: item in self.value
     __call__ = lambda self, *args, **kwargs: self.value(*args, **kwargs)
 
-    # Optimize arithmetic operations
+    # Aithmetic operations
     __add__ = lambda self, other: self.value + other
     __sub__ = lambda self, other: self.value - other
     __mul__ = lambda self, other: self.value * other
@@ -98,7 +97,6 @@ class OptimizedBuffer:
     def read(self, size: int = -1) -> bytes:
         return self.buffer.read(size)
 
-# Platform-specific optimizations
 if IS_WINDOWS:
     # platform-specific Windows settings
     pass
