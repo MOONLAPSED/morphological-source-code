@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""PEP0342 generator/await coroutine-based 'trampoline' server."""
+#------------------------------------------------------------------------------
+# Standard Library Imports - 3.13 std libs **ONLY**
+#------------------------------------------------------------------------------
 import collections
 import sys
 import types
