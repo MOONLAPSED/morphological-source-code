@@ -47,14 +47,15 @@ class Transducer:
 
 
 class Map(Transducer):
-    """Transducer for mapping a function over the collection."""
     def __init__(self, f: Callable[[T], R]):
-        def _map_step(r: Any = Missing, x: Optional[T] = Missing):
-            if r is Missing:
-                return step()
-            if x is Missing:
-                return step(r)
-            return step(r, f(x))
+        def _map_step(step):
+            def new_step(r: Any = Missing, x: Optional[T] = Missing):
+                if r is Missing:
+                    return step()
+                if x is Missing:
+                    return step(r)
+                return step(r, f(x))
+            return new_step
         super().__init__(_map_step)
 
 
@@ -86,8 +87,18 @@ def mapcat(f: Callable[[T], Iterable[R]]) -> Transducer:
     return compose(Map(f), Cat())
 
 
-class Cat(Transducer):
-    """Transducer that flattens nested collections."""
+def _cat_step(r: Any = Missing, x: Optional[Any] = Missing):
+    """Flattens nested collections during reduction.
+    
+    Args:
+        r: Accumulated result
+        x: Current iterable to flatten
+        
+    Returns:
+        Reduced collection with flattened elements
+    """
+    if not hasattr(x, '__iter__') and x is not Missing:
+        raise TypeError(f"Expected iterable, got {type(x)}")
     def __init__(self):
         def _cat_step(r: Any = Missing, x: Optional[Any] = Missing):
             if r is Missing:
@@ -109,3 +120,21 @@ def append(r: Any = Missing, x: Optional[Any] = Missing) -> Any:
         return []
     r.append(x)
     return r
+
+def main():
+    numbers = range(1, 10)
+    
+    def reducing_fn(acc=Missing, x=Missing):
+        if acc is Missing:
+            return []
+        if x is Missing:
+            return acc
+        acc.append(x)
+        return acc
+    
+    double_xform = Map(lambda x: x * 2)
+    result = transduce(double_xform, reducing_fn, [], numbers)
+    print("Doubled numbers:", result)
+
+if __name__ == "__main__":
+    main()

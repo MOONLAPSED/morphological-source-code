@@ -2,7 +2,6 @@ from typing import TypeVar, Generic, List
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 import math
-import cmath
 from random import random
 
 Q = TypeVar('Q')  # Quantum state
@@ -47,6 +46,36 @@ class QuantumTemporalMRO:
         entropy = sum(-p * math.log(p) for p in (ev.real for ev in eigenvalues if ev.real > 1e-10))
         return entropy
 
+    @staticmethod
+    def _combinations(items, k):
+        """Generate k-combinations of items"""
+        if k == 0:
+            yield []
+            return
+        if not items:
+            return
+        first, rest = items[0], items[1:]
+        # Combinations that include the first element
+        for c in QuantumTemporalMRO._combinations(rest, k - 1):
+            yield [first] + c
+        # Combinations that don't include the first element
+        yield from QuantumTemporalMRO._combinations(rest, k)
+
+    @staticmethod
+    def determinant(matrix: List[List[complex]]) -> complex:
+        """Calculate determinant of a matrix using recursive expansion"""
+        n = len(matrix)
+        if n == 1:
+            return matrix[0][0]
+        if n == 2:
+            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+        
+        det = complex(0)
+        for j in range(n):
+            minor = [[matrix[i][k] for k in range(n) if k != j] for i in range(1, n)]
+            det += matrix[0][j] * ((-1) ** j) * QuantumTemporalMRO.determinant(minor)
+        return det
+
     def lindblad_evolution(self, density_matrix: List[List[complex]], hamiltonian: List[List[complex]], duration: timedelta) -> List[List[complex]]:
         """Implement Lindblad master equation evolution over a small time duration"""
         dt = duration.total_seconds()
@@ -84,7 +113,7 @@ class QuantumTemporalMRO:
             max_change = 0
             for i in range(n):
                 numerator = sum(coeffs[k] * (roots[i] ** (n - 1 - k)) for k in range(n + 1))
-                denominator = complex(1) * cmath.prod(roots[i] - roots[j] if i != j else 1 for j in range(n))
+                denominator = complex(1) * math.prod(roots[i] - roots[j] if i != j else 1 for j in range(n))
                 correction = numerator / (denominator if abs(denominator) > tolerance else complex(tolerance))
                 max_change = max(max_change, abs(correction))
                 roots[i] -= correction
@@ -129,6 +158,11 @@ class QuantumTemporalMRO:
     def conjugate_transpose(matrix: List[List[complex]]) -> List[List[complex]]:
         """Calculates the conjugate transpose of a matrix."""
         return [[matrix[j][i].conjugate() for j in range(len(matrix))] for i in range(len(matrix[0]))]
+
+    @staticmethod
+    def matrix_subtract(A: List[List[complex]], B: List[List[complex]]) -> List[List[complex]]:
+        """Subtracts matrix B from matrix A."""
+        return [[a - b for a, b in zip(A_row, B_row)] for A_row, B_row in zip(A, B)]
 
 def main_demo():
     dimension = 2

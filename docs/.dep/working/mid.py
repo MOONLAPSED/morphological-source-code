@@ -202,12 +202,11 @@ class HomoiconicEntity(Generic[T, V]):
 # Example usage showing both properties preserved
 @atom
 class Example(HomoiconicEntity[Callable, int]):
-    async def to_code(self) -> Callable:
+    def to_code(self) -> Callable:
         return lambda: self.value * 2
 
     def to_data(self) -> int:
         return self.value
-
 def main():
     runtime = HomoiconicRuntime()
     example = Example(5, DataType.INTEGER, AtomType.FUNCTION)
