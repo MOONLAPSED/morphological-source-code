@@ -11,12 +11,11 @@ import sys
 import ast
 import time
 import site
-import socket
+import mmap
 import json
-import tempfile
-import http.server
 import uuid
 import shlex
+import socket
 import struct
 import shutil
 import pickle
@@ -27,6 +26,7 @@ import pathlib
 import asyncio
 import inspect
 import hashlib
+import tempfile
 import platform
 import traceback
 import functools
@@ -35,15 +35,19 @@ import importlib
 import threading
 import subprocess
 import tracemalloc
+import http.server
+import collections
+from array import array
 from pathlib import Path
 from enum import Enum, auto
-from queue import Queue, Empty
+from collections.abc import Iterable, Mapping
 from datetime import datetime
+from queue import Queue, Empty
 from abc import ABC, abstractmethod
-from contextlib import contextmanager, asynccontextmanager
-from functools import wraps, lru_cache
+from functools import reduce, lru_cache, partial, wraps
 from dataclasses import dataclass, field
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import contextmanager, asynccontextmanager
 from importlib.util import spec_from_file_location, module_from_spec
 from types import SimpleNamespace, ModuleType,  MethodType, FunctionType, CodeType, TracebackType, FrameType
 from typing import (
@@ -408,6 +412,46 @@ def load_files_as_models(root_dir: pathlib.Path, file_extensions: List[str]) -> 
                 models[model_name] = instance
                 sys.modules[model_name] = instance
     return models
+def mapper(mapping_description, input_data):
+    def transform(xform, value):
+        if callable(xform):
+            return xform(value)
+        elif isinstance(xform, Mapping):
+            return {k: transform(v, value) for k, v in xform.items()}
+        else:
+            raise ValueError(f"Invalid transformation: {xform}")
+    def get_value(key):
+        if isinstance(key, str) and key.startswith(":"):
+            return input_data.get(key[1:])
+        return input_data.get(key)
+    def process_mapping(mapping_description):
+        result = {}
+        for key, xform in mapping_description.items():
+            if isinstance(xform, str):
+                value = get_value(xform)
+                result[key] = value
+            elif isinstance(xform, Mapping):
+                if "key" in xform:
+                    value = get_value(xform["key"])
+                    if "xform" in xform:
+                        result[key] = transform(xform["xform"], value)
+                    elif "xf" in xform:
+                        if isinstance(value, list):
+                            transformed = [xform["xf"](v) for v in value]
+                            if "f" in xform:
+                                result[key] = xform["f"](transformed)
+                            else:
+                                result[key] = transformed
+                        else:
+                            result[key] = xform["xf"](value)
+                    else:
+                        result[key] = value
+                else:
+                    result[key] = process_mapping(xform)
+            else:
+                result[key] = xform
+        return result
+    return process_mapping(mapping_description)
 #------------------------------------------------------------------------------
 # Logging Configuration
 #------------------------------------------------------------------------------
@@ -422,9 +466,7 @@ class CustomFormatter(logging.Formatter):
         'green': "\x1b[32;20m",
         'reset': "\x1b[0m"
     }
-    
     FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s (%(filename)s:%(lineno)d)"
-    
     FORMATS = {
         logging.DEBUG: COLORS['grey'] + FORMAT + COLORS['reset'],
         logging.INFO: COLORS['green'] + FORMAT + COLORS['reset'],
@@ -432,18 +474,15 @@ class CustomFormatter(logging.Formatter):
         logging.ERROR: COLORS['red'] + FORMAT + COLORS['reset'],
         logging.CRITICAL: COLORS['bold_red'] + FORMAT + COLORS['reset']
     }
-    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.log_queue = Queue()
         self.log_thread = threading.Thread(target=self._log_thread_func, daemon=True)
         self.log_thread.start()
-    
     def format(self, record):
         log_fmt = self.FORMATS.get(record.levelno, self.FORMAT)
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
-    
     def _log_thread_func(self):
         while True:
             try:
@@ -455,25 +494,18 @@ class CustomFormatter(logging.Formatter):
                 import traceback
                 print("Error in log thread:", file=sys.stderr)
                 traceback.print_exc()
-    
     def emit(self, record):
         self.log_queue.put(record)
-    
     def close(self):
         self.log_queue.put(None)
         self.log_thread.join()
-
 class AdminLogger(logging.LoggerAdapter):
     """Logger adapter for administrative logging."""
-    
     def __init__(self, logger, extra=None):
         super().__init__(logger, extra or {})
-    
     def process(self, msg, kwargs):
         return f"{self.extra.get('name', 'Admin')}: {msg}", kwargs
-
 logger = AdminLogger(logging.getLogger(__name__))
-
 #------------------------------------------------------------------------------
 # Security
 #------------------------------------------------------------------------------
@@ -848,6 +880,19 @@ class Atom(Generic[T, V, C]):
     symmetry: Callable[[T, T], bool] = lambda x, y: x == y
     transitivity: Callable[[T, T, T], bool] = lambda x, y, z: (x == y and y == z)
     transparency: Callable[[Callable[..., T], T, T], T] = lambda f, x, y: f(True, x, y) if x == y else None
+    def process_attributes(self, mapping_description: Dict[str, Any], input_data: Dict[str, Any]) -> None:
+        """
+        Use the `mapper` function to process input data and map it to attributes.
+        
+        Args:
+            mapping_description (Dict[str, Any]): The mapping description for transformation.
+            input_data (Dict[str, Any]): Data to be processed and mapped.
+        """
+        mapped_data = mapper(mapping_description, input_data)
+        for key, value in mapped_data.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+        # Log or process additional logic if required
     def encode(self) -> bytes:
         return json.dumps({
             'id': self.id,
@@ -946,6 +991,18 @@ class QuantumAtom(Atom[T, V, C]):
         super().__init__(value, type_)
         self.quantum_metadata = QuantumAtomMetadata()
         self._observers: List[Callable] = []
+    def quantum_attribute_update(self, input_data: Dict[str, Any]) -> None:
+        """
+        Example method to update quantum-related metadata using a transformation map.
+        """
+        quantum_mapping = {
+            'quantum_metadata': { 
+                'state': ":state",
+                'coherence_threshold': lambda metadata: metadata.get('coherence', 0.95),
+                'entanglement_pairs': lambda pairs: {k: v for k, v in pairs.items() if isinstance(v, QuantumAtom)}
+            }
+        }
+        self.process_attributes(quantum_mapping, input_data)
     def entangle(self, other: 'QuantumAtom') -> None:
         """Quantum entanglement between two atoms"""
         if self.quantum_metadata.state != QuantumState.SUPERPOSITION:
