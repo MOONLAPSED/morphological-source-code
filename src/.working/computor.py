@@ -10,7 +10,7 @@ from enum import Enum, auto
 from typing import Dict, Any, List, Callable, Union, Type, TypeVar
 from dataclasses import dataclass, field
 """
-ganymede/
+/cognosis/
 │
 ├── src/
 │   ├── __init__.py
@@ -18,8 +18,6 @@ ganymede/
 │
 └── main.py
 """
-
-
 __all__ = []
 """py objects are implemented as C structures.
 typedef struct _object {

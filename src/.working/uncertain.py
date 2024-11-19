@@ -32,9 +32,9 @@ class CommutativeTransform:
         result = value
         for operation in operations:
             if operation == "add":
-                result = self.add(result)  # This will now work correctly
+                result = self.add(result)
             elif operation == "multiply":
-                result = self.multiply(result)  # This will now work correctly
+                result = self.multiply(result)
         return result
 
 # Example usage
