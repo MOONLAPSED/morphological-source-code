@@ -39,7 +39,7 @@ import http.server
 import collections
 from array import array
 from pathlib import Path
-from enum import Enum, auto
+from enum import Enum, auto, IntEnum, StrEnum, Flag
 from collections.abc import Iterable, Mapping
 from datetime import datetime
 from queue import Queue, Empty
@@ -677,10 +677,10 @@ What's conserved across these transformations:
 T = TypeVar('T', bound=any) # T for TypeVar, V for ValueVar. Homoicons are T+V.
 V = TypeVar('V', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type])
 C = TypeVar('C', bound=Callable[..., Any])  # callable 'T'/'V' first class function interface
-DataType = Enum('DataType', 'INTEGER FLOAT STRING BOOLEAN NONE LIST TUPLE') # 'T' vars (stdlib)
-AtomType = Enum('AtomType', 'FUNCTION CLASS MODULE OBJECT') # 'C' vars (homoiconic methods or classes)
-AccessLevel = Enum('AccessLevel', 'READ WRITE EXECUTE ADMIN USER')
-QuantumState = Enum('QuantumState', ['SUPERPOSITION', 'ENTANGLED', 'COLLAPSED', 'DECOHERENT'])
+DataType = StrEnum('DataType', 'INTEGER FLOAT STRING BOOLEAN NONE LIST TUPLE') # 'T' vars (stdlib)
+AtomType = StrEnum('AtomType', 'FUNCTION CLASS MODULE OBJECT') # 'C' vars (homoiconic methods or classes)
+AccessLevel = StrEnum('AccessLevel', 'READ WRITE EXECUTE ADMIN USER')
+QuantumState = StrEnum('QuantumState', ['SUPERPOSITION', 'ENTANGLED', 'COLLAPSED', 'DECOHERENT'])
 """py objects are implemented as C structures.
 typedef struct _object {
     Py_ssize_t ob_refcnt;

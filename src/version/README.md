@@ -1,20 +1,8 @@
-# /src/external/__init__.py - does not exist
-
- - must be generated at runtime if the application version is 'external'
- - 'external' uses several methods to attempt to download and install dependencies
- - if the application version is 'external' then the application will attempt to download and install dependencies
- - any subdir in /src/external/ will be treated as a dependency and passed with simple validation to `pdm install lib1 lib2 transformers`
- - functionaly, this allows a runtime User which installed `non-dev` mode to install dependencies
-
-
-## NYE Source Code to be Backported into `/main.py`
-
-`ver.<0.2.469>:` (This section provides a template for extrapolating the implementation details from `/src/external/README.md` (this file) back to /main.py. In other words, this is the source code to be backported into `/main.py` once `UserMain` is refactored into `/src/external/umain.py`)
-
 ```markdown
 src/
 │
 ├── (optional)__init__.py
+├── pyproject.toml
 |
 ├── external/
 │   ├── transformers/
@@ -31,12 +19,34 @@ src/
 │
 ├── app/
 │   ├── __init__.py
+│   ├── ruff.toml
 │   └── main.py
 │
 └── utils/
     ├── __init__.py
     └── helper.py
 ```
+
+
+
+
+
+
+
+# /src/external/__init__.py - does not exist
+
+ - must be generated at runtime if the application version is 'external'
+ - 'external' uses several methods to attempt to download and install dependencies
+ - if the application version is 'external' then the application will attempt to download and install dependencies
+ - any subdir in /src/external/ will be treated as a dependency and passed with simple validation to `pdm install lib1 lib2 transformers`
+ - functionaly, this allows a runtime User which installed `non-dev` mode to install dependencies
+
+
+## NYE Source Code to be Backported into `/main.py`
+
+`ver.<0.2.469>:` (This section provides a template for extrapolating the implementation details from `/src/external/README.md` (this file) back to /main.py. In other words, this is the source code to be backported into `/main.py` once `UserMain` is refactored into `/src/external/umain.py`)
+
+
 
 ```python
 #!/usr/bin/env python3
