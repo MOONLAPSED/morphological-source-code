@@ -253,8 +253,8 @@ def main():
         print(f'{t1 - t0:.3f}s', end=' \n')
         # appends the time to the platform-specific IF_POSIX/IF_WINDOWS code
     print('_' * 80)
-    print(f'best of {args.num}: {best:.3f}s')
-    return 0
+    mreturn = print(f'best of {args.num}: {best:.3f}s')
+    return mreturn
 
 profiler.disable()
 # Extract profiling data
