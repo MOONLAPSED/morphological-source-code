@@ -61,9 +61,8 @@ class TemporalMRO:
         """Estimates inference duration based on model name and input data"""
         base_duration = { # Basic estimation logic
             "ollama": 1.0,  # 1 second base for ollama
-            "gpt2": 0.5,    # 0.5 seconds base for gpt2
-        }.get(model_name, 0.5)  # default 0.5s for unknown models
-        
+            "nomic-text-embed": 0.5,
+        }.get(model_name, 1.0)
         # Factor in input size
         input_size_factor = len(str(input_data)) / 100  # rough estimation
         

@@ -256,124 +256,133 @@ class QuantumTuringHarness(Generic[S, I, O]):
             if not recursive:
                 return ComputationalClass.RECURSIVE
                 
-            turing = await self._test_turing_complete()
-            if not turing:
-                return ComputationalClass.TURING_COMPLETE
+            turing_complete = await self._test_turing_complete()
+            if not turing_complete:
+                return ComputationalClass.RECURSIVE
                 
             return ComputationalClass.TURING_COMPLETE
             
         except Exception as e:
-            print(f"Testing error: {e}")
+            logging.error(f"Testing error: {e}")
             return ComputationalClass.FINITE
 
     @quantum_coherent
     async def _test_finite(self) -> bool:
+        """Test if system can handle finite state computations"""
         initial_state = 0
         self.configuration.state = initial_state
         
-        for i in range(3):
-            result = await self.simulate_step(i)
-            if result != i:
-                return False
-        return True
+        try:
+            for i in range(3):
+                result = await self.simulate_step(i)
+                if result != i:
+                    return False
+            return True
+        except Exception as e:
+            logging.error(f"Finite state test failed: {e}")
+            return False
 
     @quantum_coherent
     async def _test_regular(self) -> bool:
+        """Test if system can handle regular language computations"""
         pattern = [0, 1, 0]
-        for symbol in pattern:
-            result = await self.simulate_step(symbol)
-            if result != symbol:
-                return False
-        return True
+        try:
+            for symbol in pattern:
+                result = await self.simulate_step(symbol)
+                if result != symbol:
+                    return False
+            return True
+        except Exception as e:
+            logging.error(f"Regular language test failed: {e}")
+            return False
 
     @quantum_coherent
     async def _test_context_free(self) -> bool:
+        """Test if system can handle context-free computations"""
         sequence = ['(', '(', ')', ')']
         stack = []
-        for symbol in sequence:
-            result = await self.simulate_step(symbol)
-            if symbol == '(':
-                stack.append(symbol)
-            elif symbol == ')':
-                if not stack:
-                    return False
-                stack.pop()
-        return len(stack) == 0
+        try:
+            for symbol in sequence:
+                result = await self.simulate_step(symbol)
+                if symbol == '(':
+                    stack.append(symbol)
+                elif symbol == ')':
+                    if not stack:
+                        return False
+                    stack.pop()
+            return len(stack) == 0
+        except Exception as e:
+            logging.error(f"Context-free test failed: {e}")
+            return False
 
     @quantum_coherent
     async def _test_recursive(self) -> bool:
-        def factorial(n):
+        """Test if system can handle recursive computations"""
+        async def factorial(n):
             if n <= 1:
                 return 1
-            return n * factorial(n - 1)
+            subfact = await factorial(n - 1)
+            return n * subfact
         
-        result = await self.simulate_step(factorial(3))
-        return result == 6
+        try:
+            result = await self.simulate_step(await factorial(3))
+            return result == 6
+        except Exception as e:
+            logging.error(f"Recursive test failed: {e}")
+            return False
 
     @quantum_coherent
-    async def simulate_step(self, 
-                          input_symbol: I) -> Optional[O]:
+    async def simulate_step(self, input_symbol: I) -> Optional[O]:
         """Execute one step of quantum computation"""
-        # Create superposition of possible next states
-        wave_function = WaveFunction(
-            type_structure=type(input_symbol),
-            amplitude=input_symbol
-        )
-        
-        # Perform quantum measurement
-        collapsed_state = wave_function.collapse()
-        
-        # Record transition
-        self.transition_history.append((
-            self.configuration.state,
-            collapsed_state
-        ))
-        
-        # Update configuration
-        self.configuration.state = collapsed_state
-        return collapsed_state
+        try:
+            # Create superposition of possible next states
+            wave_function = WaveFunction(
+                type_structure=type(input_symbol),
+                amplitude=input_symbol
+            )
+            
+            # Perform quantum measurement
+            collapsed_state = wave_function.collapse()
+            
+            # Record transition
+            self.transition_history.append((
+                self.configuration.state,
+                collapsed_state
+            ))
+            
+            # Update configuration
+            self.configuration.state = collapsed_state
+            return collapsed_state
+        except Exception as e:
+            logging.error(f"Simulation step failed: {e}")
+            return None
 
     @quantum_coherent
-    def universal_gate(self, 
-                      func: Callable[[I], O]) -> Callable[[I], O]:
+    def universal_gate(self, func: Callable[[I], O]) -> Callable[[I], O]:
         """
         Implements a universal quantum gate.
         This should be able to simulate any classical computation.
         """
         @wraps(func)
         def quantum_gate(x: I) -> O:
-            # Create quantum superposition
-            atom = Atom(
-                type_info=type(x),
-                value=x
-            )
-            
-            # Apply transformation
-            transformed = HoloiconicTransform.transform(atom)
-            
-            # Measure result
-            result = transformed.value() if callable(transformed.value) else transformed.value
-            return result
+            try:
+                # Create quantum superposition
+                atom = Atom(
+                    type_info=type(x),
+                    value=x
+                )
+                
+                # Apply transformation
+                transformed = HoloiconicTransform.transform(atom)
+                
+                # Measure result
+                result = transformed.value() if callable(transformed.value) else transformed.value
+                return result
+            except Exception as e:
+                logging.error(f"Universal gate operation failed: {e}")
+                raise
         
         return quantum_gate
-
-    def test_computational_power(self) -> ComputationalClass:
-        """
-        Test the computational power of our system.
-        Returns the highest computational class achieved.
-        """
-        tests = [
-            self._test_finite(),
-            self._test_regular(),
-            self._test_context_free(),
-            self._test_recursive(),
-            self._test_turing_complete()
-        ]
-        
-        for test, comp_class in zip(tests, ComputationalClass):
-            if not test:
-                return comp_class
-        return ComputationalClass.TURING_COMPLETE
 
     @quantum_coherent
     async def _test_turing_complete(self) -> bool:
@@ -382,29 +391,38 @@ class QuantumTuringHarness(Generic[S, I, O]):
         that can simulate any other function.
         """
         async def U(f: Callable[[I], O], x: I) -> O:
-            f_atom = Atom(type_info=type(f), value=f)
-            x_atom = Atom(type_info=type(x), value=x)
-            f_transformed = self.universal_gate(f)(x)
-            return f_transformed
+            try:
+                f_atom = Atom(type_info=type(f), value=f)
+                x_atom = Atom(type_info=type(x), value=x)
+                f_transformed = self.universal_gate(f)(x)
+                return f_transformed
+            except Exception as e:
+                logging.error(f"Universal function simulation failed: {e}")
+                return None
         
         identity = lambda x: x
         successor = lambda x: x + 1
         
         try:
-            # Using regular functions for first two tests
+            # Test with regular functions
             result1 = await U(identity, 5)
+            if result1 != 5:
+                return False
+                
             result2 = await U(successor, 5)
+            if result2 != 6:
+                return False
             
-            # Using async lambda for composition
+            # Test with async lambda for composition
             async def composed(x): 
                 return await U(successor, x)
                 
             result3 = await U(composed, 5)
+            return result3 == 6
             
-            return result1 == 5 and result2 == 6 and result3 == 6
-        except:
+        except Exception as e:
+            logging.error(f"Turing completeness test failed: {e}")
             return False
-
 class UniversalComputer:
     """
     A universal computer implementation using our quantum coherent system.
