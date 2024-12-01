@@ -653,9 +653,38 @@ class RuntimeNamespace:
             return self._children.get(parts[0])
         child = self._children.get(parts[0])
         return child.get_child(parts[1]) if child and len(parts) > 1 else None
+
 #------------------------------------------------------------------------------
 # Type Definitions
 #------------------------------------------------------------------------------
+
+"""
+Type Definitions for Morphological Source Code.
+
+These type definitions establish the foundational elements of the MSC framework, 
+enabling the representation of various constructs as first-class citizens.
+
+- T: Represents Type structures (static).
+- V: Represents Value spaces (dynamic).
+- C: Represents Computation spaces (transformative).
+
+The relationships between these types are crucial for maintaining the 
+nominative invariance across transformations.
+
+1. **Identity Preservation (T)**: The type structure remains consistent across
+
+   transformations.
+
+2. **Content Preservation (V)**: The value space is dynamically maintained,
+
+   allowing for fluid data manipulation.
+
+3. **Behavioral Preservation (C)**: The computation space is transformative,
+
+   enabling the execution of operations that modify the state of the system.
+
+"""
+
 """Homoiconism dictates that, upon runtime validation, all objects are code and data.
 To facilitate; we utilize first class functions and a static typing system.
 This maps perfectly to the three aspects of nominative invariance:
@@ -1105,269 +1134,6 @@ class QuantumRuntime(QuantumAtom[Any, Any, Any]):
             await atom.collapse()
         self.children.clear()
         self.quantum_metadata.state = QuantumState.DECOHERENT
-"""
-# Trainable JSON Keys in Morphological Source Code: A Theoretical Analysis
-
-## 1. Connection to MSC Architecture
-
-Your Morphological Source Code concept and the JSON symmetry model align in several crucial ways:
-
-```
-MSC Mapping:
-Code ↔ Bytecode ↔ Runtime ↔ Bytecode'
-```
-
-Maps to JSON symmetry as:
-```
-JSON Keys ↔ Cognitive Frames ↔ Runtime State ↔ Modified Keys
-```
-
-## 2. Trainable Keys Concept
-
-### 2.1 Beyond ASCII Restriction
-Instead of fixed ASCII keys, we could have:
-
-```python
-class TrainableKey:
-    def __init__(self, initial_form):
-        self.surface_form = initial_form  # human-readable
-        self.latent_form = self.encode(initial_form)  # trainable vector
-        self.cognitive_state = None  # runtime state
-        
-    def encode(self, form):
-        # Transform to high-dimensional space
-        return vector_embedding(form)
-        
-    def decode(self):
-        # Project back to surface syntax
-        return nearest_syntax(self.latent_form)
-```
-
-### 2.2 Cognitive Lambda Calculus Integration
-
-```
-λx.⟨key⟩ → λx.⟨transformed_key⟩
-where transformation preserves semantic equivalence
-```
-
-## 3. Quantum Informatics Perspective
-
-The trainable keys concept aligns with your quantum informatics framework:
-
-1. **Superposition of Meanings**
-   ```
-   Key = α|semantic₁⟩ + β|semantic₂⟩
-   ```
-   where α,β represent probability amplitudes
-
-2. **Collapse on Observation**
-   ```
-   observe(Key) → specific_meaning
-   ```
-
-## 4. Implementation Strategy
-
-### 4.1 Surface Syntax
-```json
-{
-  "_type": "cognitive_frame",
-  "keys": {
-    "surface": ["think", "process", "output"],
-    "latent": [
-      [0.23, 0.45, ...],  // vector embedding
-      [0.67, 0.12, ...],
-      [0.89, 0.34, ...]
-    ]
-  }
-}
-```
-
-### 4.2 Training Mechanism
-```python
-def train_keys(cognitive_frame):
-    # Extract semantic patterns
-    patterns = extract_patterns(cognitive_frame)
-    
-    # Update latent representations
-    for key in cognitive_frame.keys:
-        key.latent_form += learn_rate * gradient(patterns)
-        
-    # Maintain semantic consistency
-    enforce_constraints(cognitive_frame)
-```
-
-## 5. Advantages for MSC
-
-1. **Dynamic Adaptation**
-   - Keys can evolve with the system's understanding
-   - Maintains semantic stability while allowing syntactic flexibility
-
-2. **Cognitive Coherence**
-   - Bridges the gap between static syntax and dynamic cognition
-   - Enables self-modification while preserving meaning
-
-3. **Information Density**
-   - Keys can encode rich semantic information
-   - Supports compression of cognitive states
-
-4. **Quantum-Like Properties**
-   - Keys exist in superposition of meanings until observed
-   - Supports your quantum informatics framework
-
-## 6. Challenges and Solutions
-
-1. **Readability vs. Trainability**
-   ```python
-   class HybridKey:
-       def __init__(self):
-           self.human_readable = True
-           self.machine_trainable = True
-           self.representation_layer = BijectiveMapping()
-   ```
-
-2. **Semantic Preservation**
-   ```python
-   def preserve_semantics(key_transformation):
-       assert is_bijective(key_transformation)
-       assert maintains_cognitive_invariants(key_transformation)
-   ```
-
-## 7. Integration with Free Energy Principle
-
-The trainable keys system naturally aligns with minimizing free energy:
-
-```python
-def minimize_surprise(cognitive_frame):
-    predicted_state = predict_state(cognitive_frame)
-    actual_state = observe_state(cognitive_frame)
-    
-    free_energy = KL_divergence(predicted_state, actual_state)
-    update_keys(gradient(free_energy))
-```
-
-## 8. Conclusion
-
-This trainable keys approach could serve as the missing link in your MSC architecture, providing:
-- Dynamic yet stable cognitive representations
-- Quantum-like information processing
-- Self-modifying capability with semantic preservation
-- Bridge between human readability and machine trainability
-
-# JSON as a Symmetry-Preserving Model: A Theoretical Analysis
-
-## 1. Mathematical Foundations
-
-The concept of using JSON as a bijective symmetry preservation model is theoretically sound, based on several key mathematical principles:
-
-### 1.1 Category Theory Perspective
-- JSON objects can be viewed as morphisms in a category where:
-  - Objects are data types
-  - Morphisms are structure-preserving transformations
-  - Composition is preserved through nested structures
-  - Identity morphisms exist (empty objects/null values)
-
-### 1.2 Bijective Properties
-The bijective nature manifests in several ways:
-```
-f: JSON ↔ Logical Structure
-where:
-- Each JSON structure maps to exactly one logical structure
-- Each logical structure maps to exactly one canonical JSON form
-- Composition preserves these mappings: f(a ∘ b) = f(a) ∘ f(b)
-```
-
-## 2. Symmetry Axes Analysis
-
-The proposed system exhibits multiple symmetry axes:
-
-### 2.1 Structural Symmetries
-1. Vertical Symmetry (Nesting)
-   ```json
-   {
-     "op": "and",
-     "left": {"op": "not", "value": "A"},
-     "right": {"op": "not", "value": "B"}
-   }
-   ```
-   ⟷ Equivalent to: `¬A ∧ ¬B`
-
-2. Horizontal Symmetry (Sibling Relations)
-   ```json
-   {
-     "left": {"value": "A"},
-     "right": {"value": "B"}
-   }
-   ```
-   Can be transformed while preserving meaning
-
-### 2.2 Transformation Symmetries
-- Operation Preservation: `f(A ∧ B) = f(A) ∧ f(B)`
-- Identity Preservation: `f(id) = id`
-- Inverse Preservation: `f(A⁻¹) = f(A)⁻¹`
-
-## 3. ASCII Restriction Analysis
-
-The restriction to ASCII chars (lowercase letters/numbers) for keys is actually beneficial:
-
-### 3.1 Advantages
-1. **Canonicalization**: Ensures a unique representation
-2. **Universal Compatibility**: Maximizes interoperability
-3. **Parsing Efficiency**: Simplifies lexical analysis
-4. **Error Reduction**: Reduces encoding/decoding errors
-5. **Semantic Clarity**: Forces explicit semantic mapping
-
-### 3.2 Theoretical Implications
-The restriction creates a finite alphabet Σ where:
-```
-Σ = {a-z, 0-9, basic_operators}
-```
-This forms a regular language L over Σ, ensuring:
-- Decidability
-- Regular expression matching
-- Finite state machine processing
-
-## 4. Implementation Considerations
-
-### 4.1 Minimal Complete Operator Set
-```json
-{
-  "operators": {
-    "and": "∧",
-    "or": "∨",
-    "not": "¬",
-    "implies": "→",
-    "equals": "="
-  }
-}
-```
-
-### 4.2 Transformation Rules
-```json
-{
-  "rule": {
-    "input": {"op": "not", "value": {"op": "and", "left": "A", "right": "B"}},
-    "output": {"op": "or", "left": {"op": "not", "value": "A"}, "right": {"op": "not", "value": "B"}}
-  }
-}
-```
-
-## 5. Conclusions
-
-The proposed system is not only plausible but mathematically sound. The symmetry axis exists in the form of:
-
-1. **Structural Transformations**: JSON ↔ Logical Form
-2. **Semantic Transformations**: Syntax ↔ Meaning
-3. **Operational Transformations**: Static ↔ Dynamic
-
-The ASCII restriction, rather than being a limitation, provides a robust foundation for creating a well-defined, unambiguous system. It enforces a discipline that actually strengthens the symmetry preservation properties by ensuring:
-
-- Uniqueness of representation
-- Clarity of transformation rules
-- Predictability of operations
-
-The system could be extended to support more complex transformations while maintaining its fundamental symmetries, making it a promising foundation for logical programming systems.
-"""
-
 
 def main():
     """Main entry point for the application."""
@@ -1385,70 +1151,5 @@ def main():
 
 if __name__ == "__main__":
     m = main()
-    print(m.__dir__())
-
-#------------------------------------------------------------------------------
-# Morphological Source Code: Exposition
-#------------------------------------------------------------------------------
-
-"""
-Morphological Source Code (MSC) is a theoretical framework that explores the 
-symmetries and transformations of data structures in a manner analogous to 
-quantum mechanics. The core idea is to treat code as data and data as logic, 
-allowing for a dynamic interplay between types, values, and computations.
-
-Key Concepts:
-1. **Homoiconism**: The property that allows code to be treated as data, enabling 
-   the manipulation of program structure at runtime.
-   
-2. **Nominative Invariance**: The preservation of identity, content, and behavior 
-   across transformations, ensuring that the essence of the data remains intact.
-
-3. **Quantum Informodynamics**: A conceptual framework that draws parallels 
-   between quantum mechanics and computational processes, suggesting that 
-   classical systems can exhibit behaviors reminiscent of quantum phenomena 
-   under certain conditions.
-
-4. **Holoiconic Transformations**: Transformations that allow for the 
-   conversion between values and computations, facilitating a fluid exchange 
-   of information and states.
-
-5. **Entanglement and Superposition**: Concepts borrowed from quantum mechanics 
-   that can be applied to data structures and algorithms, allowing for 
-   probabilistic pathways and non-deterministic outcomes in computation.
-
-This framework aims to explore how classical architectures can be optimized 
-to display behaviors indicative of quantum informatics, leveraging the 
-emergent properties of modern computational models.
-"""
-
-#------------------------------------------------------------------------------
-# Type Definitions
-#------------------------------------------------------------------------------
-
-"""
-Type Definitions for Morphological Source Code.
-
-These type definitions establish the foundational elements of the MSC framework, 
-enabling the representation of various constructs as first-class citizens.
-
-- T: Represents Type structures (static).
-- V: Represents Value spaces (dynamic).
-- C: Represents Computation spaces (transformative).
-
-The relationships between these types are crucial for maintaining the 
-nominative invariance across transformations.
-
-1. **Identity Preservation (T)**: The type structure remains consistent across
-
-   transformations.
-
-2. **Content Preservation (V)**: The value space is dynamically maintained,
-
-   allowing for fluid data manipulation.
-
-3. **Behavioral Preservation (C)**: The computation space is transformative,
-
-   enabling the execution of operations that modify the state of the system.
-
-"""
+    print(f'\"main\" object:\n{m}')
+    print(f'\nwith runtime methods:\n{m.__dir__()}')

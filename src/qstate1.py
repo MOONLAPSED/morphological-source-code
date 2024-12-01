@@ -57,7 +57,7 @@ class AtomType(Enum):
     - VALUE: Pure eigenstate of data
     - FUNCTION: Superposition of code and data
     - CLASS: Type boundary condition
-    - MODULE: Composite quantum system
+    - MODULE: Composite quantum system or kb article or literal module
     """
     VALUE = auto()
     FUNCTION = auto()
@@ -207,6 +207,13 @@ class ComputationalClass(Enum):
     CONTEXT_FREE = auto()
     RECURSIVE = auto()
     TURING_COMPLETE = auto()
+
+def _noetherian_invariant(self) -> bool:
+    """Verify that boundary and bulk quantities are conserved."""
+    # Example heuristic: Length/type coherence between boundary and bulk
+    boundary_info = len(str(self.type_info))
+    bulk_info = len(str(self.value))
+    return boundary_info == bulk_info
 
 @dataclass
 class TuringConfiguration:
