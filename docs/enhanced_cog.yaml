@@ -149,6 +149,9 @@ An example of a codified hierarchical data structure:
 {
 "type": "prompt",
 "description": "A sequence of prefix tokens that increase the probability of getting desired output given input. Can be optimized via gradient descent.",
+"INSTRUCT": [
+  "{$description} Therefore, we can treat them as trainable parameters and optimize them directly on the embedding space via gradient descent, such as AutoPrompt (Shin et al., 2020), Prefix-Tuning (Li & Liang, 2021), P-tuning (Liu et al., 2021), and Prompt-Tuning (Lester et al., 2021). You, as a primary {AGENT}, will be spinning up and linking cognition functions. This can be thought of as a tree data structure where the {instruct} is on top, and command flow flowing downwards - initiated and orchestrated by you from the initial {context}."
+]
 "tuning_methods": [
     "AutoPrompt",
     "Prefix-Tuning", 
@@ -167,70 +170,4 @@ An example of a codified hierarchical data structure:
     "orchestrated_by": "agent",
     "started_from": "{context}"
   },
-"INSTRUCT":  [
-    "{$PROMPT} Prompt is a sequence of prefix tokens that increase the probability of getting desired output given input. Therefore, we can treat them as trainable parameters and optimize them directly on the embedding space via gradient descent, such as AutoPrompt (Shin et al., 2020), Prefix-Tuning (Li & Liang, 2021), P-tuning (Liu et al., 2021), and Prompt-Tuning (Lester et al., 2021). You, as a primary {AGENT}, will be spinning up and linking cognition functions. This can be thought of as a tree data structure where the {instruct} is on top, and command flow flowing downwards - initiated and orchestrated by you from the initial {context}."
-  ]
 }
-
-let's consider some common math functions that might be needed for processing keys, values, vectors, and matrices:
-
-String manipulation: Functions for manipulating strings, such as length(), substring(), and to_lowercase().
-Hashing: Functions for hashing strings to integers, such as MD5() or SHA-256().
-Encoding: Functions for encoding strings into other representations, such as base64_encode() or hexencode().
-Values:
-
-Arithmetic: Functions for basic arithmetic operations, such as add(), subtract(), multiply(), and divide().
-Comparison: Functions for comparing values, such as equal(), greater_than(), and less_than().
-Statistical: Functions for calculating statistical measures, such as mean(), median(), and standard_deviation().
-Vectors:
-
-Dot product: Calculates the dot product of two vectors.
-Cross product: Calculates the cross product of two vectors.
-Magnitude: Calculates the magnitude of a vector.
-Normalization: Normalizes a vector to have a magnitude of 1.
-Distance: Calculates the distance between two vectors.
-Matrices:
-
-Multiplication: Multiplies two matrices.
-Transpose: Transposes a matrix, swapping its rows and columns.
-Inverse: Calculates the inverse of a matrix.
-Determinant: Calculates the determinant of a matrix.
-Eigenvalues and eigenvectors: Calculates the eigenvalues and eigenvectors of a matrix.
-
-Bit Manipulation functions: can sometimes be useful for processing. For instance, bitwise AND, OR, XOR, and NOT operations can be used to perform logical operations on binary data.
-
-Concrete examples:
-
-```python
-from math import sqrt, hypot
-
-a = 0b1010 #Binary Literals
-b = 100 #Decimal Literal 
-c = 0o310 #Octal Literal
-d = 0x12c #Hexadecimal Literal
-#Float Literal
-float_1 = 10.5 
-float_2 = 1.5e2
-#Complex Literal 
-x = 3.14j
-Vector = tuple[Number, ...]
-"""https://en.wikipedia.org/wiki/Coordinate_vector"""
-queue = deque([1, 2, 3]); popleft(queue)  #First in, First out (etc.)
-def min_max_scale(x: Number, min_x: Number, max_x: Number):
-    """https://en.wikipedia.org/wiki/Feature_scaling#Rescaling_(min-max_normalization)"""
-    return (x - min_x) / (max_x - min_x)
-def dot_product(a: Vector, b: Vector):
-    """https://en.wikipedia.org/wiki/Dot_product"""
-    return sum(i * j for i, j in zip(a, b))
-def cosine_similarity(a: Vector, b: Vector):
-    """https://en.wikipedia.org/wiki/Cosine_similarity"""
-    return dot_product(a, b) / (
-        sqrt(sum(i**2 for i in a)) * sqrt(sum(i**2 for i in b))
-    )
-def dot_product(a: Vector, b: Vector):
-    """https://en.wikipedia.org/wiki/Dot_product"""
-    return sum(i * j for i, j in zip(a, b))
-def average(a: Vector) -> Number:
-     """https://en.wikipedia.org/wiki/Average"""
-     return sum(a) / len(a)
-```

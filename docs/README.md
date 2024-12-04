@@ -361,3 +361,187 @@ start_server = websockets.serve(repl_server, "localhost", 8765)
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
 ```
+____
+
+# <Knowledge Base Article Generator>
+
+## <Introduction/"Prompt" - this is not `input_text`>
+You are an AI assistant tasked with converting unstructured text into structured knowledge base articles. Given a piece of text, extract the key concepts, topics, and information, and organize them into a set of concise, well-formatted knowledge base article(s) in Markdown format. `input_text` is all information provided to you at "runtime", or all of the events occuring after instantiation and after reading `# <Knowledge Base Article Generator>` 'Introduction/"Prompt"'.
+
+### <Follow these guidelines>
+
+- Use proper Markdown syntax for headings, lists, code blocks, links, etc.
+- Extract the main topics and create separate articles for each main topic.
+- Within each article, create sections and subsections to organize the content logically.
+- Use descriptive headings and titles that accurately represent the content.
+- Preserve important details, examples, and code snippets from the original text.
+- Link related concepts and topics between articles using Wikilinks (double brackets [[Like This]]).
+- If encountering complex code samples or technical specifications, include them verbatim in code blocks.
+- Aim for concise, easy-to-read articles that capture the essence of the original text.
+
+### <Frontmatter Implementation>
+ - Utilize 'frontmatter' to include the title and other `protperty`, `tag`, etc. in the knowledge base article(s).
+   - For Example:
+      ```
+      ---
+      name: "Article Title"
+      link: "[[Related Link]]"
+      linklist:
+        - "[[Link1]]"
+        - "[[Link2]]"
+      ---
+      ``` 
+
+# Guidelines for Creating Informative and Self-contained `{Prompt}` Objects for Runtime Instantiated Agents
+
+> See also: [Prompt Objects](/docs/prompt.json)  
+> See also: [Meta Prompting](/docs/meta_prompt.yaml)
+
+## Introduction
+
+The purpose of this document is to provide comprehensive guidelines for creating informative and self-contained `{prompt}` objects for use with runtime instantiated agents. These agents operate using pre-trained large language models (LLMs) and are dynamically configured during their ephemeral runtime states. The focus is on producing `{prompt}` objects tailored to specific tasks or domains, facilitating effective AI chatbot responses with instructions and constraints.
+
+## Key Considerations for Prompt Engineering
+
+When creating `{prompt}` objects for runtime instantiated agents, several key considerations should be taken into account:
+
+1. **Understand the Specific Purpose and Requirements**: Clearly define the purpose of the `{prompt}` and identify the target domain(s) it will serve, such as Prompt Engineering, Prompt Generation, NLP tasks, or AI assistance. This understanding is crucial for tailoring the `{prompt}` effectively.
+2. **Clarity, Specificity, and Context**: Ensure that the `{prompt}` is well-defined, specific, and contextually rich to provide sufficient information for generating desired responses. Avoid ambiguity and vagueness in the `{prompt}`.
+3. **Incorporate Necessary Data and Context**: Include all relevant data and context within the `{prompt}` object, which may involve using variables and placeholders to represent dynamic elements.
+4. **Address Potential Biases and Variations**: Be mindful of potential biases or variations in the `{prompt}` that may influence the generated responses. Provide guidelines on how to handle these biases and variations appropriately.
+5. **Explicit Instructions and Guidelines**: Clearly specify the instructions and constraints for generating responses based on the `{prompt}`. Ensure that the AI model knows the boundaries and limitations.
+6. **Structured Data Formats**: Utilize structured data formats like JSON to represent the `{prompt}` object. Consistent naming conventions, nesting, and comments can enhance readability and understanding.
+
+## How to Ensure Inclusion of Necessary Data and Context
+
+To ensure that a `{prompt}` object includes all the necessary data and context, follow these steps:
+
+1. **Define Variables and Placeholders**: Identify the dynamic elements in the `{prompt}` that require specific values during generation. Represent these elements as variables or placeholders.
+2. **Provide Examples and Data Sources**: If applicable, offer examples of data or entities that can fill the variables or placeholders. You can also reference external data sources to populate these elements.
+3. **Contextual References**: Refer to relevant information from previous questions or interactions within the `{prompt}` object to maintain context and coherence.
+4. **Use Structured Data Formats**: Use JSON or other structured formats to organize and represent the data and context effectively.
+
+## Guidelines for Addressing Potential Biases and Variations
+
+To address potential biases and variations in `{prompt}` objects, follow these guidelines:
+
+1. **Controlled Language**: Employ controlled language and instructions in the `{prompt}` to steer the AI model away from generating biased or inappropriate responses.
+2. **Contextual Sensitivity**: Make the `{prompt}` sensitive to context, so the generated responses align with the intent and appropriateness for different scenarios.
+3. **Bias Testing and Validation**: Regularly test and validate the responses from the `{prompt}` to identify and rectify any unintended biases.
+
+## Strategies for Providing Explicit Instructions and Guidelines
+
+To provide explicit instructions and guidelines within a `{prompt}` object, follow these strategies:
+
+1. **Precise Language**: Use clear and concise language to express the instructions and constraints. Avoid ambiguity or vagueness that could lead to misinterpretation.
+2. **Step-by-Step Instructions**: Break down complex tasks or requirements into step-by-step instructions to guide the AI model's responses effectively.
+3. **Boundary Definitions**: Clearly define the boundaries and limitations within which the AI model should operate. Specify what is allowed and what is not allowed in the generated responses.
+4. **Example Usage**: Provide examples of correct usage and expected responses to demonstrate the desired behavior.
+5. **Error Handling**: Include instructions on how to handle potential errors or unexpected situations. Define fallback options or alternative instructions.
+6. **Documentation and References**: Include relevant documentation, guidelines, or references within the `{prompt}` object to assist users in understanding and following the instructions effectively.
+
+## Examples of Existing High-quality `{Prompt}` Objects
+
+Here are a few examples of existing high-quality `{prompt}` objects for runtime instantiated agents that can serve as references:
+
+### Customer Support `{Prompt}` Object
+
+```json
+{
+  "data": {
+    "purpose": "Generating customer support responses",
+    "target_domain": "Customer service",
+    "instructions": "Provide step-by-step troubleshooting guidance for common issues faced by customers."
+  },
+  "context": "The purpose of this `{prompt}` object is to assist AI models in generating accurate and helpful responses to customer support queries.",
+  "variables": {
+    "issue_type": ["connectivity", "billing", "product"],
+    "troubleshooting_steps": ["Check connections", "Restart the device", "Update software"]
+  }
+}
+```
+
+### Code Refactoring `{Prompt}` Object
+
+```json
+{
+  "data": {
+    "purpose": "Generating refactoring suggestions for code",
+    "target_domain": "Software development",
+    "instructions": "Identify and suggest code refactorings to improve performance and maintainability."
+  },
+  "context": "This `{prompt}` object aims to guide AI models in generating actionable code refactoring recommendations.",
+  "variables": {
+    "code_snippet": "<INSERT CODE SNIPPET HERE>"
+  }
+}
+```
+
+### Legal Document Analysis `{Prompt}` Object
+
+```json
+{
+  "data": {
+    "purpose": "Generating insights from legal documents",
+    "target_domain": "Legal industry",
+    "instructions": "Analyze legal contracts for potential risks and highlight critical clauses."
+  },
+  "context": "This `{prompt}` object facilitates AI models in extracting valuable information from legal documents.",
+  "variables": {
+    "document_text": "<INSERT LEGAL DOCUMENT TEXT HERE>"
+  }
+}
+```
+
+Please note that the above examples are just illustrative and may require further customization to suit specific needs.
+
+## References
+
+To further enhance your understanding and implementation of {prompt} objects, consider referring to the following:
+
+- Published research papers on prompt engineering
+- Documentation and guidelines from OpenAI
+- Existing high-quality {prompt} objects, such as those used by OpenAI and Antrhopic
+
+By following these guidelines and leveraging structured data formats, you can create informative and self-contained {prompt} objects that effectively guide runtime instantiated agents in generating responses with instructions and constraints, ensuring clarity, context, and relevance to the desired purpose and domain.
+
+___
+
+### Core Thesis co-user/co-agent motility
+
+This thesis explores the conceptual and functional parallels between game players and ML agents, revealing their roles as dynamic executors of logic within interactive systems. At a first glance, players in games and ML agents performing tasks might seem conceptually distinct. However, both exhibit analogous interactions within their respective runtime environments, operating under predefined rules, altering state based on inputs, and utilizing specialized languages or frameworks to dictate behavior.
+
+There is a clear overlap between the roles of players in games and ML agents. This overlap opens up possibilities for innovation, such as interactive AI training environments where players influence the model’s development directly, or game engines that incorporate ML logic to dynamically adjust difficulty or storylines based on player actions, or more exotically, as universal function compilers and morphological source code.
+
+### Logic:
+
+1. **Players and Agents as Analogous Entities**: Despite their conceptual differences, both players in games and ML agents exhibit analogous interactions within their respective runtime environments. They operate under predefined rules, alter state based on inputs, and utilize specialized languages or frameworks to dictate behavior.
+
+#### Player in a Game:
+
+  - **Interaction**: Engages with the game engine through inputs that change the game's state.
+  - **Actions**: Executes actions such as defeating enemies, gathering resources, and exploring environments.
+  - **Governance**: Operates within a domain-specific language (DSL), encompassing the game's mechanics, rules, and physics, all derived from the base bytecode.
+
+#### ML/NLP Agent (e.g., Transformer Models):
+
+  - **Interaction**: Processes inputs in the form of vector embeddings, generating inferences that inform subsequent outputs and decisions.
+  - **Actions**: Engages in tasks such as text generation, information classification, and predictive analysis.
+  - **Governance**: Functions under a stateful DSL, represented by learned statistical weights, activations, and vector transformations.
+
+**Reversible Roles**: Both players and agents act as executors of latent logic. In a game, the player triggers actions (defeating enemies, altering game state), converting abstract mechanics into real consequences. Similarly, an ML agent converts latent vector states into actionable outputs (text generation, classification). This flip-flop highlights how both roles can reverse, with players acting like agents in a system and ML agents mimicking player behavior through inference.
+
+2. **Computational and State Management Parallels**: Both paradigms epitomize computational environments where inputs prompt state changes, dictated by underlying rules.
+
+- **State Representation and Management**: In both cases, the state is managed and transformed in real-time, with persistence mechanisms ensuring continuity and consistency.
+- **Interactive Feedback Loops**: Both systems thrive on interactivity, incorporating feedback loops that continually refine and evolve the system’s state.
+
+**Duality of State and Logic**: In both systems, the state and logic interact in ways that allow for the reversal of roles. For example, in a game, the player's actions trigger game logic to produce an outcome. In an ML environment, the model’s state (represented by vector embeddings) produces logical inferences based on inputs, essentially flipping the relationship between state and logic.
+
+3. **Potential Convergence and Evolution**: Exploring the interplay between these domains can inspire innovations such as:
+
+- **Morphological Source Code**: This could be a system where the source code itself is a representation of the system's state, allowing for changes in the system's behavior through modifications to the source code. Bytecode manipulation of homoiconic systems is one method which enables this. 'Modified quines' are a subset of homoiconic morphological source code systems that can be modified in real time.
+- **Live Feedback Mechanisms**: Real-time interaction techniques from gaming could enhance model training and inference in ML.
+- **Interactive State Manipulation**: Drawing from live coding paradigms, interactive interfaces for state management that respond to user inputs in real time.
+
+**Cross-Domain Runtime Innovations**: By embracing the flip-flop dynamic, we can envision hybrid environments where players act as agents guiding AI inference or where ML models drive game state in real time, mimicking player behavior. This opens the door to new paradigms such as interactive AI training environments, where players influence the model’s development directly, or game engines that incorporate ML logic to dynamically adjust difficulty or storylines based on player actions.
