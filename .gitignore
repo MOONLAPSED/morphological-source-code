@@ -15,6 +15,7 @@ logs/*
 pdm.lock
 /src/ts/dist/*.js
 /src/ts/node_modules/*
+/.request_cache.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
