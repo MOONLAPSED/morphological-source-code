@@ -24,21 +24,32 @@ run `python3 -m venv venv` or simply `python .\__init__.py` or `python ./__init_
 
 ____
 
-## Current experiment: 
+# Current experiment: 
 
-Spatial RGB sphere data stream multiplexing with positional 'observer cyper', or the place in configuration space where the observer is able to observe the data stream (coherently).
+`(see: /cognosis/experiments/ and/or [[Morphological Source Code]] (tag in the kb))`
 
-The article incorporates the concepts of RGB as a semantic vector space and the broader implications for data-oriented design, blending cache efficiency with morphological source code.
+## RGB as Morphological Source Code: Towards a New Data-Oriented Paradigm
 
-```markdown
+### Abstract
 
-# RGB as Morphological Source Code: A Data-Oriented Design Approach
+This work explores the radical notion of leveraging the **RGB color space** as a **semantic vector space** for data representation and manipulation, blending it with principles of **data-oriented design (DOD)**. The hypothesis asserts that RGB's simplicity and ubiquity in human-computer interaction make it an ideal medium for embedding **morphological reasoning** into computational workflows. Moreover, the implications of treating RGB-based data as **frozen states** within Hilbert spaces suggest a potential for marrying intuitive geometries with quantum and classical computation paradigms.
 
-## Introduction
+### Introduction: The Bottleneck of Computation
 
-Modern computational architectures face a significant bottleneck due to the disparity between memory bus speed and hardware advancements. This gap emphasizes the importance of efficient data structures and access patterns. While traditional approaches optimize for computation speed, the **RGB-based semantic space** introduces a unique perspective for clustering, visualization, and inference, inspired by the compactness and intuitiveness of the RGB color model.
+Despite exponential improvements in processing power, modern computation remains constrained by:
 
-This article explores the integration of **RGB color space** into **data-oriented design (DOD)** workflows, emphasizing its potential to revolutionize local embedding-based architectures and cache-aware data manipulation.
+1. **Memory latency**: The gap between CPU speed and memory access creates inefficiencies in traditional architectures.
+2. **Overhead of abstraction**: Complex data structures and object-oriented paradigms introduce computational costs that hinder scalability.
+
+Data-Oriented Design (DOD) directly addresses these challenges by focusing on:
+
+- Efficient memory layouts.
+- Predictable, bulk memory access.
+- Alignment with hardware realities (e.g., cache and SIMD optimizations).
+
+The proposal to encode data as **RGB vectors** introduces an alternative dimension of reasoning, blending **semantic embedding** with geometric and morphological interpretations.
+
+Spatial RGB sphere data stream multiplexing with positional 'observer cyper', or the place in configuration space where the observer is able to observe the data stream (coherently). RGB-space vector embeddings form the backbone of a quantum stochastic virtual memory ontology, RGB functionally replacing 'complex numbers' for the laypersons/for-intuition & visualization. This non-relatavistic configuration space ('higher-dimensional' data embeddings as RGB-space vectors) fascilitates 'computation' only in situations where the coherent observer is able to form the basis for the bijective mapping (or digital bistable latching, if you prefer).
 
 ---
 
@@ -123,30 +134,35 @@ Refer to **Figure (4, p.#)** for an example of RGB-based morphological source co
 
 ## Conclusion
 
-By integrating RGB as a semantic space and morphological source code, we can unlock new paradigms in data-oriented design. The compactness, intuitive visualization, and computational efficiency of RGB make it a powerful tool for addressing the challenges of modern architectures. This approach not only bridges theoretical models like Hilbert spaces but also grounds them in practical, accessible workflows.
+By integrating RGB as a semantic space and morphological source code, we can unlock new paradigms in data-oriented design. The compactness, intuitive visualization, and computational efficiency of RGB make it a powerful tool for addressing the challenges of modern architectures. This approach not only bridges mathematical/theoretical models like Hilbert spaces but also grounds them in practical, accessible workflows, paving the way for a new generation of data/state-driven applications.
 
-For further insights, refer to the accompanying [video presentation](https://www.youtube.com/watch?v=xm4AQj5PHT4).
+Morphological Source Code, Data-Oriented Design, Semantic Space, Compactness, Visualization, Quantum Stochastic Processes, Hilbert Space Representation, Non-Relativistic Reasoning, Local LLM Inference, Vector Embeddings, RGB-Based symantic kernels (vector embeddings of Morphological Source Code encoded into a color space), Game Development, Real-Time Systems, Cache-Aware time travel debugging, distributed kernels (microkernels), and agentic motility (in relativistic 4d spacetime). These are just a few of the parallel/adjascent concepts that can be explored in the context of this work. I have formulated it specifically beause it:
 
----
+- **bridges** the gap between theoretical models and practical applications
+ - Provides a concrete, visualizable interface to high-dimensional information
+ - Leverages human perceptual systems as a computational metaphor
+ - Creates a bridge between geometric reasoning and quantum information dynamics
+ - Explores the possibility of 'quantizing' classical hardware via JIT-LLVM + Python imperitive/compiled + homoiconic simulated statistical mechanics (the Cognosis method et all: cognitive lambda calculus) context free language.
 
-# RGB as Morphological Source Code: Towards a New Data-Oriented Paradigm
+I will finish by posing a question to the educated/experienced massed; why do we continue to build increasingly complex abstractions instead of diving directly into the quantum-electronic negotiation of states? The N/P junction isn't just a computational element - it's a threshold of becoming, where potential transforms into actuality. It's the precise point where information negotiates its own existence. So is the cognitive event horizon, so to is the digital, one. I will expand this insight into a more literal-one:
 
-## Abstract
+`The world of forms is not merely constituted of operators & observables alone; it contains cognitive patterns such as observers, too! 'Observing' is the ingression of patterns and consciousness into the quantum space of forms and morphemes.` Cognosis, borrowed heavily from Michael Levitt's recent work and heavily inspired by Jacob Barandes + Stephen Wolfram.
 
-This work explores the radical notion of leveraging the **RGB color space** as a **semantic vector space** for data representation and manipulation, blending it with principles of **data-oriented design (DOD)**. The hypothesis asserts that RGB's simplicity and ubiquity in human-computer interaction make it an ideal medium for embedding **morphological reasoning** into computational workflows. Moreover, the implications of treating RGB-based data as **frozen states** within Hilbert spaces suggest a potential for marrying intuitive geometries with quantum and classical computation paradigms.
+___
 
-## Introduction: The Bottleneck of Computation
+Here are Jacob's most recent paper:
 
-Despite exponential improvements in processing power, modern computation remains constrained by:
+New Prospects for a Causally Local Formulation of Quantum Theory
+J. Barandes. arXiv:2402.16935 (two-column format). philsci:23151 (one-column format).
 
-1. **Memory latency**: The gap between CPU speed and memory access creates inefficiencies in traditional architectures.
-2. **Overhead of abstraction**: Complex data structures and object-oriented paradigms introduce computational costs that hinder scalability.
+The Stochastic-Quantum Theorem
+J. Barandes. arXiv:2309.03085 (two-column format). philsci:22502 (one-column format).
 
-Data-Oriented Design (DOD) directly addresses these challenges by focusing on:
+The Stochastic-Quantum Correspondence
+J. Barandes. arXiv:2302.10778 (two-column format). philsci:22501 (one-column format).
 
-- Efficient memory layouts.
-- Predictable, bulk memory access.
-- Alignment with hardware realities (e.g., cache and SIMD optimizations).
+Quantum Conditional Probabilities and New Measures of Quantum Information
+J. Barandes, D. Kagan. Annals of Physics 448 (2023). arXiv:2109.07447. philsci:19747.
 
-The proposal to encode data as **RGB vectors** introduces an alternative dimension of reasoning, blending **semantic embedding** with geometric and morphological interpretations. The question is: **Can RGB be both a computational format and a conceptual substrate for higher-order reasoning?**
-```
+Platonic Quantum Theory
+J. Barandes. Synthese 460 (2022).
