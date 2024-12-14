@@ -79,9 +79,20 @@ class OllamaClient:
             }
             headers = {'Content-Type': 'application/json'}
             
+            logger.info(f"Requesting embedding with data: {request_data}")
             conn.request("POST", "/api/embeddings", json.dumps(request_data), headers)
             response = conn.getresponse()
-            result = json.loads(response.read().decode())
+            response_data = response.read().decode()
+            logger.info(f"Received embedding response: {response_data}")
+            if response.status != 200:
+                logger.error(f"Error response from API: {response.status} - {response_data}")
+                return None
+            
+            try:
+                result = json.loads(response_data)
+            except json.JSONDecodeError as e:
+                logger.error(f"JSON decoding error: {e} - Response data: {response_data}")
+                return None
             return result['embedding']
         except Exception as e:
             logger.error(f"Embedding generation error: {e}")
@@ -281,6 +292,18 @@ class EnhancedRuntimeSystem:
         latest_file = max(state_files, key=lambda f: f.stat().st_mtime)
         with open(latest_file, 'r') as f:
             return json.load(f)
+
+    def _generate_index_data(self) -> Dict:
+        """Generate index data for the current state."""
+        return {}
+
+    def _calculate_state_deltas(self, previous_state: Optional[Dict]) -> Dict:
+        """Calculate state deltas compared to the previous state."""
+        return {}
+
+    def _collect_performance_metrics(self) -> Dict:
+        """Collect performance metrics for the current state."""
+        return {}
 
     async def query(self, query_text: str, top_k: int = 3) -> Dict:
         logger.info(f"Querying for: {query_text}")
