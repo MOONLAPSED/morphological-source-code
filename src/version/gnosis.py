@@ -82,6 +82,7 @@ class OllamaClient:
             logger.info(f"Requesting embedding with data: {request_data}")
             conn.request("POST", "/api/embeddings", json.dumps(request_data), headers)
             response = conn.getresponse()
+            # result = json.loads(response.read().decode())
             response_data = response.read().decode()
             logger.info(f"Received embedding response: {response_data}")
             if response.status != 200:
