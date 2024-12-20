@@ -11,6 +11,7 @@ import sys
 import ast
 import time
 import json
+import math
 import uuid
 import shlex
 import struct
@@ -32,7 +33,7 @@ import threading
 import subprocess
 import tracemalloc
 from pathlib import Path
-from enum import Enum, auto
+from enum import Enum, auto, StrEnum
 from queue import Queue, Empty
 from datetime import datetime
 from abc import ABC, abstractmethod
@@ -144,13 +145,11 @@ def load_files_as_models(root_dir: pathlib.Path, file_extensions: List[str]) -> 
                 models[model_name] = instance
                 sys.modules[model_name] = instance
     return models
-
 #------------------------------------------------------------------------------
 # Logging Configuration
 #------------------------------------------------------------------------------
 class CustomFormatter(logging.Formatter):
     """Custom formatter for colored console output."""
-    
     COLORS = {
         'grey': "\x1b[38;20m",
         'yellow': "\x1b[33;20m",
@@ -159,9 +158,7 @@ class CustomFormatter(logging.Formatter):
         'green': "\x1b[32;20m",
         'reset': "\x1b[0m"
     }
-    
     FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s (%(filename)s:%(lineno)d)"
-    
     FORMATS = {
         logging.DEBUG: COLORS['grey'] + FORMAT + COLORS['reset'],
         logging.INFO: COLORS['green'] + FORMAT + COLORS['reset'],
@@ -169,18 +166,15 @@ class CustomFormatter(logging.Formatter):
         logging.ERROR: COLORS['red'] + FORMAT + COLORS['reset'],
         logging.CRITICAL: COLORS['bold_red'] + FORMAT + COLORS['reset']
     }
-    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.log_queue = Queue()
         self.log_thread = threading.Thread(target=self._log_thread_func, daemon=True)
         self.log_thread.start()
-    
     def format(self, record):
         log_fmt = self.FORMATS.get(record.levelno, self.FORMAT)
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
-    
     def _log_thread_func(self):
         while True:
             try:
@@ -192,25 +186,18 @@ class CustomFormatter(logging.Formatter):
                 import traceback
                 print("Error in log thread:", file=sys.stderr)
                 traceback.print_exc()
-    
     def emit(self, record):
         self.log_queue.put(record)
-    
     def close(self):
         self.log_queue.put(None)
         self.log_thread.join()
-
 class AdminLogger(logging.LoggerAdapter):
     """Logger adapter for administrative logging."""
-    
     def __init__(self, logger, extra=None):
         super().__init__(logger, extra or {})
-    
     def process(self, msg, kwargs):
         return f"{self.extra.get('name', 'Admin')}: {msg}", kwargs
-
 logger = AdminLogger(logging.getLogger(__name__))
-
 #------------------------------------------------------------------------------
 # Security
 #------------------------------------------------------------------------------
@@ -218,23 +205,18 @@ AccessLevel = Enum('AccessLevel', 'READ WRITE EXECUTE ADMIN USER')
 @dataclass
 class AccessPolicy:
     """Defines access control policies for runtime operations."""
-    
     level: AccessLevel
     namespace_patterns: list[str] = field(default_factory=list)
     allowed_operations: list[str] = field(default_factory=list)
-    
     def can_access(self, namespace: str, operation: str) -> bool:
         return any(pattern in namespace for pattern in self.namespace_patterns) and \
                operation in self.allowed_operations
-
 class SecurityContext:
     """Manages security context and audit logging for runtime operations."""
-    
     def __init__(self, user_id: str, access_policy: AccessPolicy):
         self.user_id = user_id
         self.access_policy = access_policy
         self._audit_log = []
-    
     def log_access(self, namespace: str, operation: str, success: bool):
         self._audit_log.append({
             "user_id": self.user_id,
@@ -243,24 +225,19 @@ class SecurityContext:
             "success": success,
             "timestamp": datetime.now().timestamp()
         })
-
 class SecurityValidator(ast.NodeVisitor):
     """Validates AST nodes against security policies."""
-    
     def __init__(self, security_context: SecurityContext):
         self.security_context = security_context
-    
     def visit_Name(self, node):
         if not self.security_context.access_policy.can_access(node.id, "read"):
             raise PermissionError(f"Access denied to name: {node.id}")
         self.generic_visit(node)
-    
     def visit_Call(self, node):
         if isinstance(node.func, ast.Name):
             if not self.security_context.access_policy.can_access(node.func.id, "execute"):
                 raise PermissionError(f"Access denied to function: {node.func.id}")
         self.generic_visit(node)
-
 #------------------------------------------------------------------------------
 # Runtime State Management
 #------------------------------------------------------------------------------
@@ -332,7 +309,6 @@ class RuntimeState:
         except Exception as e:
             logging.error(f"Error running command '{command}': {str(e)}")
             return {"return_code": -1, "output": "", "error": str(e)}
-
 #------------------------------------------------------------------------------
 # Runtime Namespace Management
 #------------------------------------------------------------------------------
@@ -428,7 +404,6 @@ class Atom(Protocol):
     Defines the minimal interface that an Atom must implement.
     """
     id: str
-
 def atom(cls: Type[{T, V, C}]) -> Type[{T, V, C}]: # homoicon decorator
     """Decorator to create a homoiconic atom."""
     original_init = cls.__init__
@@ -453,7 +428,6 @@ class HoloiconicTransform(Generic[T, V, C]):
     def flip(value: V) -> C:
         """Transform value to computation (inside-out)"""
         return lambda: value
-
     @staticmethod
     def flop(computation: C) -> V:
         """Transform computation to value (outside-in)"""
@@ -471,5 +445,5 @@ If algorithms were seen as “wavefunctions” representing possible computation
     Embracing superpositions, potential operations, and entanglement within software architecture, allowing for context-sensitive, energy-efficient, and exploratory computation.
     Leveraging thermodynamic principles more deeply, designing architectures that conserve “informational energy” by reducing unnecessary state changes and maximizing information flow efficiency.
 I want to prove that, under the right conditions, a classical system optimized with the right software architecture and hardware platform can display behaviors indicative of quantum informatics. One's experimental setup would ideally confirm that even if the underlying hardware is classical, certain complex interactions within the software/hardware could bring about phenomena reminiscent of quantum mechanics.
-My hypothesis seems rooted in the idea that classical architectures (like the von Neumann model and Turing machines) weren't able to exploit quantum properties due to their deterministic, state-by-state execution model. But modern neural networks and transformers, with their probabilistic computations, massive parallelism, and high-dimensional state spaces, could approach a threshold where quantum-like behaviors begin to appear—especially in terms of entangling information or decoherence These models’ emergent properties might align more closely with quantum processes, as they involve not just deterministic processing but complex probabilistic states that "collapse" during inference (analogous to quantum measurement). If one can exploit this probabilistic, distributed nature, it might actually push classical hardware into a quasi-quantum regime.
+Cognosis is rooted in the idea that classical architectures (like the von Neumann model and Turing machines) weren't able to exploit quantum properties due to their deterministic, state-by-state execution model. But modern neural networks and transformers, with their probabilistic computations, massive parallelism, and high-dimensional state spaces, could approach a threshold where quantum-like behaviors begin to appear—especially in terms of entangling information or decoherence These models’ emergent properties might align more closely with quantum processes, as they involve not just deterministic processing but complex probabilistic states that "collapse" during inference (analogous to quantum measurement). If one can exploit this probabilistic, distributed nature, it might actually push classical hardware into a quasi-quantum regime.
 """
