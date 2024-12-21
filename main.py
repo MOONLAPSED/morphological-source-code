@@ -424,6 +424,7 @@ The holoiconic property enables:
     Types as boundary conditions
     Runtime as bulk geometry"""
 class HoloiconicTransform(Generic[T, V, C]):
+    """A square matrix `A` is Hermitian if and only if it is unitarily diagonalizable with real eigenvalues. """
     @staticmethod
     def flip(value: V) -> C:
         """Transform value to computation (inside-out)"""
