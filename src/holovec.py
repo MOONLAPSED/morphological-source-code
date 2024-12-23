@@ -59,8 +59,6 @@ except ImportError:
 IS_WINDOWS = os.name == 'nt'
 IS_POSIX = os.name == 'posix'
 
-
-# Type Definitions consistent with your holographic system
 T = TypeVar('T', bound=Any)  # Type structure (static)
 V = TypeVar('V', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable])  # Value space
 C = TypeVar('C', bound=Callable[..., Any])  # Computation space
