@@ -10,6 +10,8 @@ import types
 import socket
 import select
 import time
+import collections
+
 
 class SocketWrapper:
     def __init__(self, sock):
@@ -40,8 +42,9 @@ def nonblocking_read(sock, chunk_size=8192):
                 data = sock.recv(chunk_size)
                 if not data:
                     raise ConnectionLost()
+                print(f"Received data: {data}")  # Debugging log
                 return data
-            yield None
+            yield None  # Yield control back to the event loop
         except socket.error:
             raise ConnectionLost()
 
@@ -54,6 +57,7 @@ def nonblocking_write(sock, data):
             if ready:
                 sent = sock.send(data)
                 data = data[sent:]
+                print(f"Sent data: {data}")  # Debugging log
             yield None
         except socket.error:
             raise ConnectionLost()
@@ -66,6 +70,7 @@ def nonblocking_accept(sock):
             ready = select.select([sock], [], [], 0.1)[0]
             if ready:
                 client_sock, addr = sock.accept()
+                print(f"Accepted connection from: {addr}")  # Debugging log
                 yield client_sock
                 return  # Properly terminate the generator
             yield None
@@ -81,6 +86,7 @@ def listening_socket(host, port):
     sock.bind((host, port, 0, 0))  # The zeros are for flow info and scope id
     sock.listen(5)
     sock.setblocking(False)
+    print(f"Listening on {host}:{port}")  # Debugging log
     return SocketWrapper(sock)
 
 class ConnectionLost(Exception):
@@ -98,17 +104,19 @@ class Trampoline:
         """Request that a coroutine be executed"""
         self.schedule(coroutine)
 
-    def run(self):
+    def run(self, single_tick=False):
         result = None
         self.running = True
         try:
-            while self.running:  # Remove the 'and self.queue' condition
+            while self.running:
                 if self.queue:
                     func = self.queue.popleft()
                     result = func()
                 else:
-                    # Small sleep to prevent CPU spinning
+                    # Only sleep if there are no coroutines to process
                     time.sleep(0.01)
+                if single_tick:  # Allow for a single tick
+                    break
             return result
         finally:
             self.running = False
@@ -159,10 +167,12 @@ def echo_handler(sock):
     
     while True:
         try:
-            data = yield nonblocking_read(wrapped_sock)
-            yield nonblocking_write(wrapped_sock, data)
+            data = yield from nonblocking_read(wrapped_sock)
+            yield from nonblocking_write(wrapped_sock, data)
         except ConnectionLost:
             break
+        except Exception as e:
+            print(f"Error in echo_handler: {e}")  # Debugging log
 
 def listen_on(trampoline, sock, handler):
     if sock is None:
@@ -177,13 +187,15 @@ def listen_on(trampoline, sock, handler):
                 trampoline.add(handler_coro)
         except ConnectionLost:
             break
+        except Exception as e:
+            print(f"Error in listen_on: {e}")  # Debugging log
 
 try:
     # Create a scheduler to manage all our coroutines
     t = Trampoline()
 
     # Initialize server socket with explicit validation
-    server_socket = listening_socket("localhost", 8888)
+    server_socket = listening_socket("localhost", 8008)
     if not server_socket:
         raise ValueError("Failed to create server socket")
 
@@ -194,7 +206,7 @@ try:
     t.add(server)
 
     # Run the event loop
-    t.run()
+    t.run(single_tick=True)
 except KeyboardInterrupt:
     print("\nShutting down server...")
 except Exception as e:
@@ -202,4 +214,5 @@ except Exception as e:
 finally:
     if 'server_socket' in locals():
         server_socket.sock.close()
+        print("Server socket closed")  # Debugging log
 # run gen342.ps1 to test/progress the generator
