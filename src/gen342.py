@@ -72,7 +72,7 @@ def nonblocking_accept(sock):
                 client_sock, addr = sock.accept()
                 print(f"Accepted connection from: {addr}")  # Debugging log
                 yield client_sock
-                return  # Properly terminate the generator
+                return
             yield None
         except socket.error:
             raise ConnectionLost()
