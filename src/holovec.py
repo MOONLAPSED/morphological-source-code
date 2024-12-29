@@ -214,26 +214,192 @@ def rgb_to_hsv(r: int, g: int, b: int) -> tuple[float, float, float]:
     
     return h/360.0, s, v
 
-def demonstrate_holographic_rgb():
-    """Demonstrate the holographic RGB system"""
-    # Create two RGB Atoms
-    rgb1 = RGBAtom(0.8, 0.2, 0.3)
-    rgb2 = RGBAtom(0.3, 0.7, 0.5)
+@dataclass
+class HolographicToken:
+    """Represents an arbitrary token with quantum-aware color space embedding"""
+    token: str
+    vector: list[float] = field(default_factory=list)
+    metadata: dict[str, Any] = field(default_factory=dict)
+    quantum_state: QuantumState = QuantumState.SUPERPOSITION
+
+    def __post_init__(self):
+        # Generate a unique ID for the token
+        self.id = hashlib.sha256(self.token.encode('utf-8')).hexdigest()
+        if not self.vector:
+            # Default to a neutral RGB-inspired vector
+            self.vector = [0.5] * 64
+    
+    def collapse(self) -> list[float]:
+        """Collapse the quantum state to a concrete vector"""
+        self.quantum_state = QuantumState.COLLAPSED
+        return [max(0.0, min(1.0, x)) for x in self.vector]
+    
+    def entangle(self, other: 'HolographicToken'):
+        """Entangle this token's vector with another"""
+        if self.quantum_state != QuantumState.SUPERPOSITION:
+            return
+        self.quantum_state = QuantumState.ENTANGLED
+        self.vector = [
+            (v1 + v2) / 2 for v1, v2 in zip(self.vector, other.vector)
+        ]
+        self.metadata.update(other.metadata)
+    
+    def to_color(self) -> tuple[int, int, int]:
+        """Convert the token vector to an RGB representation"""
+        collapsed_vector = self.collapse()
+        r = int(collapsed_vector[0] * 255)
+        g = int(collapsed_vector[1] * 255)
+        b = int(collapsed_vector[2] * 255)
+        return (r, g, b)
+
+class HolographicColorSpace:
+    """Manages tokens and associations in a quantum-aware space"""
+    def __init__(self):
+        self.tokens: dict[str, HolographicToken] = {}
+    
+    def add_token(self, token: str, metadata: Optional[dict[str, Any]] = None):
+        """Add a token to the holographic space"""
+        if token not in self.tokens:
+            self.tokens[token] = HolographicToken(
+                token=token,
+                metadata=metadata or {}
+            )
+    
+    def associate_tokens(self, token1: str, token2: str):
+        """Associate two tokens by entangling their vectors"""
+        if token1 in self.tokens and token2 in self.tokens:
+            self.tokens[token1].entangle(self.tokens[token2])
+    
+    def get_token_vector(self, token: str) -> Optional[list[float]]:
+        """Retrieve the vector representation of a token"""
+        if token in self.tokens:
+            return self.tokens[token].collapse()
+        return None
+
+    def get_color(self, token: str) -> Optional[tuple[int, int, int]]:
+        """Get an RGB color representation for a token"""
+        if token in self.tokens:
+            return self.tokens[token].to_color()
+        return None
+
+    def visualize_tokens(self):
+        """Print token information for visualization"""
+        for token, hologram in self.tokens.items():
+            print(f"Token: {token}, Color: {hologram.to_color()}, Metadata: {hologram.metadata}")
+
+@dataclass
+class ColorSpaceVector:
+    """
+    Represents a vector in the holographic color space, with embeddings
+    and associated metadata for arbitrary tokenization.
+    """
+    vector: List[float]
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def normalize(self) -> None:
+        """Normalize the vector to unit length."""
+        magnitude = math.sqrt(sum(x ** 2 for x in self.vector))
+        if magnitude > 0:
+            self.vector = [x / magnitude for x in self.vector]
+
+    def associate(self, key: str, value: Any) -> None:
+        """Associate metadata with the vector."""
+        self.metadata[key] = value
+
+    def merge(self, other: 'ColorSpaceVector') -> 'ColorSpaceVector':
+        """
+        Merge two vectors into a new one, combining metadata and embeddings.
+        """
+        new_vector = [
+            (v1 + v2) / 2 for v1, v2 in zip(self.vector, other.vector)
+        ]
+        new_metadata = {**self.metadata, **other.metadata}
+        return ColorSpaceVector(new_vector, new_metadata)
+
+
+@__atom__
+class ExtendedRGBAtom(RGBAtom):
+    """
+    Extends RGBAtom to include metadata and support for holographic associations.
+    """
+    def __init__(self, r: float = 0.0, g: float = 0.0, b: float = 0.0, **kwargs):
+        super().__init__(r, g, b)
+        self.metadata = kwargs.get("metadata", {})
+        self.embedding = ColorSpaceVector(
+            vector=self.to_semantic_vector(), metadata=self.metadata
+        )
+
+    def associate_metadata(self, key: str, value: Any) -> None:
+        """Associate metadata with this atom."""
+        self.metadata[key] = value
+        self.embedding.associate(key, value)
+
+    def combine_with(self, other: 'ExtendedRGBAtom') -> 'ExtendedRGBAtom':
+        """Combine two atoms into a new one, merging their embeddings and metadata."""
+        combined_state = self.state
+        combined_state.r = (self.state.r + other.state.r) / 2
+        combined_state.g = (self.state.g + other.state.g) / 2
+        combined_state.b = (self.state.b + other.state.b) / 2
+
+        combined_metadata = {**self.metadata, **other.metadata}
+        combined_embedding = self.embedding.merge(other.embedding)
+
+        new_atom = ExtendedRGBAtom(
+            combined_state.r, combined_state.g, combined_state.b
+        )
+        new_atom.metadata = combined_metadata
+        new_atom.embedding = combined_embedding
+        return new_atom
+
+    def project_to_space(self, dimensions: int = 64) -> ColorSpaceVector:
+        """
+        Project the atom into a higher-dimensional vector space.
+        The projection uses metadata to influence the vector structure.
+        """
+        base_vector = self.to_semantic_vector()
+        extended_vector = base_vector + [
+            math.sin(int(hashlib.md5(str(key).encode()).hexdigest()[:2], 16)) / 255.0
+            for key in self.metadata
+        ]
+        return ColorSpaceVector(vector=extended_vector[:dimensions], metadata=self.metadata)
+
+
+# Demonstration of Holographic Color Space and Associations
+def demonstrate_holographic_extensions():
+    atom1 = ExtendedRGBAtom(0.5, 0.3, 0.2, metadata={"name": "warm tone"})
+    atom2 = ExtendedRGBAtom(0.2, 0.6, 0.7, metadata={"name": "cool tone", "mood": "calm"})
+
+    print("Atom 1 Embedding:", atom1.embedding.vector[:3])
+    print("Atom 2 Embedding:", atom2.embedding.vector[:3])
+
+    # Combine atoms
+    combined_atom = atom1.combine_with(atom2)
+    print("Combined Atom Metadata:", combined_atom.metadata)
+    print("Combined Atom Embedding:", combined_atom.embedding.vector[:3])
+
+    # Project to higher-dimensional space
+    projected_vector = atom1.project_to_space(dimensions=128)
+    print("Projected Vector (first 3 components):", projected_vector.vector[:3])
+    print("Projected Metadata:", projected_vector.metadata)
+
+
+# Demonstration of the holographic system
+def demonstrate_holographic_color_space():
+    color_space = HolographicColorSpace()
+    
+    # Add tokens with metadata
+    color_space.add_token("hello", {"context": "greeting"})
+    color_space.add_token("world", {"context": "noun"})
     
     # Show initial states
-    print("RGB1 Initial:", rgb1.collapse())
-    print("RGB2 Initial:", rgb2.collapse())
+    print("Initial Tokens:")
+    color_space.visualize_tokens()
     
-    # Entangle the atoms
-    rgb1.entangle(rgb2)
-    print("RGB1 After Entanglement:", rgb1.collapse())
-    
-    # Convert to semantic vector
-    semantic = rgb1.to_semantic_vector()
-    print("Semantic Vector (first 3 components):", semantic[:3])
-    
-    # Demonstrate quantum state preservation
-    print("Final Quantum State:", rgb1.quantum_state)
+    # Associate (entangle) tokens
+    color_space.associate_tokens("hello", "world")
+    print("\nAfter Association:")
+    color_space.visualize_tokens()
 
 if __name__ == "__main__":
-    demonstrate_holographic_rgb()
+    demonstrate_holographic_color_space()
+    demonstrate_holographic_extensions()
