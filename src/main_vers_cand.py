@@ -490,6 +490,7 @@ class HoloiconicTransform(Generic[T, V, C]):
 
 def main():
     class MyAtom(Atom):
+        """A runtime user-scoped atom for doing addition in the bulk theory."""
         def __atom__(self):
             """Custom Atom behavior."""
             print("Custom Atom behavior")
