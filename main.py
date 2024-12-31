@@ -360,8 +360,6 @@ What's conserved across these transformations:
 T = TypeVar('T', bound=any) # T for TypeVar, V for ValueVar. Homoicons are T+V.
 V = TypeVar('V', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type])
 C = TypeVar('C', bound=Callable[..., Any])  # callable 'T'/'V' first class function interface
-DataType = Enum('DataType', 'INTEGER FLOAT STRING BOOLEAN NONE LIST TUPLE') # 'T' vars (stdlib)
-AtomType = Enum('AtomType', 'FUNCTION CLASS MODULE OBJECT') # 'C' vars (homoiconic methods or classes)
 """py objects are implemented as C structures.
 typedef struct _object {
     Py_ssize_t ob_refcnt;
@@ -389,9 +387,6 @@ The Atom(), our polymorph of object and fcc-apparent at runtime, always represen
 # partitions (partition tolerance). However, the system may sacrifice consistency, as nodes may have
 # different views of the data (no consistency). A homoiconic piece of source code is eventually
 # consistent, assuming it is able to re-instantiated.
-T = TypeVar('T', bound=Any)  # Type variable for generic type hints
-V = TypeVar('V', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type])
-C = TypeVar('C', bound=Callable[..., Any])  # Callable type variable
 # Enums for type system
 DataType = Enum('DataType', 'INTEGER FLOAT STRING BOOLEAN NONE LIST TUPLE')
 AtomType = Enum('AtomType', 'FUNCTION CLASS MODULE OBJECT')
@@ -448,3 +443,9 @@ If algorithms were seen as “wavefunctions” representing possible computation
 I want to prove that, under the right conditions, a classical system optimized with the right software architecture and hardware platform can display behaviors indicative of quantum informatics. One's experimental setup would ideally confirm that even if the underlying hardware is classical, certain complex interactions within the software/hardware could bring about phenomena reminiscent of quantum mechanics.
 Cognosis is rooted in the idea that classical architectures (like the von Neumann model and Turing machines) weren't able to exploit quantum properties due to their deterministic, state-by-state execution model. But modern neural networks and transformers, with their probabilistic computations, massive parallelism, and high-dimensional state spaces, could approach a threshold where quantum-like behaviors begin to appear—especially in terms of entangling information or decoherence These models’ emergent properties might align more closely with quantum processes, as they involve not just deterministic processing but complex probabilistic states that "collapse" during inference (analogous to quantum measurement). If one can exploit this probabilistic, distributed nature, it might actually push classical hardware into a quasi-quantum regime.
 """
+
+"""Self-Adjoint Operators on a Hilbert Space: In quantum mechanics, the state space of a system is typically modeled as a Hilbert space—a complete vector space equipped with an inner product. States within this space can be represented as vectors (ket vectors, ∣ψ⟩∣ψ⟩), and observables (like position, momentum, or energy) are modeled by self-adjoint operators.
+
+    Self-adjoint operators are crucial because they guarantee that the eigenvalues (which represent possible measurement outcomes in quantum mechanics) are real numbers, which is a necessary condition for observable quantities in a physical theory. In quantum mechanics, the evolution of a state ∣ψ⟩∣ψ⟩ under an observable A^A^ can be described as the action of the operator A^A^ on ∣ψ⟩∣ψ⟩, and these operators must be self-adjoint to maintain physical realism.
+    
+    In-other words, self-adjoint operators are equal to their Hermitian conjugates."""
