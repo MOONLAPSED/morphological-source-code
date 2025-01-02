@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# hook for 'kb' (knowledge base) directories which must accept multi-media to-be valid.
 shopt -s globstar
 for file in **/*.md; do
     dir=$(dirname "$file")
