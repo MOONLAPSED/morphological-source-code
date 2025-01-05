@@ -37,7 +37,8 @@ class StateLogger:
 
     def commit(self, state: str) -> None:
         self.history.append(state)
-        print(f"Log commit: {state}")
+        self.history.append(state.__getstate__)
+        print(f"Log commit: {state.encode()}")
 
 # Use StateLogger to track different states over time.
 logger = StateLogger()
