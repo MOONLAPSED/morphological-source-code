@@ -139,6 +139,9 @@ Exclusion Principle
 ∀x, y ∈ S, x ≠ y ⇒ x * y ≡ 0
 
 This expression states that for all elements x and y in set S, if x is not equal to y, then their product x * y is equivalent to 0.
+
+### Heuristic definitions
+
 1. Surprise (Statistical Surprise)
 
     Definition: In a probabilistic sense, "surprise" represents how unlikely or unexpected a particular sensory observation is, given a model's expectations. Mathematically, this is related to the negative log-probability of a sensory observation.
@@ -165,7 +168,7 @@ This expression states that for all elements x and y in set S, if x is not equal
 
     Relation to Free Energy and Surprise: Action is guided by the goal of minimizing free energy, thus also indirectly minimizing surprise. A system minimizes action by adopting the least surprising or least energetically costly responses over time, which guides it toward adaptive behavior.
 
-Putting It All Together: How They Connect
+## Putting It All Together: How They Connect
 
 In a system that follows the Free Energy Principle:
 
