@@ -1,0 +1,6 @@
+# bunfig.toml
+
+name = "cognos.bun"
+version = "2.0.0"
+server = "server.ts" # ADMIN runtime - in parent dir
+main = "dist/app.ts" # USER runtime - in dynamic /dist/
