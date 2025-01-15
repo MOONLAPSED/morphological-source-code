@@ -297,6 +297,48 @@ class EnhancedRuntimeSystem:
         except Exception as e:
             logger.error(f"Query error: {e}")
             return {'error': str(e)}
+class FeedbackLoop:
+    def __init__(self, system: EnhancedRuntimeSystem):
+        self.system = system
+
+    async def evaluate_documents(self):
+        """A simple feedback loop to score and label documents"""
+        scores = {}
+        
+        for doc in self.system.documents:
+            score = 0
+            # Basic heuristics - can be replaced or expanded with more sophisticated methods
+            if "function" in doc.content.lower():
+                score += 1
+            if len(doc.content) > 1000:
+                score += 1
+            if "import" in doc.content.lower():
+                score += 1
+            
+            # Store the score with associated UUID
+            scores[doc.uuid] = score
+        
+        return scores
+
+    async def apply_feedback(self, scores: Dict[str, int], threshold: int = 2):
+        """Label and adjust documents based on scores and feedback"""
+        for doc_uuid, score in scores.items():
+            doc = next(doc for doc in self.system.documents if doc.uuid == doc_uuid)
+
+            if score >= threshold:
+                doc.metadata['label'] = 'High Relevance'
+            else:
+                doc.metadata['label'] = 'Low Relevance'
+            
+            logger.info(f"Document {doc_uuid} labeled as: {doc.metadata['label']}")
+
+async def main_feedback_loop():
+    # Presuming system is an instance of EnhancedRuntimeSystem with documents
+    feedback_loop = FeedbackLoop(system)
+    
+    scores = await feedback_loop.evaluate_documents()
+    await feedback_loop.apply_feedback(scores)
+
 
 async def main():
     # Initialize system
@@ -335,3 +377,13 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+    # Initialize system
+    config = EmbeddingConfig(
+        dimensions=768,
+        precision='float32',
+        cluster_count=8,
+        cache_path='runtime_cache.json'
+    )
+    
+    system = EnhancedRuntimeSystem(config)
+    asyncio.run(main_feedback_loop())
