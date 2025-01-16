@@ -52,42 +52,38 @@ class TuringMachine:
     def decode_state_godel(self, godel_number: int, tape_length: int):
         logger.info(f"Decoding Gödel number: {godel_number}")
         number = Decimal(godel_number)
-
         primes = list(itertools.islice(self.prime_generator(), tape_length + 2))
         
         # Decode head position
-        head_position = 0
-        last_prime = primes[-1]
-        while number % last_prime == 0:
-            number /= last_prime
-            head_position += 1
-            logger.debug(f"Decoded head position factor: {head_position}, Remaining number: {number}")
-        head_position -= 1
-
+        head_position = self._decode_factor(number, primes[-1]) - 1
+        if head_position < 0 or head_position >= tape_length:
+            raise ValueError("Invalid head position decoded")
+        
         # Decode state
-        state_index = 0
-        first_prime = primes[0]
-        while number % first_prime == 0:
-            number /= first_prime
-            state_index += 1
-            logger.debug(f"Decoded state factor: {state_index}, Remaining number: {number}")
-        state_index -= 1
-        state = self.states[state_index] if state_index >= 0 and state_index < len(self.states) else 'INVALID'
-
+        state_index = self._decode_factor(number, primes[0]) - 1
+        if state_index < 0 or state_index >= len(self.states):
+            raise ValueError("Invalid state index decoded")
+        state = self.states[state_index]
+        
         # Decode tape
         tape = []
         for i in range(tape_length):
-            symbol_index = 0
             prime = primes[i + 1]
-            while number % prime == 0:
-                number /= prime
-                symbol_index += 1
-                logger.debug(f"Decoded symbol factor for position {i}: {symbol_index}, Remaining number: {number}")
-            
-            tape.append(self.tape_alphabet[symbol_index - 1] if symbol_index > 0 else self.blank)
-
+            symbol_index = self._decode_factor(number, prime) - 1
+            if symbol_index < 0 or symbol_index >= len(self.tape_alphabet):
+                raise ValueError(f"Invalid symbol index at position {i} decoded")
+            tape.append(self.tape_alphabet[symbol_index] if symbol_index > 0 else self.blank)
+        
         logger.info(f"Decoded configuration: State: {state}, Tape: '{''.join(tape)}', Head: {head_position}")
         return state, tape, head_position
+
+    def _decode_factor(self, number: Decimal, prime: int) -> int:
+        factor = 0
+        while number % prime == 0:
+            number /= prime
+            factor += 1
+            logger.debug(f"Decoded factor: {factor}, Remaining number: {number}")
+        return factor
 
     def step(self):
         if self.state in [self.accept_state, self.reject_state]:
@@ -140,11 +136,17 @@ class TuringMachine:
         return godel_number
 
     def prime_generator(self):
-        n = 2
+        D = {}
+        q = 2
         while True:
-            if all(n % i != 0 for i in range(2, int(n ** 0.5) + 1)):
-                yield n
-            n += 1
+            if q not in D:
+                yield q
+                D[q * q] = [q]
+            else:
+                for p in D[q]:
+                    D.setdefault(p + q, []).append(p)
+                del D[q]
+            q += 1
 
     def run(self):
         logger.info("Running Turing Machine")
@@ -160,22 +162,22 @@ class TuringMachine:
         return f'State: {self.state}, Tape: {tape_str}, Head: {self.head_position}'
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.StreamHandler(),
+            logging.FileHandler('turing_machine.log', mode='w', encoding='utf-8')
+        ]
+    )
+    logger = logging.getLogger('TuringMachine')
+    
     logger.info("Starting Turing Machine program")
     
     states = ['q0', 'q1', 'qAccept', 'qReject']
     tape_alphabet = ['0', '1', '_']
     tape = ['1', '0', '1', '_']
     blank = '_'
-    """infinite_loop
-        transitions = {
-            ('q0', '1'): ('q1', '0', 'R'),
-            ('q0', '0'): ('q0', '1', 'R'),
-            ('q1', '1'): ('q0', '0', 'L'),
-            ('q1', '0'): ('q1', '1', 'R'),
-        ('q0', '_'): ('qAccept', '_', 'R'),
-        ('q1', '_'): ('q1', '_', 'R'),  # New transition for thawing
-        }
-    """
     transitions = {
         ('q0', '1'): ('q1', '0', 'R'),
         ('q0', '0'): ('q0', '1', 'R'),
@@ -187,8 +189,8 @@ if __name__ == "__main__":
     start_state = 'q0'
     accept_state = 'qAccept'
     reject_state = 'qReject'
-
     initial_godel = None
+    
     tm = TuringMachine(states, tape_alphabet, tape, blank, transitions, 
                       start_state, accept_state, reject_state, initial_godel)
     steps = tm.run()

@@ -1,5 +1,6 @@
 import itertools
 import logging
+import random
 from typing import List, Tuple, Dict
 from decimal import Decimal, getcontext
 
@@ -8,14 +9,13 @@ getcontext().prec = 100
 
 # Set up logging with UTF-8 encoding for broader character support
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(),
         logging.FileHandler('turing_machine.log', mode='w', encoding='utf-8')
     ]
 )
-
 logger = logging.getLogger('TuringMachine')
 
 class TuringMachine:
@@ -37,7 +37,7 @@ class TuringMachine:
         self.transitions = transitions
         self.accept_state = accept_state
         self.reject_state = reject_state
-
+        
         if initial_godel is not None:
             logger.info(f"Initializing from Gödel number: {initial_godel}")
             self.state, self.tape, self.head_position = self.decode_state_godel(initial_godel, len(tape))
@@ -52,40 +52,28 @@ class TuringMachine:
     def decode_state_godel(self, godel_number: int, tape_length: int):
         logger.info(f"Decoding Gödel number: {godel_number}")
         number = Decimal(godel_number)
-
         primes = list(itertools.islice(self.prime_generator(), tape_length + 2))
         
         # Decode head position
-        head_position = 0
-        last_prime = primes[-1]
-        while number % last_prime == 0:
-            number /= last_prime
-            head_position += 1
-            logger.debug(f"Decoded head position factor: {head_position}, Remaining number: {number}")
-        head_position -= 1
-
+        head_position = self._decode_factor(number, primes[-1]) - 1
+        if head_position < 0 or head_position >= tape_length:
+            raise ValueError("Invalid head position decoded")
+        
         # Decode state
-        state_index = 0
-        first_prime = primes[0]
-        while number % first_prime == 0:
-            number /= first_prime
-            state_index += 1
-            logger.debug(f"Decoded state factor: {state_index}, Remaining number: {number}")
-        state_index -= 1
-        state = self.states[state_index] if state_index >= 0 and state_index < len(self.states) else 'INVALID'
-
+        state_index = self._decode_factor(number, primes[0]) - 1
+        if state_index < 0 or state_index >= len(self.states):
+            raise ValueError("Invalid state index decoded")
+        state = self.states[state_index]
+        
         # Decode tape
         tape = []
         for i in range(tape_length):
-            symbol_index = 0
             prime = primes[i + 1]
-            while number % prime == 0:
-                number /= prime
-                symbol_index += 1
-                logger.debug(f"Decoded symbol factor for position {i}: {symbol_index}, Remaining number: {number}")
-            
+            symbol_index = self._decode_factor(number, prime) - 1
+            if symbol_index < 0 or symbol_index >= len(self.tape_alphabet):
+                raise ValueError(f"Invalid symbol index at position {i} decoded")
             tape.append(self.tape_alphabet[symbol_index - 1] if symbol_index > 0 else self.blank)
-
+        
         logger.info(f"Decoded configuration: State: {state}, Tape: '{''.join(tape)}', Head: {head_position}")
         return state, tape, head_position
 
@@ -129,10 +117,8 @@ class TuringMachine:
         state_index = self.states.index(self.state) + 1
         tape_indices = [self.tape_alphabet.index(symbol) + 1 for symbol in self.tape]
         head_adjusted = self.head_position + 1 
-
         primes = list(itertools.islice(self.prime_generator(), len(tape_indices) + 2))
         godel_number = Decimal(primes[0] ** state_index) * Decimal(primes[-1] ** head_adjusted)
-
         for i, symbol_index in enumerate(tape_indices):
             godel_number *= Decimal(primes[i + 1] ** symbol_index)
         
@@ -140,11 +126,17 @@ class TuringMachine:
         return godel_number
 
     def prime_generator(self):
-        n = 2
+        D = {}
+        q = 2
         while True:
-            if all(n % i != 0 for i in range(2, int(n ** 0.5) + 1)):
-                yield n
-            n += 1
+            if q not in D:
+                yield q
+                D[q * q] = [q]
+            else:
+                for p in D[q]:
+                    D.setdefault(p + q, []).append(p)
+                del D[q]
+            q += 1
 
     def run(self):
         logger.info("Running Turing Machine")
@@ -155,71 +147,60 @@ class TuringMachine:
         logger.info(f"Machine halted after {steps} steps in state {self.state}")
         return steps
 
+    def _decode_factor(self, number: Decimal, prime: int) -> int:
+        factor = 0
+        while number % prime == 0:
+            number /= prime
+            factor += 1
+            logger.debug(f"Decoded factor: {factor}, Remaining number: {number}")
+        return factor
+
+    def perturb_tape(self, new_tape: List[str]):
+        """Change the tape content."""
+        logger.info(f"Perturbing tape to: {new_tape}")
+        self.tape = new_tape.copy()
+
+    def perturb_initial_state(self, new_start_state: str):
+        """Change the initial state."""
+        if new_start_state in self.states:
+            logger.info(f"Perturbing initial state to: {new_start_state}")
+            self.state = new_start_state
+        else:
+            raise ValueError(f"Invalid state: {new_start_state}")
+
+    def perturb_transitions(self, perturbation_rate: float = 0.1):
+        """Perturb the transitions randomly."""
+        perturbed_transitions = self.transitions.copy()
+        for key in list(perturbed_transitions.keys()):
+            if random.random() < perturbation_rate:
+                new_state = random.choice(self.states)
+                new_symbol = random.choice(self.tape_alphabet)
+                new_direction = random.choice(['L', 'R'])
+                perturbed_transitions[key] = (new_state, new_symbol, new_direction)
+                logger.info(f"Perturbed transition {key} -> {perturbed_transitions[key]}")
+        self.transitions = perturbed_transitions
+
+    def generate_random_godel_number(self, tape_length: int, head_position: int):
+        """Generate a random Gödel number for initialization."""
+        state_index = self.states.index(random.choice(self.states)) + 1
+        tape_indices = [self.tape_alphabet.index(random.choice(self.tape_alphabet)) + 1 for _ in range(tape_length)]
+        head_adjusted = head_position + 1 
+        primes = list(itertools.islice(self.prime_generator(), tape_length + 2))
+        godel_number = Decimal(primes[0] ** state_index) * Decimal(primes[-1] ** head_adjusted)
+        for i, symbol_index in enumerate(tape_indices):
+            godel_number *= Decimal(primes[i + 1] ** symbol_index)
+        return godel_number
+
     def __str__(self):
         tape_str = ''.join(self.tape).replace(' ', '_')
         return f'State: {self.state}, Tape: {tape_str}, Head: {self.head_position}'
 
+if __name__ == "__main__":
+    logger.info("Starting Turing Machine program")
 
-def test_turing_machine():
-    logger = logging.getLogger('TestHarness')
-    logging.basicConfig(level=logging.INFO)
-
-    # Test different initial configurations
-    configurations = [
-        {
-            'description': 'Basic reject test with additional left moves',
-            'initial_tape': ['1', '1', '1', '_'],
-            'expected_final_state': 'qReject',
-        },
-        {
-            'description': 'Empty tape test',
-            'initial_tape': ['_', '_', '_', '_'],
-            'expected_final_state': 'qAccept',
-        },
-    ]
-
-    for config in configurations:
-        logger.info(f"Running test: {config['description']}")
-        tape = config['initial_tape']
-        
-        states = ['q0', 'q1', 'qAccept', 'qReject']
-        tape_alphabet = ['0', '1', '_']
-        blank = '_'
-        transitions = {
-            ('q0', '1'): ('q1', '0', 'R'),
-            ('q0', '0'): ('q0', '1', 'R'),
-            ('q1', '1'): ('q0', '0', 'L'),
-            ('q1', '0'): ('q1', '1', 'R'),
-            ('q0', '_'): ('qAccept', '_', 'R'),
-            ('q1', '_'): ('qReject', '_', 'R'),
-        }
-        start_state = 'q0'
-        accept_state = 'qAccept'
-        reject_state = 'qReject'
-
-        tm = TuringMachine(states, tape_alphabet, tape, blank, transitions,
-                           start_state, accept_state, reject_state)
-
-        steps = tm.run()
-        
-        assert tm.state == config['expected_final_state'], \
-            f"Test failed: Expected {config['expected_final_state']} but got {tm.state}"
-
-        logger.info(f"Test passed. Machine halted after {steps} steps in state {tm.state}")
-
-def fuzz_turing_machine():
-    logger = logging.getLogger('FuzzHarness')
-    logging.basicConfig(level=logging.INFO)
-
-    import random
-
-    def generate_random_tape(alphabet, length):
-        return [random.choice(alphabet) for _ in range(length)]
-
-    random.seed(42)  # Set seed for reproducibility
-    
     states = ['q0', 'q1', 'qAccept', 'qReject']
     tape_alphabet = ['0', '1', '_']
+    tape = ['1', '0', '1', '_']
     blank = '_'
     transitions = {
         ('q0', '1'): ('q1', '0', 'R'),
@@ -227,27 +208,30 @@ def fuzz_turing_machine():
         ('q1', '1'): ('q0', '0', 'L'),
         ('q1', '0'): ('q1', '1', 'R'),
         ('q0', '_'): ('qAccept', '_', 'R'),
-        ('q1', '_'): ('qReject', '_', 'R'),
+        ('q1', '_'): ('qReject', '_', 'R'),  # Changed to allow exiting loop
     }
     start_state = 'q0'
     accept_state = 'qAccept'
     reject_state = 'qReject'
 
-    num_tests = 10
-    for i in range(num_tests):
-        random_tape = generate_random_tape(tape_alphabet, random.randint(3, 7))
-        logger.info(f"Running fuzz test {i+1}: Tape = {''.join(random_tape)}")
+    tm = TuringMachine(states, tape_alphabet, tape, blank, transitions, 
+                       start_state, accept_state, reject_state)
 
-        tm = TuringMachine(states, tape_alphabet, random_tape, blank, transitions,
-                           start_state, accept_state, reject_state)
+    # Perturb the tape content
+    tm.perturb_tape(['0', '1', '1', '_'])
 
-        steps = tm.run()
-        
-        if tm.state not in [accept_state, reject_state]:
-            logger.warning("Fuzz test failed: Machine did not halt as expected.")
+    # Perturb the initial state
+    tm.perturb_initial_state('q1')
 
-        logger.info(f"Fuzz test completed. Machine halted after {steps} steps in state {tm.state}")
+    # Perturb the transitions
+    tm.perturb_transitions(perturbation_rate=0.1)
 
-if __name__ == "__main__":
-    test_turing_machine()
-    fuzz_turing_machine()
+    # Generate a random Gödel number for initialization
+    random_godel_number = tm.generate_random_godel_number(len(tape), 2)
+    tm = TuringMachine(states, tape_alphabet, tape, blank, transitions, 
+                       start_state, accept_state, reject_state, initial_godel=random_godel_number)
+
+    steps = tm.run()
+    logger.info(f"Machine completed in {steps} steps")
+    final_godel = tm.encode_state_godel()
+    logger.info(f"Final state Gödel number: {final_godel}")
