@@ -1,3 +1,4 @@
+from __future__ import annotations
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #------------------------------------------------------------------------------
@@ -14,6 +15,7 @@ import site
 import mmap
 import json
 import uuid
+import cmath
 import shlex
 import socket
 import struct
@@ -37,6 +39,7 @@ import subprocess
 import tracemalloc
 import http.server
 import collections
+from math import sqrt
 from array import array
 from pathlib import Path
 from enum import Enum, auto, IntEnum, StrEnum, Flag
@@ -51,8 +54,8 @@ from contextlib import contextmanager, asynccontextmanager
 from importlib.util import spec_from_file_location, module_from_spec
 from types import SimpleNamespace, ModuleType,  MethodType, FunctionType, CodeType, TracebackType, FrameType
 from typing import (
-    Any, Dict, List, Optional, Union, Callable, TypeVar, Tuple, Generic, Set,
-    Coroutine, Type, NamedTuple, ClassVar, Protocol, runtime_checkable, AsyncIterator
+    Any, Dict, List, Optional, Union, Callable, TypeVar, Tuple, Generic, Set, OrderedDict,
+    Coroutine, Type, NamedTuple, ClassVar, Protocol, runtime_checkable, AsyncIterator, Iterator
 )
 try:
     from .__init__ import __all__
@@ -328,20 +331,21 @@ elif IS_POSIX:
 #------------------------------------------------------------------------------
 # BaseModel (no-copy immutable dataclasses for data models)
 #------------------------------------------------------------------------------
+@dataclass(frozen=True)
 class BaseModel:
     __slots__ = ('__dict__', '__weakref__')
+
     def __init__(self, **data):
         for name, value in data.items():
             setattr(self, name, value)
-    def __setattr__(self, name, value):
-        if name in self.__annotations__:
-            expected_type = self.__annotations__[name]
-            if not isinstance(value, expected_type):
-                raise TypeError(f"Expected {expected_type} for {name}, got {type(value)}")
-            validator = getattr(self.__class__, f'validate_{name}', None)
+    def __post_init__(self):
+        for field_name, expected_type in self.__annotations__.items():
+            actual_value = getattr(self, field_name)
+            if not isinstance(actual_value, expected_type):
+                raise TypeError(f"Expected {expected_type} for {field_name}, got {type(actual_value)}")
+            validator = getattr(self.__class__, f'validate_{field_name}', None)
             if validator:
-                validator(self, value)
-        super().__setattr__(name, value)
+                validator(self, actual_value)
     @classmethod
     def create(cls, **kwargs):
         return cls(**kwargs)
@@ -351,8 +355,7 @@ class BaseModel:
         attrs = ', '.join(f"{name}={getattr(self, name)!r}" for name in self.__annotations__)
         return f"{self.__class__.__name__}({attrs})"
     def __str__(self):
-        attrs = ', '.join(f"{name}={getattr(self, name)}" for name in self.__annotations__)
-        return f"{self.__class__.__name__}({attrs})"
+        return f"{self.__class__.__name__}({', '.join(f'{name}={value!r}' for name, value in self.dict().items())})"
     def clone(self):
         return self.__class__(**self.dict())
 def frozen(cls): # decorator
@@ -412,7 +415,7 @@ def load_files_as_models(root_dir: pathlib.Path, file_extensions: List[str]) -> 
                 models[model_name] = instance
                 sys.modules[model_name] = instance
     return models
-def mapper(mapping_description, input_data):
+def mapper(mapping_description: Mapping, input_data: Dict[str, Any]):
     def transform(xform, value):
         if callable(xform):
             return xform(value)
@@ -420,10 +423,12 @@ def mapper(mapping_description, input_data):
             return {k: transform(v, value) for k, v in xform.items()}
         else:
             raise ValueError(f"Invalid transformation: {xform}")
+
     def get_value(key):
         if isinstance(key, str) and key.startswith(":"):
             return input_data.get(key[1:])
         return input_data.get(key)
+
     def process_mapping(mapping_description):
         result = {}
         for key, xform in mapping_description.items():
@@ -451,6 +456,7 @@ def mapper(mapping_description, input_data):
             else:
                 result[key] = xform
         return result
+
     return process_mapping(mapping_description)
 #------------------------------------------------------------------------------
 # Logging Configuration
@@ -1011,11 +1017,11 @@ class Atom(Generic[T, V, C]):
     __floordiv__ = lambda self, other: self.value // other
     @staticmethod
     def serialize_data(data: Any) -> bytes:
-        # return msgpack.packb(data, use_bin_type=True)
+        return msgpack.packb(data, use_bin_type=True)
         pass
     @staticmethod
     def deserialize_data(data: bytes) -> Any:
-        # return msgpack.unpackb(data, raw=False)
+        return msgpack.unpackb(data, raw=False)
         pass
 @dataclass
 class QuantumAtomMetadata:
