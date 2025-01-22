@@ -167,8 +167,6 @@ async def async_main():
     combined_qsd = qsd.tensor_product(second_qsd)
     print(f"Combined QSD state vector: {combined_qsd.state.state_vector}")
 
-    print("Quantum simulation complete.")
-
 # Run the async main function
 if __name__ == "__main__":
     asyncio.run(async_main())
