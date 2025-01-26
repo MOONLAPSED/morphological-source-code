@@ -70,7 +70,6 @@ def energy_cost(computation_cycles: int, memory_usage: int) -> float:
     """Model energy cost of a computation."""
     # Example heuristic: cost proportional to cycles and memory
     return 1e-9 * computation_cycles + 1e-6 * memory_usage
-
 def main():
     # Example usage
     ts1 = datetime(2025, 1, 1, 12, 0, 0)
