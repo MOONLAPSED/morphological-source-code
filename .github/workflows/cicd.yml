@@ -1,13 +1,18 @@
 name: python-app
 
 on:
+  schedule:
+    - cron: "0 * * * *"  # Runs every hour
+  workflow_dispatch:  # Allows manual execution
   push:
-    branches: [ "main" ]
+    branches: [ "staging" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "production" ]
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -25,40 +30,50 @@ jobs:
 
       - name: Create logs directory
         run: mkdir -p logs
+
       - name: Set permissions for logs directory
         run: chmod 755 logs
+
       - name: Create setup log file
         run: touch logs/setup.log
+
       - name: Create run log file
         run: touch logs/python-app.log
+
       - name: Create app log file
         run: touch logs/app.log
 
       - name: Create and activate Python virtual environment
         run: |
-            python -m venv venv
-            bash -c "source venv/bin/activate"
-            echo $PATH | tee -a logs/setup.log 2>&1
-            echo $VIRTUAL_ENV | tee -a logs/setup.log 2>&1
-            echo $PYTHONPATH | tee -a logs/setup.log 2>&1
+          python -m venv venv
+          source venv/bin/activate
+          echo $PATH | tee -a logs/setup.log 2>&1
+          echo $VIRTUAL_ENV | tee -a logs/setup.log 2>&1
+          echo $PYTHONPATH | tee -a logs/setup.log 2>&1
+
       - name: Install dependencies and set up environment
         run: | 
-            sudo apt-get update
-            sudo apt-get upgrade -y >> logs/setup.log 2>&1
-            python -m pip install --upgrade pip >> logs/setup.log 2>&1
-            sudo apt install curl -y
-            sudo apt install -y chromium-chromedriver
-            pip install selenium litellm 
-            curl -fsSL https://ollama.com/install.sh | sh      
-            pip install -r requirements.txt 
-            echo "::set-output name=result::$result" >> logs/setup.log 2>&1
-              
+          sudo apt-get update
+          sudo apt-get upgrade -y >> logs/setup.log 2>&1
+          python -m pip install --upgrade pip >> logs/setup.log 2>&1
+          sudo apt install curl -y
+          sudo apt install -y chromium-chromedriver
+          pip install selenium litellm 
+          curl -fsSL https://ollama.com/install.sh | sh
+
+      - name: Install pip dependencies and build project
+        run: |
+          pip install setuptools wheel
+          pip install .
+          echo "::set-output name=result::$result" >> logs/python-app.log 2>&1
+
       - name: Run main python app
         run: |
-          python main.py . 2>&1 | tee -a logs/app.log logs/python-app.log
+          python main.py 2>&1 | tee -a logs/app.log logs/python-app.log
+
       - name: Archive test output as artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: python-app
-          path: logs/python-app.log
+          name: python-app-logs
+          path: logs

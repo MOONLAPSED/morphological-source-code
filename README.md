@@ -1,16 +1,34 @@
 # cognosis candidate release 0.4.20
 
-3.13 std libs only
+```
+pyproject.toml         # Project-wide tool + build config
+.env                   # Local secrets (ignored by Git)
+.env.example           # Template for local environment vars
+docker-compose.yml     # Base compose file (used in all environments)
+dockerfile             # Dockerfile for external dependencies
 
-+++
+/config/               # Canonical environment config for all lifecycles
+  ├── dev.env
+  ├── staging.env
+  └── production.env
 
-ollama on the same machine as the python app
+/.devcontainer/        # For Dev and Staging lifecycles only (VS Code dev environment)
+  └── docker-compose-override.yml
+  └── docker-compose-devcontainer.yml
+  └── setup.sh
+  └── devcontainer.json
 
-that's it
+/.github/              # GitHub-specific config (CI/CD + lifecycle management)
+  └── install_hooks.sh
+  ├── workflows/
+  │   └── cicd.yml     # CI/CD pipeline
+  └── hooks/           # Git hooks (local dev + CI hooks)
+      ├── pre-commit
+      ├── post-merge
+      └── post-release
+```
+___
 
-platforms: Win11 + Ubuntu
-
-____
 ### how: ollama
 go get ollama and run it
 1) ollama pull gemma2
@@ -18,24 +36,6 @@ go get ollama and run it
 3) ollama serve
 
 ____
-### how: cognosis
-navigate to the cognosis folder
-run `python3 -m venv venv` or simply `python .\__init__.py` or `python ./__init__.py -h`
-
-____
-
-# Current experiment: 
-
-`(see: /cognosis/experiments/ and/or [[Morphological Source Code]] (tag in the kb))`
-
-____
-
-I have started to learn quantum field theory after getting an undergrad appreciation for differential equations and quantum electrodynamics but primarily classical mechanics and Maxwell's electrodynamics because I think that string theory is a convenient model for agentic motility or my proposition that a language model building a robot and then writing code for that robot; which then goes on to do some impactful thing in the real world; is 'proof' of spooky action at a distance and 'entanglement' or the 'wave function collapsing' is involved; a previously, STRICTLY, not digital phenomenon.
-I rationalize this as a 'shape' of information. A 'space' of scale-invariant field theories. Or a Bayesian topology. A fundamentally quantum, stochastic process, which is only partially reversible - since observation collapses state and 'evolves' the system. Effectively 'branching' a "new universe" if you want to think of it in the Copenhagen-interpretation but I do like these really complex and difficult to learn string theories, better, than Many Worlds; which is something that I could intuitively understand and appreciate long before finally groking quantum electrodynamics. 
-Anyways, the 'shape' is what I call the 'valuedness' of morphological, cognitive computation. Upon a substrate of binary digital 0s and 1s emerges a scale-invariant 'space'; a stage set for actors of all different kinds, and special effects and lighting, for anything whatsoever. Because I truly believe there to be some sort of shape, or form, that is quantifiable, which represents becoming, complexity, emergence, language, math, consciousness, and the wave function; and it is the infinite set of reals between 0 and 1 which don't exist in this universe at all, so to speak, instead being encoded as mere 0s and 1s (as binary/machine code), but which, indeed, contain all of the infinite complexity of the cosmos! Inertia and information forming the measurable residue on it's body that can not exist in our universe, our 3+1D spacetime. I call it the "morphology" of information. And I posit that it extends into the realm of logic, maths, evolution, and all possible/relevant nomenclature because it **IS** a multi-layer competency function that excels in existing in myriad forms throughout spacetime. 
-Another proof I give is the 'shape' of the no-copy c-standard library method of software architecture on Von Neumann Architecture. It's always the same! Demonstrably-so. One could take programmers unfamiliar with C, or convention, and they would eventually 'settle-on' the same exact architecture as the initial nerds did 40 years ago, because there **IS** a morphology of code defined by the cost of information access and thermodynamics!
-I rationalize this with Landaur's theorem and what I am researching I call quantum informatics which states the fundamental 'cost' of information in-terms of constants of the universe and I position Maxwell's Demon, itself, as the 'thermodynamic head' of all morphological computation. I call that "Morphological Source Code". Or the spontaneous ability for entropy to 'become' into something that didn't exist, before. When Maxwell's Demon, rather than observing the natural, non-relativistic, flow of information past it's head, ejects the current state as heat, fundamentally observing and collapsing the systems wave function (and forming the quantized 'shape' of information/computation).
-
 
 # Morphological Source Code: The Quantum Bridge to Data-Oriented Design
 
