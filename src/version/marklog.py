@@ -47,6 +47,11 @@ The universal law of radioactive decay, which describes the time until a given r
 
 from math import log, exp
 import logging
+from typing import Dict, List, Tuple, Iterator
+from collections import deque
+from itertools import islice
+import random
+import time
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -108,21 +113,6 @@ def log_to_int(log_value: float) -> int:
         int: The integer value.
     """
     return round(exp(log_value))
-"""
-Pure standard library implementation of discrete-time Markov processes
-using only built-in Python types and math module.
-
-Key concepts:
-1. State space representation using logarithmic bijection
-2. Memoryless property preservation
-3. Transition dynamics using modular arithmetic
-"""
-from math import log, exp
-from typing import Dict, List, Tuple, Iterator
-from collections import deque
-from itertools import islice
-import random
-import time
 
 class DiscreteMarkovChain:
     """
@@ -265,7 +255,7 @@ def test_memoryless_property(chain: DiscreteMarkovChain,
 
 if __name__ == "__main__":
     test_mapping(1_000)
-    # Example usage
+
     chain = DiscreteMarkovChain(num_states=100)
     
     print("Testing Markov chain properties...")
