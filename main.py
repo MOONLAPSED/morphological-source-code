@@ -47,104 +47,6 @@ from typing import (
     Any, Dict, List, Optional, Union, Callable, TypeVar, Tuple, Generic, Set,
     Coroutine, Type, NamedTuple, ClassVar, Protocol, runtime_checkable
 )
-try:
-    from .__init__ import __all__
-    if not __all__:
-        __all__ = []
-    else:
-        __all__ += __file__
-except ImportError:
-    __all__ = []
-    __all__ += __file__
-IS_WINDOWS = os.name == 'nt'
-IS_POSIX = os.name == 'posix'
-#------------------------------------------------------------------------------
-# BaseModel (no-copy immutable dataclasses for data models)
-#------------------------------------------------------------------------------
-class BaseModel:
-    __slots__ = ('__dict__', '__weakref__')
-    def __init__(self, **data):
-        for name, value in data.items():
-            setattr(self, name, value)
-    def __setattr__(self, name, value):
-        if name in self.__annotations__:
-            expected_type = self.__annotations__[name]
-            if not isinstance(value, expected_type):
-                raise TypeError(f"Expected {expected_type} for {name}, got {type(value)}")
-            validator = getattr(self.__class__, f'validate_{name}', None)
-            if validator:
-                validator(self, value)
-        super().__setattr__(name, value)
-    @classmethod
-    def create(cls, **kwargs):
-        return cls(**kwargs)
-    def dict(self):
-        return {name: getattr(self, name) for name in self.__annotations__}
-    def __repr__(self):
-        attrs = ', '.join(f"{name}={getattr(self, name)!r}" for name in self.__annotations__)
-        return f"{self.__class__.__name__}({attrs})"
-    def __str__(self):
-        attrs = ', '.join(f"{name}={getattr(self, name)}" for name in self.__annotations__)
-        return f"{self.__class__.__name__}({attrs})"
-    def clone(self):
-        return self.__class__(**self.dict())
-def frozen(cls): # decorator
-    original_setattr = cls.__setattr__
-    def __setattr__(self, name, value):
-        if hasattr(self, name):
-            raise AttributeError(f"Cannot modify frozen attribute '{name}'")
-        original_setattr(self, name, value)
-    cls.__setattr__ = __setattr__
-    return cls
-def validate(validator: Callable[[Any], None]):
-    def decorator(func):
-        @wraps(func)
-        def wrapper(self, value):
-            return validator(value)
-        return wrapper
-    return decorator
-class FileModel(BaseModel):
-    file_name: str
-    file_content: str
-    def save(self, directory: pathlib.Path):
-        with (directory / self.file_name).open('w') as file:
-            file.write(self.file_content)
-@frozen
-class Module(BaseModel):
-    file_path: pathlib.Path
-    module_name: str
-    @validate(lambda x: x.endswith('.py'))
-    def validate_file_path(self, value):
-        return value
-    @validate(lambda x: x.isidentifier())
-    def validate_module_name(self, value):
-        return value
-    @frozen
-    def __init__(self, file_path: pathlib.Path, module_name: str):
-        super().__init__(file_path=file_path, module_name=module_name)
-        self.file_path = file_path
-        self.module_name = module_name
-def create_model_from_file(file_path: pathlib.Path):
-    try:
-        with file_path.open('r', encoding='utf-8', errors='ignore') as file:
-            content = file.read()
-        model_name = file_path.stem.capitalize() + 'Model'
-        model_class = type(model_name, (FileModel,), {})
-        instance = model_class.create(file_name=file_path.name, file_content=content)
-        logging.info(f"Created {model_name} from {file_path}")
-        return model_name, instance
-    except Exception as e:
-        logging.error(f"Failed to create model from {file_path}: {e}")
-        return None, None
-def load_files_as_models(root_dir: pathlib.Path, file_extensions: List[str]) -> Dict[str, BaseModel]:
-    models = {}
-    for file_path in root_dir.rglob('*'):
-        if file_path.is_file() and file_path.suffix in file_extensions:
-            model_name, instance = create_model_from_file(file_path)
-            if model_name and instance:
-                models[model_name] = instance
-                sys.modules[model_name] = instance
-    return models
 #------------------------------------------------------------------------------
 # Logging Configuration
 #------------------------------------------------------------------------------
@@ -239,77 +141,6 @@ class SecurityValidator(ast.NodeVisitor):
                 raise PermissionError(f"Access denied to function: {node.func.id}")
         self.generic_visit(node)
 #------------------------------------------------------------------------------
-# Runtime State Management
-#------------------------------------------------------------------------------
-def register_models(models: Dict[str, BaseModel]):
-    for model_name, instance in models.items():
-        globals()[model_name] = instance
-        logging.info(f"Registered {model_name} in the global namespace")
-def runtime(root_dir: pathlib.Path):
-    file_models = load_files_as_models(root_dir, ['.md', '.txt'])
-    register_models(file_models)
-@dataclass
-class RuntimeState:
-    """Manages runtime state and filesystem operations."""
-    pdm_installed: bool = False
-    virtualenv_created: bool = False
-    dependencies_installed: bool = False
-    lint_passed: bool = False
-    code_formatted: bool = False
-    tests_passed: bool = False
-    benchmarks_run: bool = False
-    pre_commit_installed: bool = False
-    variables: Dict[str, Any] = field(default_factory=dict)
-    timestamp: datetime = field(default_factory=datetime.now)
-    allowed_root: str = field(init=False)
-    def __post_init__(self):
-        try:
-            self.allowed_root = os.path.dirname(os.path.realpath(__file__))
-            if not any(os.listdir(self.allowed_root)):
-                raise FileNotFoundError(f"Allowed root directory empty: {self.allowed_root}")
-            logging.info(f"Allowed root directory found: {self.allowed_root}")
-        except Exception as e:
-            logging.error(f"Error initializing RuntimeState: {e}")
-            raise
-    @classmethod
-    def platform(cls):
-        """Initialize platform-specific state."""
-        if IS_POSIX:
-            from ctypes import cdll
-        elif IS_WINDOWS:
-            from ctypes import windll
-            from ctypes.wintypes import DWORD, HANDLE
-        try:
-            state = cls()
-            tracemalloc.start()
-            return state
-        except Exception as e:
-            logging.warning(f"Failed to initialize runtime state: {e}")
-            return None
-    async def run_command_async(self, command: str, shell: bool = False, timeout: int = 120):
-        """Run a system command asynchronously with timeout."""
-        logging.info(f"Running command: {command}")
-        split_command = shlex.split(command, posix=IS_POSIX)
-        try:
-            process = await asyncio.create_subprocess_exec(
-                *split_command,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
-                shell=shell
-            )
-            stdout, stderr = await asyncio.wait_for(process.communicate(), timeout=timeout)
-            return {
-                "return_code": process.returncode,
-                "output": stdout.decode() if stdout else "",
-                "error": stderr.decode() if stderr else "",
-            }
-        except asyncio.TimeoutError:
-            logging.error(f"Command '{command}' timed out.")
-            return {"return_code": -1, "output": "", "error": "Command timed out"}
-        except Exception as e:
-            logging.error(f"Error running command '{command}': {str(e)}")
-            return {"return_code": -1, "output": "", "error": str(e)}
-#------------------------------------------------------------------------------
 # Runtime Namespace Management
 #------------------------------------------------------------------------------
 class RuntimeNamespace:
@@ -349,22 +180,7 @@ class FrameModel(ABC):
     def to_bytes(self) -> bytes:
         """Return the frame data as bytes."""
         pass
-
-class AbstractDataModel(FrameModel, ABC):
-    """A data model is a data structure that contains the data of a frame aka a chunk of text contained by dilimiters.
-        It has abstract methods --> to str and --> to os.pipe() which are implemented by the concrete classes.
-    """
-    @abstractmethod
-    def to_pipe(self, pipe) -> None:
-        """Write the model to a named pipe."""
-        pass
-
-    @abstractmethod
-    def to_str(self) -> str:
-        """Return the frame data as a string representation."""
-        pass
-
-class SerialObject(AbstractDataModel, ABC):
+class SerialObject(FrameModel, ABC):
     """SerialObject is an abstract class that defines the interface for serializable objects within the abstract data model.
         Inputs:
             AbstractDataModel: The base class for the SerialObject class
@@ -383,18 +199,17 @@ class SerialObject(AbstractDataModel, ABC):
         """Return a JSON string representation of the model."""
         pass
 @dataclass
-class ConcreteSerialModel(SerialObject):
+class ConcreteModel(SerialObject):
     """
     This concrete implementation of SerialObject ensures that instances can
-    be used wherever a FrameModel, AbstractDataModel, or SerialObject is required,
+    be used wherever a FrameModel or SerialObject is required,
     hence demonstrating polymorphism.
         Inputs:
             SerialObject: The base class for the ConcreteSerialModel class
 
         Returns:
-            ConcreteSerialModel object        
+            ConcreteModel object        
     """
-
     name: str
     age: int
     timestamp: datetime = field(default_factory=datetime.now)
@@ -402,13 +217,6 @@ class ConcreteSerialModel(SerialObject):
     def to_bytes(self) -> bytes:
         """Return the JSON representation as bytes."""
         return self.json().encode()
-
-    def to_pipe(self, pipe) -> None:
-        """
-        Write the JSON representation of the model to a named pipe.
-        TODO: actual implementation needed for communicating with the pipe.
-        """
-        pass
 
     def to_str(self) -> str:
         """Return the JSON representation as a string."""
@@ -425,13 +233,9 @@ class ConcreteSerialModel(SerialObject):
     def json(self) -> str:
         """Return a JSON representation of the model as a string."""
         return json.dumps(self.dict())
-    
-    def to_pipe(self, pipe_name) -> None:
-        """Write the JSON representation of the model to a named pipe."""
-        write_to_pipe(pipe_name, self.json())
 
 # Abstract Base Class for models
-class AtomicModel(BaseModel, AbstractDataModel, ABC):
+class AtomicModel(ConcreteModel, ABC):
     @abstractmethod
     def get_properties(self) -> Dict[str, Any]:
         """Method to get properties of the AtomicModel instance."""
@@ -462,110 +266,23 @@ class AtomicModel(BaseModel, AbstractDataModel, ABC):
         """Equality comparison between two models."""
         pass
 
-# Base class for atomically-based structures
-@dataclass
-class AtomicTheory(AtomicModel):
-    # Use `frozen=True` for immutability (like a slot).
-    __slots__ = ['state', 'properties', 'name']
-
-    name: str
-    state: Dict[str, Any] = field(default_factory=dict)
-    properties: Dict[str, Any] = field(default_factory=dict)
-
-    def get_properties(self) -> Dict[str, Any]:
-        """Return the properties of the atomic theory."""
-        return self.properties
-
-    def update_state(self, state: Dict[str, Any]) -> None:
-        """Update the internal state of the atomic theory."""
-        self.state = state
-
-    def analyze(self) -> Dict[str, Any]:
-        """Perform analysis of the atomic theory."""
-        analysis_result = {'state': self.state, 'properties': self.properties}
-        return analysis_result
-
-    def validate(self) -> bool:
-        """Validate the consistency of the atomic theory."""
-        # Check if all expected properties are present (example).
-        return 'energy' in self.properties
-
-    def __repr__(self) -> str:
-        """Return the string representation of the atomic theory."""
-        return f"AtomicTheory(name={self.name}, properties={self.properties})"
-
-    def __eq__(self, other: Any) -> bool:
-        """Equality comparison based on the name and properties."""
-        if not isinstance(other, AtomicTheory):
-            return False
-        return self.name == other.name and self.properties == other.properties
-
-# Concrete atomic model based on AtomicTheory
-@dataclass
-class ConcreteAtomicTheory(AtomicTheory):
-    # This is a specific instantiation of an atomic theory.
-    value: float = 0.0  # Just an example field
-
-    def get_properties(self) -> Dict[str, Any]:
-        """Extend the base class get_properties method."""
-        properties = super().get_properties()
-        properties['value'] = self.value
-        return properties
-
-    def analyze(self) -> Dict[str, Any]:
-        """Extend the base class analyze method."""
-        result = super().analyze()
-        result['value'] = self.value
-        return result
-
-    def validate(self) -> bool:
-        """Extend the base class validate method."""
-        valid = super().validate()
-        # Additional validation for value
-        return valid and isinstance(self.value, (int, float))
-
-    def __repr__(self) -> str:
-        """Override the string representation."""
-        return f"ConcreteAtomicTheory(name={self.name}, value={self.value}, properties={self.properties})"
-
-    def __eq__(self, other: Any) -> bool:
-        """Override equality check."""
-        return super().__eq__(other) and self.value == other.value
-
-def __theory__(cls: Type[AtomicTheory]):
-    """Decorator to add theoretical behavior."""
-    
-    # Wrapping the original class constructor for custom behavior
-    original_init = cls.__init__
-    
-    def wrapped_init(self, *args, **kwargs):
-        # Custom initialization for atomic theory
-        self.initialized = False
-        original_init(self, *args, **kwargs)
-    
-    cls.__init__ = wrapped_init
-    return cls
-
-@dataclass
-class Condition:
+class Condition(AtomicModel, ABC):
     """Represents a state or condition in the system."""
     attributes: Dict[str, Any]
-
+    @abstractmethod
     def __repr__(self):
         return f"Condition({self.attributes})"
 
-class Action(ABC):
+class Action(Condition, ABC):
     """Abstract base class for an elementary action or reaction."""
     @abstractmethod
     def execute(self, input_condition: Condition) -> Condition:
         """Transform an input condition into an output condition."""
         pass
-
-@dataclass
-class Reaction(Action):
+class Reaction(Action, ABC):
     """Concrete implementation of an elementary reaction."""
     transformation: Callable[[Condition], Condition]
-
+    @abstractmethod
     def execute(self, input_condition: Condition) -> Condition:
         output_condition = self.transformation(input_condition)
         print(f"Reaction: {input_condition} -> {output_condition}")
@@ -588,17 +305,6 @@ class Agency:
         self.rules[action_key] = action
         print(f"Action '{action_key}' added to agency '{self.name}'.")
 
-# Example: Define transformations
-def collapse_wave_function(condition: Condition) -> Condition:
-    """Simulates a quantum observation collapsing the wave function."""
-    new_attributes = {**condition.attributes, "observed": True}
-    return Condition(attributes=new_attributes)
-
-def metabolize(condition: Condition) -> Condition:
-    """Simulates metabolic transformation in an organism."""
-    new_attributes = {**condition.attributes, "energy_level": condition.attributes.get("energy_level", 0) - 10}
-    return Condition(attributes=new_attributes)
-
 """Homoiconism dictates that, upon runtime validation, all objects are code and data.
 To facilitate; we utilize first class functions and a static typing system.
 This maps perfectly to the three aspects of nominative invariance:
@@ -616,7 +322,6 @@ What's conserved across these transformations:
     Information content
     Causal structure
     Computational potential"""
-# Atom()(s) are a wrapper that can represent any Python object, including values, methods, functions, and classes.
 T = TypeVar('T', bound=any) # T for TypeVar, V for ValueVar. Homoicons are T+V.
 V = TypeVar('V', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type])
 C = TypeVar('C', bound=Callable[..., Any])  # callable 'T'/'V' first class function interface
@@ -648,18 +353,32 @@ The Atom(), our polymorph of object and fcc-apparent at runtime, always represen
 # different views of the data (no consistency). A homoiconic piece of source code is eventually
 # consistent, assuming it is able to re-instantiated.
 # Enums for type system
-DataType = Enum('DataType', 'INTEGER FLOAT STRING BOOLEAN NONE LIST TUPLE')
-AtomType = Enum('AtomType', 'FUNCTION CLASS MODULE OBJECT', bound=_Atom_)
-AccessLevel = Enum('AccessLevel', 'READ WRITE EXECUTE ADMIN USER')
-QuantumState = Enum('QuantumState', ['SUPERPOSITION', 'ENTANGLED', 'COLLAPSED', 'DECOHERENT'])
+#------------------------------------------------------------------------------
+# Enums and Data Classes for Symmetries and Manifolds
+#------------------------------------------------------------------------------
+class Symmetry(Enum):
+    TRANSLATION = "Translation"
+    ROTATION = "Rotation"
+    PHASE = "Phase"
+class Conservation(Enum):
+    INFORMATION = "Information"
+    COHERENCE = "Coherence"
+    BEHAVIORAL = "Behavioral"
+@dataclass
+class State:
+    type_space: T
+    value_space: V
+    computation_space: C
+    symmetry: Symmetry
+    conservation: Conservation
 @runtime_checkable
-class Atom(Protocol):
+class Field(Protocol):
     """
-    Structural typing protocol for Atoms.
-    Defines the minimal interface that an Atom must implement.
+    Defines a dynamic field space, leveraging symmetries and manifold mappings.
     """
-    id: str
-def __atom__(cls: Type[{T, V, C}]) -> Type[{T, V, C}]: # homoicon decorator
+    def interact(self, state: State) -> State:
+        ...
+def __field__(cls: Type[{T, V, C}]) -> Type[{T, V, C}]: # homoicon decorator
     """Decorator to create a homoiconic atom."""
     original_init = cls.__init__
     def new_init(self, *args, **kwargs):
@@ -669,7 +388,52 @@ def __atom__(cls: Type[{T, V, C}]) -> Type[{T, V, C}]: # homoicon decorator
 
     cls.__init__ = new_init
     return cls
-AtomType = TypeVar('AtomType', bound=Atom)
+FieldType = TypeVar('AtomType', bound=Field)
+class Gauge:
+    """
+    Manages the field's influence on type, value, and computation manifolds.
+    """
+    def __init__(self, local: State, global_: State, emergent: State):
+        self.fields = [local, global_, emergent]
+
+    def apply_transformation(self, state: State) -> State:
+        transformed_state = state
+        for field in self.fields:
+            transformed_state = self._combine_states(transformed_state, field)
+        return transformed_state
+
+    def _combine_states(self, state_a: State, state_b: State) -> State:
+        # Apply computation from state_b to the value space of state_a
+        new_value = [state_b.computation_space(val) for val in state_a.value_space]
+
+        return State(
+            type_space=state_a.type_space,
+            value_space=new_value,
+            computation_space=state_a.computation_space,
+            symmetry=state_a.symmetry,
+            conservation=state_b.conservation,
+        )
+#------------------------------------------------------------------------------
+# Deamon/Kernel
+#------------------------------------------------------------------------------
+class MorphologicalKernel:
+    """
+    Central to running feedback-driven transformations.
+    Interprets configuration space in accordance with Noetherian symmetries.
+    """
+    def __init__(self):
+        self.state_history = []
+
+    def run(self, initial_state: State, gauge: Gauge, steps: int) -> State:
+        current_state = initial_state
+        for _ in range(steps):
+            current_state = gauge.apply_transformation(current_state)
+            self.state_history.append(current_state)
+        return current_state
+
+    def __repr__(self):
+        return f"Kernel with {len(self.state_history)} state transitions."
+
 """The type system forms the "boundary" theory
 The runtime forms the "bulk" theory
 The homoiconic property ensures they encode the same information
@@ -700,12 +464,119 @@ If algorithms were seen as “wavefunctions” representing possible computation
     Treating data and computation as probabilistic, field-like entities rather than fixed operations on fixed memory.
     Embracing superpositions, potential operations, and entanglement within software architecture, allowing for context-sensitive, energy-efficient, and exploratory computation.
     Leveraging thermodynamic principles more deeply, designing architectures that conserve “informational energy” by reducing unnecessary state changes and maximizing information flow efficiency.
-I want to prove that, under the right conditions, a classical system optimized with the right software architecture and hardware platform can display behaviors indicative of quantum informatics. One's experimental setup would ideally confirm that even if the underlying hardware is classical, certain complex interactions within the software/hardware could bring about phenomena reminiscent of quantum mechanics.
-Cognosis is rooted in the idea that classical architectures (like the von Neumann model and Turing machines) weren't able to exploit quantum properties due to their deterministic, state-by-state execution model. But modern neural networks and transformers, with their probabilistic computations, massive parallelism, and high-dimensional state spaces, could approach a threshold where quantum-like behaviors begin to appear—especially in terms of entangling information or decoherence These models’ emergent properties might align more closely with quantum processes, as they involve not just deterministic processing but complex probabilistic states that "collapse" during inference (analogous to quantum measurement). If one can exploit this probabilistic, distributed nature, it might actually push classical hardware into a quasi-quantum regime.
 """
-
 """Self-Adjoint Operators on a Hilbert Space: In quantum mechanics, the state space of a system is typically modeled as a Hilbert space—a complete vector space equipped with an inner product. States within this space can be represented as vectors (ket vectors, ∣ψ⟩∣ψ⟩), and observables (like position, momentum, or energy) are modeled by self-adjoint operators.
 
     Self-adjoint operators are crucial because they guarantee that the eigenvalues (which represent possible measurement outcomes in quantum mechanics) are real numbers, which is a necessary condition for observable quantities in a physical theory. In quantum mechanics, the evolution of a state ∣ψ⟩∣ψ⟩ under an observable A^A^ can be described as the action of the operator A^A^ on ∣ψ⟩∣ψ⟩, and these operators must be self-adjoint to maintain physical realism.
     
     In-other words, self-adjoint operators are equal to their Hermitian conjugates."""
+#------------------------------------------------------------------------------
+# Example Usage
+#------------------------------------------------------------------------------
+def visualize_state_history(state_history):
+    """
+    Visualizes the evolution of the state transformations over time.
+    
+    This function takes the state history from the MorphologicalKernel's execution
+    and generates a simple line plot representing the "value space" at each
+    transformation step. This is a simplistic visualization to help illustrate
+    how the value space evolves, a key concept in understanding transformations
+    in this framework.
+
+    Parameters:
+    - state_history: A list of State objects created during the kernel's run.
+      Each State object represents the system's configuration at a specific point
+      in time.
+
+    Returns:
+    - Matplotlib Figure showcasing the value space over time.
+    
+    Raises:
+    - ValueError: If the state_history is not provided or is empty.
+    """
+    if not state_history:
+        raise ValueError("state_history cannot be empty!")
+
+    values = [state.value_space for state in state_history]
+    #plt.plot(values)
+    #plt.title('Evolution of Value Space')
+    #plt.xlabel('Step')
+    #plt.ylabel('Value Space')
+    #plt.grid(True)
+    #plt.show()
+def main():
+    """
+    Main Execution and Example of Morphological Kernel.
+
+    This function outlines the setup and execution process for the Morphological Kernel.
+    It showcases how initial states and Gauge configurations are used to propagate system
+    transformations through the invocation of the kernel's `run` method. Additionally,
+    it provides a demonstration of visualizing the resulting state evolution.
+
+    Steps included:
+    1. Definition of the initial state as a combination of type, value, and computation
+       spaces, decorated with symmetry and conservation laws.
+    2. Setup of Gauge states: local, global, and emergent, each providing specific
+       transformation rules for manipulating system configurations.
+    3. Initialization and execution of the Morphological Kernel, running a series of
+       transformations over the specified steps.
+    4. Display of the final state and visualization of the state history to illustrate
+       the cumulative impact of transformation steps.
+
+    Outputs:
+    - Terminal output of the final state configuration after running the kernel.
+    - A visual plot showing Value Space evolution for ease of conceptual understanding.
+    """
+    initial_state = State(
+        type_space=lambda x: x,
+        value_space=[0],
+        computation_space=lambda x: x,
+        symmetry=Symmetry.TRANSLATION,
+        conservation=Conservation.INFORMATION
+    )
+
+    local_gauge = State(
+        type_space=lambda x: x,
+        value_space=[1],
+        computation_space=lambda x: x + 1,
+        symmetry=Symmetry.ROTATION,
+        conservation=Conservation.COHERENCE
+    )
+
+    global_gauge = State(
+        type_space=lambda x: x,
+        value_space=[4],
+        computation_space=lambda x: 2 * x,
+        symmetry=Symmetry.PHASE,
+        conservation=Conservation.BEHAVIORAL
+    )
+
+    emergent_gauge = State(
+        type_space=lambda x: x,
+        value_space=[0],
+        computation_space=lambda x: x,
+        symmetry=Symmetry.TRANSLATION,
+        conservation=Conservation.INFORMATION
+    )
+
+    gauge = Gauge(local=local_gauge, global_=global_gauge, emergent=emergent_gauge)
+    
+    kernel = MorphologicalKernel()
+    final_state = kernel.run(initial_state, gauge, steps=10)
+    
+    print(f"Final state: {final_state}")
+    
+    visualize_state_history(kernel.state_history)
+
+    def collapse_wave_function(condition: Condition) -> Condition:
+        """Simulates a quantum observation collapsing the wave function."""
+        new_attributes = {**condition.attributes, "observed": True}
+        return Condition(attributes=new_attributes)
+
+    def metabolize(condition: Condition) -> Condition:
+        """Simulates metabolic transformation in an organism."""
+        new_attributes = {**condition.attributes, "energy_level": condition.attributes.get("energy_level", 0) - 10}
+        return Condition(attributes=new_attributes)
+
+if __name__ == '__main__':
+    main()
