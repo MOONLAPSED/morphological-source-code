@@ -205,7 +205,7 @@ class ConcreteModel(SerialObject):
     be used wherever a FrameModel or SerialObject is required,
     hence demonstrating polymorphism.
         Inputs:
-            SerialObject: The base class for the ConcreteSerialModel class
+            SerialObject: The base class for the ConcreteModel class
 
         Returns:
             ConcreteModel object        

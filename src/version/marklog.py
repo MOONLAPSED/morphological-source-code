@@ -251,7 +251,7 @@ def test_memoryless_property(chain: DiscreteMarkovChain,
     p2 = sum(1 for x in waiting_times if x > t) / trials
     
     # They should be approximately equal for memoryless process
-    return abs(p1 - p2) < 0.1  # allowing 10% difference
+    return abs(p1 - p2) < .10  # allowing 10% difference
 
 if __name__ == "__main__":
     test_mapping(1_000)
