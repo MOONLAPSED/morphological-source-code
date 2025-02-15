@@ -1,0 +1,3342 @@
+{
+  ".env": {
+    "path": "C:\\Users\\DEV\\cognosis\\.env",
+    "mime_type": "application/octet-stream",
+    "size": 0,
+    "created": "2025-02-06T17:45:07.139928",
+    "modified": "2025-02-06T17:45:07.139928",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".env.example": {
+    "path": "C:\\Users\\DEV\\cognosis\\.env.example",
+    "mime_type": "application/octet-stream",
+    "size": 0,
+    "created": "2025-02-06T17:45:12.820894",
+    "modified": "2025-02-06T17:45:12.820894",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".gitignore": {
+    "path": "C:\\Users\\DEV\\cognosis\\.gitignore",
+    "mime_type": "application/octet-stream",
+    "size": 3078,
+    "created": "2024-12-03T22:24:52.638546",
+    "modified": "2024-12-12T23:45:36.601876",
+    "hash": "a01ab3e25defb9dd820502a18bccebd54bcfbf716bc94910da37ff71514d32c0",
+    "symlinks": [],
+    "has_content": false
+  },
+  "LICENSE": {
+    "path": "C:\\Users\\DEV\\cognosis\\LICENSE",
+    "mime_type": "application/octet-stream",
+    "size": 1088,
+    "created": "2024-12-03T22:24:52.638546",
+    "modified": "2024-12-03T22:24:52.638546",
+    "hash": "0b9195e69cf7684e12cf9db900784d7696893da6c46269325c7bea2a903b8696",
+    "symlinks": [],
+    "has_content": false
+  },
+  "main.py": {
+    "path": "C:\\Users\\DEV\\cognosis\\main.py",
+    "mime_type": "application/python",
+    "size": 26725,
+    "created": "2024-12-03T22:24:52.728194",
+    "modified": "2025-02-07T22:41:06.676139",
+    "hash": "a62ccd702d7b06fc2748dc27894edcc6e6ed9cd6e53910b44757620e48be1d44",
+    "symlinks": [],
+    "has_content": false
+  },
+  "pyproject.toml": {
+    "path": "C:\\Users\\DEV\\cognosis\\pyproject.toml",
+    "mime_type": "application/octet-stream",
+    "size": 1800,
+    "created": "2024-12-03T22:24:52.733254",
+    "modified": "2024-12-03T22:24:52.733254",
+    "hash": "208fc58498ac445b9caa8a1df32100781daf858d65e2375732d848d68fa1053f",
+    "symlinks": [],
+    "has_content": false
+  },
+  "README.md": {
+    "path": "C:\\Users\\DEV\\cognosis\\README.md",
+    "mime_type": "text/markdown",
+    "size": 28653,
+    "created": "2024-12-03T22:24:52.638546",
+    "modified": "2025-02-12T22:52:46.230824",
+    "hash": "b13a480b73037e14a9da9ffaafa770c8a5624c433718d1c46740e3afe8ac2bbb",
+    "symlinks": [],
+    "has_content": true
+  },
+  "__init__.py": {
+    "path": "C:\\Users\\DEV\\cognosis\\__init__.py",
+    "mime_type": "application/python",
+    "size": 13412,
+    "created": "2024-12-03T22:24:52.638546",
+    "modified": "2025-02-14T19:14:16.276555",
+    "hash": "3cf958c7287aca82a059d3fe1d40b362ec8a7134ef9b640ae93d433523a44523",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".devcontainer\\.bashrc": {
+    "path": "C:\\Users\\DEV\\cognosis\\.devcontainer\\.bashrc",
+    "mime_type": "application/octet-stream",
+    "size": 13236,
+    "created": "2025-02-06T17:46:14.427146",
+    "modified": "2025-02-06T17:46:15.238642",
+    "hash": "91f8bef94f0ecb145e3f9137b1f5a06a78de0a9b585bffd4c331520a679722ef",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\COMMIT_EDITMSG": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\COMMIT_EDITMSG",
+    "mime_type": "application/octet-stream",
+    "size": 51,
+    "created": "2024-12-03T22:32:59.208853",
+    "modified": "2025-02-14T19:16:17.189704",
+    "hash": "0a9441deb47dec744aeaf87da15a55805fa09253666b3c45d26fd0a7807866ce",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\config": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\config",
+    "mime_type": "application/octet-stream",
+    "size": 349,
+    "created": "2024-12-03T22:26:10.852462",
+    "modified": "2024-12-03T22:26:10.856481",
+    "hash": "315c82f0251a56c12a511a2ef67c8fd0542512204fcafbe7b16e9a86f555136c",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\description": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\description",
+    "mime_type": "application/octet-stream",
+    "size": 73,
+    "created": "2024-12-03T22:24:51.568448",
+    "modified": "2024-12-03T22:24:51.568448",
+    "hash": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\FETCH_HEAD": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\FETCH_HEAD",
+    "mime_type": "application/octet-stream",
+    "size": 1935,
+    "created": "2024-12-28T23:02:49.071472",
+    "modified": "2025-02-11T00:02:22.248168",
+    "hash": "6b2f22ca539fd1e7b680ec7a21c49867afed8acf71529a2aa388600eacaddbe8",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\HEAD": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\HEAD",
+    "mime_type": "application/octet-stream",
+    "size": 26,
+    "created": "2025-02-11T00:02:22.339750",
+    "modified": "2025-02-11T00:02:22.483563",
+    "hash": "edee7b51944f9ed1995f2b5a7b9506753a0c4538332227bfd7d1a00c22ad4235",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\index": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\index",
+    "mime_type": "application/octet-stream",
+    "size": 1547,
+    "created": "2025-02-14T19:16:17.183099",
+    "modified": "2025-02-14T19:16:17.187137",
+    "hash": "607418fafca79542df8088b65d17e6771086ecc5409e2c46fbf351375c9b493e",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\ORIG_HEAD": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\ORIG_HEAD",
+    "mime_type": "application/octet-stream",
+    "size": 41,
+    "created": "2025-02-11T00:02:22.336749",
+    "modified": "2025-02-11T00:02:22.337750",
+    "hash": "40f58bf197e592ae25a6c13dc99506b9a0a175410cabc71335d7268d6c8c7115",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\packed-refs": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\packed-refs",
+    "mime_type": "application/octet-stream",
+    "size": 1296,
+    "created": "2024-12-03T22:24:52.593429",
+    "modified": "2024-12-03T22:24:52.603443",
+    "hash": "ec0823ecbd5bc42d0d4e6f1a0102a4b594e61d789590b809ac31548b67a8dd05",
+    "symlinks": [],
+    "has_content": false
+  },
+  "docs\\.bashrc": {
+    "path": "C:\\Users\\DEV\\cognosis\\docs\\.bashrc",
+    "mime_type": "application/octet-stream",
+    "size": 13638,
+    "created": "2024-12-03T22:24:52.638546",
+    "modified": "2024-12-03T22:24:52.638546",
+    "hash": "21358282ccb9cdbd7768bef84660aac661abdb723c7b57fb9e1135a86354d821",
+    "symlinks": [],
+    "has_content": false
+  },
+  "docs\\enhanced_cog.yaml": {
+    "path": "C:\\Users\\DEV\\cognosis\\docs\\enhanced_cog.yaml",
+    "mime_type": "application/octet-stream",
+    "size": 10662,
+    "created": "2024-12-03T22:24:52.728194",
+    "modified": "2024-12-04T13:58:07.210772",
+    "hash": "ec3b2e651e7b59846240dbb0fd4812ce0f6e2d19b51ca96b9171b0a684b97a9d",
+    "symlinks": [],
+    "has_content": false
+  },
+  "docs\\quantum-compute-viz.tsx": {
+    "path": "C:\\Users\\DEV\\cognosis\\docs\\quantum-compute-viz.tsx",
+    "mime_type": "application/octet-stream",
+    "size": 3870,
+    "created": "2024-12-03T22:24:52.733254",
+    "modified": "2024-12-03T22:24:52.733254",
+    "hash": "8225975472beac54246a342dd964fec648d4fb69b54a2cd9729214ecf5d07af9",
+    "symlinks": [],
+    "has_content": false
+  },
+  "docs\\README.md": {
+    "path": "C:\\Users\\DEV\\cognosis\\docs\\README.md",
+    "mime_type": "text/markdown",
+    "size": 33291,
+    "created": "2024-12-03T22:24:52.728194",
+    "modified": "2024-12-04T13:48:54.762004",
+    "hash": "5a6b0eda7f266304270a9d5b3dd30f378ed2ea8e2d06b1b8aecd89f91a7ed87f",
+    "symlinks": [],
+    "has_content": true
+  },
+  "src\\tripartite.py": {
+    "path": "C:\\Users\\DEV\\cognosis\\src\\tripartite.py",
+    "mime_type": "application/python",
+    "size": 4781,
+    "created": "2025-02-14T17:16:23.364581",
+    "modified": "2025-02-14T17:17:07.232508",
+    "hash": "18dc6f36c6e5e53a6f14c9ee6e525e263dd7c0336e4dab05d7670404e8fb239f",
+    "symlinks": [],
+    "has_content": false
+  },
+  "src\\__init__.py": {
+    "path": "C:\\Users\\DEV\\cognosis\\src\\__init__.py",
+    "mime_type": "application/python",
+    "size": 7360,
+    "created": "2024-12-03T22:24:52.743230",
+    "modified": "2025-02-14T19:22:23.203294",
+    "hash": "204b6783c3098e6575061dcdc47ce7d0b6d968c2ff7e308eadda8eb6b8aabe84",
+    "symlinks": [],
+    "has_content": false
+  },
+  "__pycache__\\format2.cpython-313.pyc": {
+    "path": "C:\\Users\\DEV\\cognosis\\__pycache__\\format2.cpython-313.pyc",
+    "mime_type": "application/x-python-code",
+    "size": 15676,
+    "created": "2025-02-06T18:24:38.227397",
+    "modified": "2025-02-06T18:24:38.227397",
+    "hash": "92d4b4389b90404c6ca6b64daba0e7e958c9be2ff967db2418322d97419ae5b7",
+    "symlinks": [],
+    "has_content": false
+  },
+  "__pycache__\\main.cpython-313.pyc": {
+    "path": "C:\\Users\\DEV\\cognosis\\__pycache__\\main.cpython-313.pyc",
+    "mime_type": "application/x-python-code",
+    "size": 30496,
+    "created": "2025-02-14T19:22:26.855190",
+    "modified": "2025-02-14T19:22:26.855190",
+    "hash": "d3a43c32713a6d547768ac196d07ccb8399a20d2865946a02443a4cadf302d5e",
+    "symlinks": [],
+    "has_content": false
+  },
+  "__pycache__\\__init__.cpython-313.pyc": {
+    "path": "C:\\Users\\DEV\\cognosis\\__pycache__\\__init__.cpython-313.pyc",
+    "mime_type": "application/x-python-code",
+    "size": 22245,
+    "created": "2025-02-14T19:22:26.935948",
+    "modified": "2025-02-14T19:22:26.935948",
+    "hash": "4d830cec01888e488b54e84ea787296200d5837da82e5195231ff84e67f69df8",
+    "symlinks": [],
+    "has_content": false
+  },
+  "states\\81\\1f\\811f4c9da853475a09c7f67cf31d31fb57a8a038828132068733a0beffc1a4ea.json": {
+    "path": "C:\\Users\\DEV\\cognosis\\states\\81\\1f\\811f4c9da853475a09c7f67cf31d31fb57a8a038828132068733a0beffc1a4ea.json",
+    "mime_type": "application/json",
+    "size": 937,
+    "created": "2025-02-14T19:17:48.177295",
+    "modified": "2025-02-14T19:17:48.177295",
+    "hash": "4ceee894f4dbf412785a5e03fef9df2b518e09f2d77e91d6ed8c472f433d0a4f",
+    "symlinks": [],
+    "has_content": false
+  },
+  "src\\__pycache__\\tripartite.cpython-313.pyc": {
+    "path": "C:\\Users\\DEV\\cognosis\\src\\__pycache__\\tripartite.cpython-313.pyc",
+    "mime_type": "application/x-python-code",
+    "size": 7148,
+    "created": "2025-02-14T19:22:26.989077",
+    "modified": "2025-02-14T19:22:26.989077",
+    "hash": "83f634f384bb1857b1712f13176c0c70bf6e14425e60c03890f0151fd39f296c",
+    "symlinks": [],
+    "has_content": false
+  },
+  "src\\__pycache__\\__init__.cpython-313.pyc": {
+    "path": "C:\\Users\\DEV\\cognosis\\src\\__pycache__\\__init__.cpython-313.pyc",
+    "mime_type": "application/x-python-code",
+    "size": 12950,
+    "created": "2025-02-14T19:22:26.991734",
+    "modified": "2025-02-14T19:22:26.991734",
+    "hash": "05cbd896b5c2bb0806034ae13d78910d8cf96ef3eb6b2f77c43e4fde5a5015a6",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".github\\workflows\\cicd.yml": {
+    "path": "C:\\Users\\DEV\\cognosis\\.github\\workflows\\cicd.yml",
+    "mime_type": "application/octet-stream",
+    "size": 2279,
+    "created": "2025-02-06T17:58:00.208811",
+    "modified": "2025-02-06T17:59:44.451650",
+    "hash": "05ffd577907a31b71257586db555fe4d46563d5ef65134d0073a5e8cabd50bf2",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".github\\workflows\\pre-commit.sh": {
+    "path": "C:\\Users\\DEV\\cognosis\\.github\\workflows\\pre-commit.sh",
+    "mime_type": "application/x-sh",
+    "size": 673,
+    "created": "2024-12-03T22:24:52.638546",
+    "modified": "2025-02-06T17:59:46.481282",
+    "hash": "d1bc4787eb1673b313683c8cd792217d4832ad42cd4e977f3cf0a9983ead8c4d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\hooks\\applypatch-msg.sample": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\hooks\\applypatch-msg.sample",
+    "mime_type": "application/octet-stream",
+    "size": 478,
+    "created": "2024-12-03T22:24:51.573456",
+    "modified": "2024-12-03T22:24:51.573456",
+    "hash": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\hooks\\commit-msg.sample": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\hooks\\commit-msg.sample",
+    "mime_type": "application/octet-stream",
+    "size": 896,
+    "created": "2024-12-03T22:24:51.578463",
+    "modified": "2024-12-03T22:24:51.578463",
+    "hash": "1f74d5e9292979b573ebd59741d46cb93ff391acdd083d340b94370753d92437",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\hooks\\fsmonitor-watchman.sample": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\hooks\\fsmonitor-watchman.sample",
+    "mime_type": "application/octet-stream",
+    "size": 4726,
+    "created": "2024-12-03T22:24:51.588475",
+    "modified": "2024-12-03T22:24:51.588475",
+    "hash": "e0549964e93897b519bd8e333c037e51fff0f88ba13e086a331592bf801fa1d0",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\hooks\\post-update.sample": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\hooks\\post-update.sample",
+    "mime_type": "application/octet-stream",
+    "size": 189,
+    "created": "2024-12-03T22:24:51.593481",
+    "modified": "2024-12-03T22:24:51.593481",
+    "hash": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\hooks\\pre-applypatch.sample": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\hooks\\pre-applypatch.sample",
+    "mime_type": "application/octet-stream",
+    "size": 424,
+    "created": "2024-12-03T22:24:51.598488",
+    "modified": "2024-12-03T22:24:51.598488",
+    "hash": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\hooks\\pre-commit.sample": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\hooks\\pre-commit.sample",
+    "mime_type": "application/octet-stream",
+    "size": 1649,
+    "created": "2024-12-03T22:24:51.602993",
+    "modified": "2024-12-03T22:24:51.602993",
+    "hash": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\hooks\\pre-merge-commit.sample": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\hooks\\pre-merge-commit.sample",
+    "mime_type": "application/octet-stream",
+    "size": 416,
+    "created": "2024-12-03T22:24:51.608031",
+    "modified": "2024-12-03T22:24:51.608031",
+    "hash": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\hooks\\pre-push.sample": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\hooks\\pre-push.sample",
+    "mime_type": "application/octet-stream",
+    "size": 1374,
+    "created": "2024-12-03T22:24:51.613037",
+    "modified": "2024-12-03T22:24:51.613037",
+    "hash": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\hooks\\pre-rebase.sample": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\hooks\\pre-rebase.sample",
+    "mime_type": "application/octet-stream",
+    "size": 4898,
+    "created": "2024-12-03T22:24:51.618042",
+    "modified": "2024-12-03T22:24:51.618042",
+    "hash": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\hooks\\pre-receive.sample": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\hooks\\pre-receive.sample",
+    "mime_type": "application/octet-stream",
+    "size": 544,
+    "created": "2024-12-03T22:24:51.623051",
+    "modified": "2024-12-03T22:24:51.623051",
+    "hash": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\hooks\\prepare-commit-msg.sample": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\hooks\\prepare-commit-msg.sample",
+    "mime_type": "application/octet-stream",
+    "size": 1492,
+    "created": "2024-12-03T22:24:51.628059",
+    "modified": "2024-12-03T22:24:51.628059",
+    "hash": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\hooks\\push-to-checkout.sample": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\hooks\\push-to-checkout.sample",
+    "mime_type": "application/octet-stream",
+    "size": 2783,
+    "created": "2024-12-03T22:24:51.633064",
+    "modified": "2024-12-03T22:24:51.633064",
+    "hash": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\hooks\\sendemail-validate.sample": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\hooks\\sendemail-validate.sample",
+    "mime_type": "application/octet-stream",
+    "size": 2308,
+    "created": "2024-12-03T22:24:51.638107",
+    "modified": "2024-12-03T22:24:51.638107",
+    "hash": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\hooks\\update.sample": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\hooks\\update.sample",
+    "mime_type": "application/octet-stream",
+    "size": 3650,
+    "created": "2024-12-03T22:24:51.648122",
+    "modified": "2024-12-03T22:24:51.648122",
+    "hash": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\info\\exclude": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\info\\exclude",
+    "mime_type": "application/octet-stream",
+    "size": 240,
+    "created": "2024-12-03T22:24:51.648122",
+    "modified": "2024-12-03T22:24:51.648122",
+    "hash": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\logs\\HEAD": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\logs\\HEAD",
+    "mime_type": "application/octet-stream",
+    "size": 9935,
+    "created": "2024-12-03T22:24:52.618468",
+    "modified": "2025-02-14T19:16:17.203424",
+    "hash": "c42447b5128b37773674a97dbd4ce32dd382934ea5c718e9bcbe050977bfcbb9",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\refs\\heads\\cognosis2": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\refs\\heads\\cognosis2",
+    "mime_type": "application/octet-stream",
+    "size": 41,
+    "created": "2025-02-14T19:16:17.201583",
+    "modified": "2025-02-14T19:16:17.203424",
+    "hash": "bb489d29246aa52e56af084c687860ef02419624e425d9d0e2e8ec4a36f04db5",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\refs\\remotes\\origin\\cognosis2": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\refs\\remotes\\origin\\cognosis2",
+    "mime_type": "application/octet-stream",
+    "size": 41,
+    "created": "2025-02-14T19:16:27.217145",
+    "modified": "2025-02-14T19:16:27.217145",
+    "hash": "bb489d29246aa52e56af084c687860ef02419624e425d9d0e2e8ec4a36f04db5",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\refs\\remotes\\origin\\HEAD": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\refs\\remotes\\origin\\HEAD",
+    "mime_type": "application/octet-stream",
+    "size": 35,
+    "created": "2024-12-03T22:24:52.603443",
+    "modified": "2024-12-03T22:24:52.608450",
+    "hash": "b2b56499f190f8017574f9847da6f9aba90b97d0c7372b9ba6da827f56199e78",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\refs\\remotes\\origin\\kitchen": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\refs\\remotes\\origin\\kitchen",
+    "mime_type": "application/octet-stream",
+    "size": 41,
+    "created": "2025-02-11T00:02:04.825995",
+    "modified": "2025-02-11T00:02:04.825995",
+    "hash": "9f26906c659d65c7bc7f7ef14535898dbfff0c0a8fa787cc9b8c465199759c53",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\01\\1d318e2a8872858f35f685f353d3505500e834": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\01\\1d318e2a8872858f35f685f353d3505500e834",
+    "mime_type": "application/octet-stream",
+    "size": 7742,
+    "created": "2024-12-04T13:43:19.054740",
+    "modified": "2024-12-04T13:43:19.054740",
+    "hash": "e61d1bfa1779789f6289a47b7cd7bf4b29d976899c05e0af8835e2ce5db80a9b",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\01\\58a7cf3afc24b5716872ddf881baa8da2079a9": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\01\\58a7cf3afc24b5716872ddf881baa8da2079a9",
+    "mime_type": "application/octet-stream",
+    "size": 52,
+    "created": "2025-02-06T17:59:51.901426",
+    "modified": "2025-02-06T17:59:51.901426",
+    "hash": "deca8f67fcff85b18b1690278ea355da5f0929e5d2b949ecb193f9f02c28d13b",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\01\\c2b380c3b641548e44b389bf726c19c0c18c24": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\01\\c2b380c3b641548e44b389bf726c19c0c18c24",
+    "mime_type": "application/octet-stream",
+    "size": 1721,
+    "created": "2024-12-21T22:51:17.006115",
+    "modified": "2025-01-01T22:53:02.867156",
+    "hash": "4c927e78f8e99d1aaa9b37b5c32e44d03a2b5a0e0e2351737ee92792427922e6",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\02\\5ac078bf805db00233359fff971214b528700b": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\02\\5ac078bf805db00233359fff971214b528700b",
+    "mime_type": "application/octet-stream",
+    "size": 135,
+    "created": "2025-01-01T22:53:24.428600",
+    "modified": "2025-01-01T22:53:24.428600",
+    "hash": "3f5df13250d7360f4aa4a3b75883ae5983e9dc7556c18ee87bf8a5d7c18c6f18",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\04\\1e0ab0e948e3f27487f9ec31401bb364d0a475": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\04\\1e0ab0e948e3f27487f9ec31401bb364d0a475",
+    "mime_type": "application/octet-stream",
+    "size": 383,
+    "created": "2025-02-12T22:55:39.749773",
+    "modified": "2025-02-12T22:55:39.752276",
+    "hash": "4005f5a1138421693e7e3c8fd1166e19c6e392739b5c710c1402aa82c8695836",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\04\\2a95daec3e485a23e86f4e79fe088ed49ff621": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\04\\2a95daec3e485a23e86f4e79fe088ed49ff621",
+    "mime_type": "application/octet-stream",
+    "size": 772,
+    "created": "2024-12-29T21:39:22.144225",
+    "modified": "2024-12-29T21:39:22.144225",
+    "hash": "d41db6de0bd173f2a7c5c2a9f3efa6ed34b1ff5a4b17cc7f64c916b02ebc0cb9",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\05\\cc55129b1d7f791b193cfc58c37e0bc264ab02": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\05\\cc55129b1d7f791b193cfc58c37e0bc264ab02",
+    "mime_type": "application/octet-stream",
+    "size": 1678,
+    "created": "2024-12-11T22:29:46.073129",
+    "modified": "2025-01-01T22:53:02.850633",
+    "hash": "2d6db1e628db79936c698a281f949c64f42b951c6ce2d11a277b571047d309d2",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\06\\72196a036b96fc4267ea8f25ae5f972d05dfef": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\06\\72196a036b96fc4267ea8f25ae5f972d05dfef",
+    "mime_type": "application/octet-stream",
+    "size": 309,
+    "created": "2024-12-11T22:30:32.619920",
+    "modified": "2024-12-11T22:30:32.619920",
+    "hash": "a850744168b4022a91057a4fb626731064843a0a7ce6a8558bd752d729685d41",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\07\\a60cfc9135c84ea9810d1216c8fdfabf189da8": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\07\\a60cfc9135c84ea9810d1216c8fdfabf189da8",
+    "mime_type": "application/octet-stream",
+    "size": 539,
+    "created": "2025-02-06T17:59:51.908687",
+    "modified": "2025-02-06T17:59:51.908687",
+    "hash": "ae519d00708d283a36109acd9c733451e44af13e3b46add8420b150c8ad18ba1",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\07\\d5caf90ca6f0788969181e6bdc5a1b376e18f9": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\07\\d5caf90ca6f0788969181e6bdc5a1b376e18f9",
+    "mime_type": "application/octet-stream",
+    "size": 384,
+    "created": "2025-02-06T17:59:51.823940",
+    "modified": "2025-02-06T17:59:51.824459",
+    "hash": "b82cadf40413b5b5fc49d591815cb82189ffe9d0d637f992ea5813e06141d4e2",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\08\\6acd739ff0ef90d1feb46cb2aa8f73a960121f": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\08\\6acd739ff0ef90d1feb46cb2aa8f73a960121f",
+    "mime_type": "application/octet-stream",
+    "size": 187,
+    "created": "2024-12-15T21:31:20.653267",
+    "modified": "2024-12-15T21:31:20.653267",
+    "hash": "97f0cd036e67928945b929ce29f1838acf3b021027fe851e84432de667967b69",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\09\\1ccee2096d253d067c5dc2d09e7e6259b94d21": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\09\\1ccee2096d253d067c5dc2d09e7e6259b94d21",
+    "mime_type": "application/octet-stream",
+    "size": 382,
+    "created": "2025-02-07T02:56:01.912760",
+    "modified": "2025-02-07T02:56:01.912760",
+    "hash": "470b26ca632974487cd3646d3b9121485fee16de3dbc4514a939cc5be0a82de3",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\0a\\929876fe43570eef3d0d1a11c62a5cd8c97598": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\0a\\929876fe43570eef3d0d1a11c62a5cd8c97598",
+    "mime_type": "application/octet-stream",
+    "size": 218,
+    "created": "2024-12-13T21:36:24.143654",
+    "modified": "2024-12-13T21:36:24.143654",
+    "hash": "b4752a2d7632517420778b06fa982f257845487efda223efa6b5308bb5559f4f",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\0b\\519899f574bdc2b302ec6af92c23e8886da0eb": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\0b\\519899f574bdc2b302ec6af92c23e8886da0eb",
+    "mime_type": "application/octet-stream",
+    "size": 2398,
+    "created": "2024-12-07T23:03:30.955934",
+    "modified": "2024-12-07T23:03:30.955934",
+    "hash": "e87cd3f62397d7b0e80186b0ad11c7c6429d90e22f6fae94c91dfbdea167ef0e",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\0b\\b9310620473c05a2f44548148b96afdafe3c61": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\0b\\b9310620473c05a2f44548148b96afdafe3c61",
+    "mime_type": "application/octet-stream",
+    "size": 211,
+    "created": "2024-12-24T22:02:36.465200",
+    "modified": "2024-12-24T22:02:36.465200",
+    "hash": "83622d3eeb31c837dcd9eee50bffd35b9171a6fb8412bb8cbb1d423a19c7ea18",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\0c\\9db9bf562d94105cdc3279cc5477f26124f467": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\0c\\9db9bf562d94105cdc3279cc5477f26124f467",
+    "mime_type": "application/octet-stream",
+    "size": 2551,
+    "created": "2024-12-29T21:39:03.547699",
+    "modified": "2025-01-01T22:53:02.870665",
+    "hash": "ad358cd43d50de01c9ef5a53e9c2d75592d8df8bed8008b83ac64da336e11fce",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\0c\\b509c8f6582ef914042bf4f8f7e29c23ae6968": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\0c\\b509c8f6582ef914042bf4f8f7e29c23ae6968",
+    "mime_type": "application/octet-stream",
+    "size": 4404,
+    "created": "2025-02-08T19:04:30.612270",
+    "modified": "2025-02-08T19:04:30.612270",
+    "hash": "0a89c57161d065a25597fc833be03dc5990c26b5fbecb31c89823b2e7a7d87f2",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\0d\\3ed75d095d9756889cfda23331dc911d2c69c3": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\0d\\3ed75d095d9756889cfda23331dc911d2c69c3",
+    "mime_type": "application/octet-stream",
+    "size": 1470,
+    "created": "2024-12-06T02:51:46.296698",
+    "modified": "2024-12-06T02:51:46.296698",
+    "hash": "ed565ba36b196b2bb5e6aeb82ef19336e7bf88bddb08f9c5ae3acac599d68257",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\0d\\d64f5552631eff5ccfe6f5b690e35503bb4c54": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\0d\\d64f5552631eff5ccfe6f5b690e35503bb4c54",
+    "mime_type": "application/octet-stream",
+    "size": 2267,
+    "created": "2024-12-24T22:02:05.997805",
+    "modified": "2025-01-01T22:53:02.865155",
+    "hash": "ada55ef262ee405e250fbe9eecfa7c4d6eaabebd09c9065e4d5108fe9463043d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\0d\\edb923429f37fd45670d87bfd6cfc61fe2d35e": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\0d\\edb923429f37fd45670d87bfd6cfc61fe2d35e",
+    "mime_type": "application/octet-stream",
+    "size": 218,
+    "created": "2024-12-07T23:04:19.728372",
+    "modified": "2024-12-07T23:04:19.728372",
+    "hash": "474933779b2baf4dc69bdcbc96eb5eb4e1fefd424222574715fcee26bb0c32da",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\0d\\f8137ab5fabbf4e9e6eca709bb70d40995ceef": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\0d\\f8137ab5fabbf4e9e6eca709bb70d40995ceef",
+    "mime_type": "application/octet-stream",
+    "size": 483,
+    "created": "2024-12-17T02:40:27.182333",
+    "modified": "2024-12-17T02:40:27.183481",
+    "hash": "193657c02244d15fc2e0ef77bdbec8e1c4b471ebdfef1b494696c0c081c85111",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\0e\\434f5b0a6a32adb59e8155419a79b992329b9b": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\0e\\434f5b0a6a32adb59e8155419a79b992329b9b",
+    "mime_type": "application/octet-stream",
+    "size": 244,
+    "created": "2024-12-06T02:52:18.225577",
+    "modified": "2024-12-06T02:52:18.226576",
+    "hash": "f33adc81fec38b93dc7d25b1b77044ab9318c23b1a9aa4755d8128d244fee6b7",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\0e\\85e27f4d3c8a0bfdaa2a2bef21ff5db3d9cd62": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\0e\\85e27f4d3c8a0bfdaa2a2bef21ff5db3d9cd62",
+    "mime_type": "application/octet-stream",
+    "size": 179,
+    "created": "2025-02-06T18:00:08.086024",
+    "modified": "2025-02-06T18:00:08.086024",
+    "hash": "a41689913d61650cd232c2f04b43658f9dd78cd83dce798cd536ad1a4cb3459d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\0e\\c7c3a2ad4ac1bd6f738561f839e9e8107e3e7b": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\0e\\c7c3a2ad4ac1bd6f738561f839e9e8107e3e7b",
+    "mime_type": "application/octet-stream",
+    "size": 175,
+    "created": "2024-12-25T21:37:20.006737",
+    "modified": "2024-12-25T21:37:20.006737",
+    "hash": "557f1952b51c64d9c7cd8c1764e1e720748b7378462522a2030ca1187c74a094",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\0e\\d9448760e0e02fd5dfa2479ccab57fbc2e3043": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\0e\\d9448760e0e02fd5dfa2479ccab57fbc2e3043",
+    "mime_type": "application/octet-stream",
+    "size": 3506,
+    "created": "2024-12-04T01:54:26.563059",
+    "modified": "2024-12-04T01:54:26.564065",
+    "hash": "8647219981374c7430af1f5b122d0ff9354673b58b30138cafa67f727fdc6406",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\0f\\cc009a6d3a833d6ece275069b0d86da5755c7c": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\0f\\cc009a6d3a833d6ece275069b0d86da5755c7c",
+    "mime_type": "application/octet-stream",
+    "size": 410,
+    "created": "2024-12-26T23:30:58.585179",
+    "modified": "2024-12-26T23:30:58.585179",
+    "hash": "b0a8411dcc603b498be3de53710f81e5f0238f0e63d7e2f49ed3855699ff2fa6",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\10\\9df6b081fa5b198a05ec012a8a471555d751f1": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\10\\9df6b081fa5b198a05ec012a8a471555d751f1",
+    "mime_type": "application/octet-stream",
+    "size": 818,
+    "created": "2024-12-28T23:01:48.457786",
+    "modified": "2025-01-01T22:53:02.850129",
+    "hash": "287907dfe367ff03b138c29856b955a5d753cd12e0fcfb2f482e5c832169a086",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\10\\ff42ae420c3effdc1b6d475d23109ccf1925b9": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\10\\ff42ae420c3effdc1b6d475d23109ccf1925b9",
+    "mime_type": "application/octet-stream",
+    "size": 675,
+    "created": "2024-12-23T20:33:15.170007",
+    "modified": "2024-12-23T20:33:15.170007",
+    "hash": "8e405be7a8586ea793b08075ecef66f128ef88663d8fabacc2e2995b61ff3c29",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\11\\c0ed3f68a845edac77ad6ec56282bdf0f14be9": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\11\\c0ed3f68a845edac77ad6ec56282bdf0f14be9",
+    "mime_type": "application/octet-stream",
+    "size": 558,
+    "created": "2024-12-13T21:36:24.145656",
+    "modified": "2024-12-13T21:36:24.145656",
+    "hash": "56257a4717dbcf79a3c495fae0485164222cafae77339c0838ed2350db94d9d8",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\14\\bb22bbfdcd93ccfba364e626813ea1f9bbfd5d": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\14\\bb22bbfdcd93ccfba364e626813ea1f9bbfd5d",
+    "mime_type": "application/octet-stream",
+    "size": 155,
+    "created": "2024-12-07T23:04:19.710424",
+    "modified": "2024-12-07T23:04:19.710424",
+    "hash": "20911124cb88e358a0b2de9adc46c151f00752c7ef8470ef9168027e35ed2287",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\14\\fd1986f4b9767d283a9ebdbab1c3162600e6af": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\14\\fd1986f4b9767d283a9ebdbab1c3162600e6af",
+    "mime_type": "application/octet-stream",
+    "size": 210,
+    "created": "2024-12-05T22:43:55.247395",
+    "modified": "2024-12-05T22:43:55.247395",
+    "hash": "44d8837dbedd1f7ebcfde2a9b11d0ca593c197bc759aa2b4cea36ca1f2c510e3",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\15\\d8c78bc292823c69a4f45374197505cc3103bb": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\15\\d8c78bc292823c69a4f45374197505cc3103bb",
+    "mime_type": "application/octet-stream",
+    "size": 7621,
+    "created": "2024-12-14T22:40:31.564756",
+    "modified": "2024-12-14T22:40:31.565256",
+    "hash": "a45a09b7a39547058f118d815307b8ba3b789b828cb08ec5e3d157c7885d87ad",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\15\\e2e162be9f7d27adf5191afcdc01ebd29c8f1e": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\15\\e2e162be9f7d27adf5191afcdc01ebd29c8f1e",
+    "mime_type": "application/octet-stream",
+    "size": 3726,
+    "created": "2024-12-25T21:37:06.103143",
+    "modified": "2024-12-25T21:37:06.103143",
+    "hash": "175b30e4774128c0345ae3651dd4954dfbb5befb7277495c539909dc21165cec",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\16\\a88ae2b242f85c1a67e1f8b4b785380aab6324": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\16\\a88ae2b242f85c1a67e1f8b4b785380aab6324",
+    "mime_type": "application/octet-stream",
+    "size": 309,
+    "created": "2024-12-06T02:52:18.227576",
+    "modified": "2024-12-06T02:52:18.227576",
+    "hash": "abcd65a4b9ba10678801bac70d36df5e304ee0c4f79dfaccb09bbf7363184f61",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\16\\d512f27f95f0751e6a82eaa90523e4e43a8c7f": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\16\\d512f27f95f0751e6a82eaa90523e4e43a8c7f",
+    "mime_type": "application/octet-stream",
+    "size": 4459,
+    "created": "2024-12-08T21:46:16.758096",
+    "modified": "2024-12-08T21:46:16.758096",
+    "hash": "e85198c6b32bbfcce7f6050d9558a2bb5ad2566b7f2072cc2cf585b5ab0979a9",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\17\\36b4c2296a926d628040d6d3f72e2e1527bbb8": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\17\\36b4c2296a926d628040d6d3f72e2e1527bbb8",
+    "mime_type": "application/octet-stream",
+    "size": 171,
+    "created": "2025-01-04T19:53:42.745291",
+    "modified": "2025-01-04T19:53:42.745291",
+    "hash": "4bcc9f5196a83d9c276c9b62f31d789a84ad3d6d29813d887db247349b547d51",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\17\\67c03c9eddea9eb26832ceb8c0fc93421189f0": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\17\\67c03c9eddea9eb26832ceb8c0fc93421189f0",
+    "mime_type": "application/octet-stream",
+    "size": 7626,
+    "created": "2024-12-15T21:30:47.001991",
+    "modified": "2025-01-01T22:53:02.869156",
+    "hash": "eddef02a9999317782e1da74f31aadb719fbcdaca95af79e35c87ecec403b29e",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\17\\81d3b0053dd5b8b39c8e32dc9321066534ae82": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\17\\81d3b0053dd5b8b39c8e32dc9321066534ae82",
+    "mime_type": "application/octet-stream",
+    "size": 218,
+    "created": "2024-12-14T22:41:31.959422",
+    "modified": "2024-12-14T22:41:31.959925",
+    "hash": "a93b90a83236a901e2a68b741f3f911598e5b0b493b74559748b32b6eca39909",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\1a\\b9d51135fa39a0d54aabbcca14e854dca62833": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\1a\\b9d51135fa39a0d54aabbcca14e854dca62833",
+    "mime_type": "application/octet-stream",
+    "size": 5239,
+    "created": "2025-01-06T10:43:21.911027",
+    "modified": "2025-01-06T10:43:21.911027",
+    "hash": "f09a2a7769928a914d287f9129b8b4e39a6fb5b895618cfec119f489023b5d60",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\1b\\8c204df705cdf4b43228f1339b16d6a5d9d630": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\1b\\8c204df705cdf4b43228f1339b16d6a5d9d630",
+    "mime_type": "application/octet-stream",
+    "size": 438,
+    "created": "2024-12-29T21:39:22.145731",
+    "modified": "2024-12-29T21:39:22.145731",
+    "hash": "7cfd27a4ec9fc76a1bf2023939c14bf4a62ac05911a8e840768fbd29ebbbb81d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\1c\\3afe8bf4f45d417e4c040e8f5e371bacdc50e3": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\1c\\3afe8bf4f45d417e4c040e8f5e371bacdc50e3",
+    "mime_type": "application/octet-stream",
+    "size": 309,
+    "created": "2024-12-13T21:36:24.147171",
+    "modified": "2024-12-13T21:36:24.147171",
+    "hash": "3e6383418c905ef893d7a46844045824db1e8000435adea61b27efc53bb9043b",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\1e\\5c0594af7c90d43aba4a920a162644e7f7039a": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\1e\\5c0594af7c90d43aba4a920a162644e7f7039a",
+    "mime_type": "application/octet-stream",
+    "size": 344,
+    "created": "2025-02-11T00:01:30.664776",
+    "modified": "2025-02-11T00:01:30.665776",
+    "hash": "651e3ac907f44b87436a66c41b2adb9c2340f6e041ca72f3bd0adeea168efa3d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\1e\\7ddded6b09c897be8ee2f827dce59fdaa08f70": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\1e\\7ddded6b09c897be8ee2f827dce59fdaa08f70",
+    "mime_type": "application/octet-stream",
+    "size": 338,
+    "created": "2025-02-07T02:59:42.065654",
+    "modified": "2025-02-07T02:59:42.065654",
+    "hash": "40c175f7406fd75e895b795af8785d7da5786c140062390440c17bb78889c1bf",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\1f\\db6874c6cc42b79d1a1055ae98466c50e5b0fb": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\1f\\db6874c6cc42b79d1a1055ae98466c50e5b0fb",
+    "mime_type": "application/octet-stream",
+    "size": 2681,
+    "created": "2024-12-28T23:01:48.459287",
+    "modified": "2025-01-01T22:53:02.866656",
+    "hash": "526c43fa223474efee8f7afe72b88ae79781670b1a69f7cedc2fcfa6c3116a99",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\20\\e5e4c311595dea26f94d7a99fd8e88fb4e5d59": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\20\\e5e4c311595dea26f94d7a99fd8e88fb4e5d59",
+    "mime_type": "application/octet-stream",
+    "size": 309,
+    "created": "2024-12-12T23:45:57.540449",
+    "modified": "2024-12-12T23:45:57.540449",
+    "hash": "af600b4cf86cd4aaa59e068efac163ff73a5030b4e888c2f6e92196d23e676e4",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\23\\d0b99af69a25884566dd52a60470061ff97ac2": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\23\\d0b99af69a25884566dd52a60470061ff97ac2",
+    "mime_type": "application/octet-stream",
+    "size": 1477,
+    "created": "2024-12-12T23:45:42.005989",
+    "modified": "2024-12-12T23:45:42.006994",
+    "hash": "6b23565651f50c8a74399f88989653c9b2b7fe8253f655ddfd005d4df8489931",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\24\\71f7ab3e4996a5e4b183efe4798afa3ca177f4": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\24\\71f7ab3e4996a5e4b183efe4798afa3ca177f4",
+    "mime_type": "application/octet-stream",
+    "size": 5219,
+    "created": "2025-01-04T21:16:06.294923",
+    "modified": "2025-01-04T21:16:06.294923",
+    "hash": "9bf40b40d3f0b8ad34a7b0c9ab0f69f9ef4a4d6343e883fb89b5a7e3dcf21539",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\28\\966542d08392f48c339f40ff16509446ade810": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\28\\966542d08392f48c339f40ff16509446ade810",
+    "mime_type": "application/octet-stream",
+    "size": 559,
+    "created": "2024-12-11T22:30:32.617919",
+    "modified": "2024-12-11T22:30:32.617919",
+    "hash": "bcc3a75f06c6d306bb6b6c674f2da3a40bb7a1a5314b45893599168369ea1b19",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\29\\1066688f1db5830e5d90903d5c55d3d7fbe02d": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\29\\1066688f1db5830e5d90903d5c55d3d7fbe02d",
+    "mime_type": "application/octet-stream",
+    "size": 167,
+    "created": "2025-01-06T10:43:40.043175",
+    "modified": "2025-01-06T10:43:40.043175",
+    "hash": "3ceefa51bc1bd32a88ba9668bf188f8b907c4b791ba01861bf689ddb14d8a81d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\29\\507a8298035d706dc85811a9b8b413d77aa6e1": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\29\\507a8298035d706dc85811a9b8b413d77aa6e1",
+    "mime_type": "application/octet-stream",
+    "size": 4404,
+    "created": "2025-02-07T02:59:42.010688",
+    "modified": "2025-02-07T02:59:42.010688",
+    "hash": "93f43e3c7ed7b2570c124ef31b37fa11b55630bc95e34f02cc45815cef959c14",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\29\\c67591e57d7b33f7e7892c0dd7eca2bed16e25": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\29\\c67591e57d7b33f7e7892c0dd7eca2bed16e25",
+    "mime_type": "application/octet-stream",
+    "size": 309,
+    "created": "2024-12-08T21:50:23.586484",
+    "modified": "2024-12-08T21:50:23.586484",
+    "hash": "4915c076e3b41536a6923436bd071b7cf31586adf0b2640c0fd2bad9521d143c",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\2a\\df0fd7cf841611aedf9fdebc553f6fcbe658b1": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\2a\\df0fd7cf841611aedf9fdebc553f6fcbe658b1",
+    "mime_type": "application/octet-stream",
+    "size": 179,
+    "created": "2024-12-16T22:07:48.582322",
+    "modified": "2024-12-16T22:07:48.583327",
+    "hash": "c447ed8ba75afc82ad5a1b5750a190e83dd664b15eeec8be6c41d119a265ecec",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\2b\\03b2e931ae3bacf8933e127889a5999e9a9aa3": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\2b\\03b2e931ae3bacf8933e127889a5999e9a9aa3",
+    "mime_type": "application/octet-stream",
+    "size": 308,
+    "created": "2024-12-20T23:52:30.630015",
+    "modified": "2024-12-20T23:52:30.631015",
+    "hash": "93005d5b32f1562ec682224bcdae372dc706b60f5ec70bc84009389e627e3ebe",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\2b\\1880b1ca2b2ad9e4d5f9d7491df6b5bd04d566": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\2b\\1880b1ca2b2ad9e4d5f9d7491df6b5bd04d566",
+    "mime_type": "application/octet-stream",
+    "size": 310,
+    "created": "2024-12-04T14:31:41.651622",
+    "modified": "2024-12-04T14:31:41.651622",
+    "hash": "02b572f5fba4df8c28c983474b28cf01b473f69b88fafbebf97c9e479c449e69",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\2b\\2c8c174407a50761f7415d83bafbb22222b764": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\2b\\2c8c174407a50761f7415d83bafbb22222b764",
+    "mime_type": "application/octet-stream",
+    "size": 186,
+    "created": "2024-12-24T22:02:36.484233",
+    "modified": "2024-12-24T22:02:36.484735",
+    "hash": "c7c87afd094c99771de469e13385c4ce5ef47fc631fcb8ddc9d96b749194162a",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\2d\\41567f3a2dd88add4ce637f146bd94285d5de8": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\2d\\41567f3a2dd88add4ce637f146bd94285d5de8",
+    "mime_type": "application/octet-stream",
+    "size": 4480,
+    "created": "2024-12-04T14:31:20.157310",
+    "modified": "2024-12-04T14:31:20.158307",
+    "hash": "2e147aec545185d148d5b4a38b83d485bd1fb69fffa3c5cda0c4be92b73e6c35",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\2e\\46217b69841b1bbf6c2a602128fbba4437f5db": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\2e\\46217b69841b1bbf6c2a602128fbba4437f5db",
+    "mime_type": "application/octet-stream",
+    "size": 2386,
+    "created": "2024-12-05T22:43:36.507728",
+    "modified": "2024-12-05T22:43:36.507728",
+    "hash": "a969ee071dcd48fd93c50722a1a3c97930acce23f16c395c502ea65082dc55e8",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\2e\\92eb67e55a773d7df6622d1219dce2c048b10d": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\2e\\92eb67e55a773d7df6622d1219dce2c048b10d",
+    "mime_type": "application/octet-stream",
+    "size": 50,
+    "created": "2025-02-07T02:59:42.065654",
+    "modified": "2025-02-07T02:59:42.065654",
+    "hash": "d65519b392c0d875a32cc7352702392e0b3d7690b79c44cc38b5018162d810fb",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\2f\\fb4274a1a42e48d1b40001bbbaaf07c1697e64": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\2f\\fb4274a1a42e48d1b40001bbbaaf07c1697e64",
+    "mime_type": "application/octet-stream",
+    "size": 96,
+    "created": "2025-01-01T22:53:24.427099",
+    "modified": "2025-01-01T22:53:24.427599",
+    "hash": "5056e9609b9a3366afe5ece579301266e04e9e8233ffb96a3040fcae195aa351",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\30\\2d2daaedb1f845c9a8b23eafee185e93b0eaae": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\30\\2d2daaedb1f845c9a8b23eafee185e93b0eaae",
+    "mime_type": "application/octet-stream",
+    "size": 166,
+    "created": "2024-12-05T22:43:55.263426",
+    "modified": "2024-12-05T22:43:55.263426",
+    "hash": "17d692d6f5945bbded13ea094b4326f3fb04066589fb2102286d9713c19f35b3",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\30\\f82350e2d697e1cd6fa6aaed85a9d830dcf71a": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\30\\f82350e2d697e1cd6fa6aaed85a9d830dcf71a",
+    "mime_type": "application/octet-stream",
+    "size": 221,
+    "created": "2024-12-14T22:41:31.976960",
+    "modified": "2024-12-14T22:41:31.977460",
+    "hash": "43ca10f63ce797983862d2bf1733c6e86cfda278d7068fb7e3e6c4af7943ea24",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\33\\cf37b91aee874c6b51f0b854d6e4cf447fbfb7": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\33\\cf37b91aee874c6b51f0b854d6e4cf447fbfb7",
+    "mime_type": "application/octet-stream",
+    "size": 4666,
+    "created": "2024-12-28T23:00:10.338260",
+    "modified": "2025-01-01T22:53:02.866156",
+    "hash": "e88f3f51086e12043099488c8e3b2ffb03f5da8edb1084e00e814e876597c40c",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\36\\3fac8e67d8b878f6f7bfb137579f48c551e969": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\36\\3fac8e67d8b878f6f7bfb137579f48c551e969",
+    "mime_type": "application/octet-stream",
+    "size": 3893,
+    "created": "2024-12-20T23:51:51.276859",
+    "modified": "2024-12-20T23:51:51.277885",
+    "hash": "bc1660ffe4ee7a1d2b08634684862a8c771a8b7cdf4c5d80febdd48ba4f489c2",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\36\\6cd980cdd6ce26ae7c317245a7b5839feda639": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\36\\6cd980cdd6ce26ae7c317245a7b5839feda639",
+    "mime_type": "application/octet-stream",
+    "size": 4674,
+    "created": "2025-02-06T17:59:51.828819",
+    "modified": "2025-02-06T17:59:51.828819",
+    "hash": "65e8f4494f57804c3c03d806968a918bef324f5ce700bba87b6478a633e008bd",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\3a\\e916dc047d3e0c0e5d0d086956ae72b554d46c": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\3a\\e916dc047d3e0c0e5d0d086956ae72b554d46c",
+    "mime_type": "application/octet-stream",
+    "size": 93,
+    "created": "2025-02-13T21:24:52.776825",
+    "modified": "2025-02-13T21:24:52.776825",
+    "hash": "f90069e42f549e856a582999cff6278fcf7f871fa0be78787c1aec2aac3d0f88",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\3b\\110ef0341d83a87d3ee543af13472b79520150": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\3b\\110ef0341d83a87d3ee543af13472b79520150",
+    "mime_type": "application/octet-stream",
+    "size": 3424,
+    "created": "2024-12-07T23:03:30.952935",
+    "modified": "2024-12-07T23:03:30.952935",
+    "hash": "5aab9d395513dbfb3eb97743f65f4bcfcb74dfce1e8ddc4a2ed35619f657c83c",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\3d\\2e22d2446c4d1a9bc688f4011b7ffd35886b0f": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\3d\\2e22d2446c4d1a9bc688f4011b7ffd35886b0f",
+    "mime_type": "application/octet-stream",
+    "size": 367,
+    "created": "2024-12-25T21:37:19.990127",
+    "modified": "2024-12-25T21:37:19.990127",
+    "hash": "cb3321c468003e127dda56caba3551713e08f958d86b2e5590206e31bccfa1dd",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\3e\\aed93d15be7c5d5b9257edb07e1937994333c6": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\3e\\aed93d15be7c5d5b9257edb07e1937994333c6",
+    "mime_type": "application/octet-stream",
+    "size": 2971,
+    "created": "2024-12-30T21:29:09.651123",
+    "modified": "2025-01-01T22:53:02.871166",
+    "hash": "109a06cb38e083b5af39574dfaf6eb00a5a8d72b6226f35fad0bf0d3da6806e6",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\3e\\fb84f415bbe9dd8b4c1d1b9925d71b51375301": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\3e\\fb84f415bbe9dd8b4c1d1b9925d71b51375301",
+    "mime_type": "application/octet-stream",
+    "size": 168,
+    "created": "2024-12-27T22:44:14.885157",
+    "modified": "2024-12-27T22:44:14.885157",
+    "hash": "f4096d2b0574143e77a2ad46fc737556da49971875edc0f3d6b8311fd1ec749f",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\42\\c378f066b9851ea62eb6180243dee2193b7291": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\42\\c378f066b9851ea62eb6180243dee2193b7291",
+    "mime_type": "application/octet-stream",
+    "size": 2389,
+    "created": "2024-12-25T21:37:06.104144",
+    "modified": "2024-12-25T21:37:06.104942",
+    "hash": "ae70b9c745ebcaa492c088567bdfb410a01bf460bd6532568c1777d65007ecc0",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\43\\38cd6824c512cfd64448ee6062b137adc0624e": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\43\\38cd6824c512cfd64448ee6062b137adc0624e",
+    "mime_type": "application/octet-stream",
+    "size": 191,
+    "created": "2024-12-11T22:30:32.639459",
+    "modified": "2024-12-11T22:30:32.639959",
+    "hash": "225fe4a04a26cbe3447af34dd2f88497ece121556175a191db4bbf49f026a91d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\48\\10898996765ce18f66be60ad511f9dbce9e52c": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\48\\10898996765ce18f66be60ad511f9dbce9e52c",
+    "mime_type": "application/octet-stream",
+    "size": 309,
+    "created": "2024-12-15T21:31:20.637741",
+    "modified": "2024-12-15T21:31:20.637741",
+    "hash": "ae097bae6acccb04f49c6df3788bd662672bd5dc740c41db0a62004ea79b35a9",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\48\\5e15d0490d439103565368b19cb353577e2ffc": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\48\\5e15d0490d439103565368b19cb353577e2ffc",
+    "mime_type": "application/octet-stream",
+    "size": 382,
+    "created": "2025-02-08T19:04:30.675251",
+    "modified": "2025-02-08T19:04:30.675251",
+    "hash": "e846121de17317aaf5d8fdf5fd5d1144067759adf3ad642bd86f9d5e11cea4c6",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\48\\e059cb0e718e3aa93e3bf5dc32071c42765243": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\48\\e059cb0e718e3aa93e3bf5dc32071c42765243",
+    "mime_type": "application/octet-stream",
+    "size": 1642,
+    "created": "2024-12-11T22:29:46.099159",
+    "modified": "2024-12-11T22:29:46.099660",
+    "hash": "79f93a1ff4651da7a7415e565ca14058cb24a6a808fcf8277b01d72e096d63c9",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\49\\425849f43f0adeeaee54ec736e7553eef8c3af": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\49\\425849f43f0adeeaee54ec736e7553eef8c3af",
+    "mime_type": "application/octet-stream",
+    "size": 337,
+    "created": "2024-12-30T21:30:06.702948",
+    "modified": "2024-12-30T21:30:06.703449",
+    "hash": "cf631a74dd2b5b80b4e74cd219e319c4d2bfbab71da1c7d622e3584ade707ed0",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\4a\\c548fa2ddec94e892f6988fd2198fe618ad684": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\4a\\c548fa2ddec94e892f6988fd2198fe618ad684",
+    "mime_type": "application/octet-stream",
+    "size": 3353,
+    "created": "2024-12-30T21:29:09.646111",
+    "modified": "2025-01-01T22:53:02.866156",
+    "hash": "46ed3b75a09445f30a6ecf6cc32296c9b74c9c6534a5264d3e13ba7ba5ba01f3",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\4d\\4f940f60d97359a79227a229152147ab18d69f": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\4d\\4f940f60d97359a79227a229152147ab18d69f",
+    "mime_type": "application/octet-stream",
+    "size": 6676,
+    "created": "2024-12-31T22:16:03.839523",
+    "modified": "2024-12-31T22:16:03.839523",
+    "hash": "7538368ee0e41033d9b7200dabcc300a78f03254dd36847ed878f459ae440f55",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\4f\\29550f6001b905b2db04bfc99eb11d5bd33052": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\4f\\29550f6001b905b2db04bfc99eb11d5bd33052",
+    "mime_type": "application/octet-stream",
+    "size": 1839,
+    "created": "2024-12-11T22:29:46.118188",
+    "modified": "2024-12-11T22:29:46.118689",
+    "hash": "122cb7ddf8dd04054653aa4bcc7f8ab4cac49f1baaee99a34b9125965b85437c",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\4f\\642bad07f78e72c5aea5e7abb4c1bc994d9379": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\4f\\642bad07f78e72c5aea5e7abb4c1bc994d9379",
+    "mime_type": "application/octet-stream",
+    "size": 1971,
+    "created": "2024-12-16T22:07:29.274696",
+    "modified": "2025-01-01T22:53:02.869156",
+    "hash": "18062fc7316620245abc126954eb9b259de9ce073d35a77f3ebd59fa1cc749aa",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\4f\\673c3c19fcb64e091093ce3501b96aae2d2a11": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\4f\\673c3c19fcb64e091093ce3501b96aae2d2a11",
+    "mime_type": "application/octet-stream",
+    "size": 11694,
+    "created": "2025-01-04T19:52:49.204034",
+    "modified": "2025-01-04T19:52:49.204034",
+    "hash": "d0266d50943c92a2ce0e36f4277519a63c127c7487e19d7ab1de182420dc8653",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\51\\a8b441cb28e235ffa4a74b35edb8aa9a00f063": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\51\\a8b441cb28e235ffa4a74b35edb8aa9a00f063",
+    "mime_type": "application/octet-stream",
+    "size": 2922,
+    "created": "2024-12-11T22:29:46.086642",
+    "modified": "2025-01-01T22:53:02.868155",
+    "hash": "0dbf5b1f1dc3722a9d55f015ccefb12f2a3d22a041d26f2cef4890132191e3f3",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\53\\04a8c7fca79d6190f241e8138d200ca910cc65": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\53\\04a8c7fca79d6190f241e8138d200ca910cc65",
+    "mime_type": "application/octet-stream",
+    "size": 1182,
+    "created": "2024-12-26T23:29:00.218471",
+    "modified": "2024-12-26T23:29:00.222472",
+    "hash": "93c9704d64eacbae800362068fc7bed15e7900ac8631d6b6c85902bf41c15ca8",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\53\\9ad39a740c56c1f605bac6a3a4a9b2acb2467d": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\53\\9ad39a740c56c1f605bac6a3a4a9b2acb2467d",
+    "mime_type": "application/octet-stream",
+    "size": 596,
+    "created": "2024-12-25T21:37:06.106167",
+    "modified": "2024-12-25T21:37:06.106167",
+    "hash": "8f3e3f22924236d557f48bc83bf23e5b796eacda0e849a1bf9ed83a4b7eeeade",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\54\\4341c9d4f7d86c0eee001ea82489128962c08a": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\54\\4341c9d4f7d86c0eee001ea82489128962c08a",
+    "mime_type": "application/octet-stream",
+    "size": 402,
+    "created": "2025-02-11T00:34:40.972573",
+    "modified": "2025-02-11T00:34:40.972573",
+    "hash": "28eea3dfee6aa1254c82c4e8f518e78841e6d16bb178e7f6852580a7add996a4",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\54\\8687758a03d0188b8fec98b0aabd63530dcaef": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\54\\8687758a03d0188b8fec98b0aabd63530dcaef",
+    "mime_type": "application/octet-stream",
+    "size": 196,
+    "created": "2024-12-21T22:51:58.655876",
+    "modified": "2024-12-21T22:51:58.655876",
+    "hash": "f330396f54562e8f81cb19e8e3d2ae471c1dfe2845008aeb169d0e996399a724",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\58\\cf45c0acceab34c09bfec4ea73e9fc277cdb8f": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\58\\cf45c0acceab34c09bfec4ea73e9fc277cdb8f",
+    "mime_type": "application/octet-stream",
+    "size": 7161,
+    "created": "2024-12-29T21:38:05.346465",
+    "modified": "2024-12-29T21:39:03.533680",
+    "hash": "41b5da09c5296a004b0d7c498211c6f64cb7832fb32966392930e9de29b6843b",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\59\\8ec7ff44e6085392f617d22f8e1fcf4df9d120": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\59\\8ec7ff44e6085392f617d22f8e1fcf4df9d120",
+    "mime_type": "application/octet-stream",
+    "size": 870,
+    "created": "2025-02-06T17:59:51.841185",
+    "modified": "2025-02-06T17:59:51.841704",
+    "hash": "283dddcfae90fb5a0283804a640f2c1d75a9f0cce378245f656396f4facb4e70",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\5a\\3e5631dd1d81397bf3444d2c96bbdd385f3864": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\5a\\3e5631dd1d81397bf3444d2c96bbdd385f3864",
+    "mime_type": "application/octet-stream",
+    "size": 163,
+    "created": "2024-12-26T23:30:58.597879",
+    "modified": "2024-12-26T23:30:58.597879",
+    "hash": "dc99a2e4df5c69922ae8cac453068f0d3d7cfa1c3dbd8faae401f4f70a6a80d2",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\5a\\d65a43b00ba2b6c034548178fa2c8cb3adf573": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\5a\\d65a43b00ba2b6c034548178fa2c8cb3adf573",
+    "mime_type": "application/octet-stream",
+    "size": 1653,
+    "created": "2024-12-05T22:43:36.503729",
+    "modified": "2024-12-05T22:43:36.503729",
+    "hash": "8d8baf9410c3fb05b323b4b9c0537da25523cfd9c9d458d7f6692d9b6fd1eb17",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\5a\\d8b93de5ed78424a5c767c86103fd534d6b483": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\5a\\d8b93de5ed78424a5c767c86103fd534d6b483",
+    "mime_type": "application/octet-stream",
+    "size": 467,
+    "created": "2025-01-06T10:43:40.031662",
+    "modified": "2025-01-06T10:43:40.031662",
+    "hash": "4a05ad62e05c7bc0adfa3933439320835619060bbe43820d16bc3e2daf3e0f5c",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\5c\\a627cc24f50c9132141c9a94726a9457a812e3": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\5c\\a627cc24f50c9132141c9a94726a9457a812e3",
+    "mime_type": "application/octet-stream",
+    "size": 197,
+    "created": "2024-12-20T23:52:30.647086",
+    "modified": "2024-12-20T23:52:30.647086",
+    "hash": "77b7d0264965aa1d6ac048f0f8db6d5c5803e8d2679f9b880c81a780ec677288",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\5d\\146a73b9084885d64126e291f8ad4d7b6ef798": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\5d\\146a73b9084885d64126e291f8ad4d7b6ef798",
+    "mime_type": "application/octet-stream",
+    "size": 797,
+    "created": "2025-01-04T21:16:56.124807",
+    "modified": "2025-01-04T21:16:56.126311",
+    "hash": "cf42046d76fe0e5208fd928e9ddacdb911d748f30573a56942c35475d52afc86",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\5d\\5865d81e10eb5d26bf8f62380c31cce50df638": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\5d\\5865d81e10eb5d26bf8f62380c31cce50df638",
+    "mime_type": "application/octet-stream",
+    "size": 1225,
+    "created": "2025-01-06T10:43:21.912903",
+    "modified": "2025-01-06T10:43:21.913908",
+    "hash": "c4f626325ecaada9ce9b256e51957273117b4f3e8adc924b9b8bdbbf820a26b1",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\5d\\737a00da4bc88eb2cf1ac77cdd59ad025c041c": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\5d\\737a00da4bc88eb2cf1ac77cdd59ad025c041c",
+    "mime_type": "application/octet-stream",
+    "size": 1399,
+    "created": "2024-12-30T21:29:09.648610",
+    "modified": "2025-01-01T22:53:02.871166",
+    "hash": "c624139db8c273bbcff57d6f00d688a0cf2936cd8dcceb00e5e77fb0ee67f49e",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\5d\\ec95f76f8a0689198484f7510004ada632cf47": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\5d\\ec95f76f8a0689198484f7510004ada632cf47",
+    "mime_type": "application/octet-stream",
+    "size": 309,
+    "created": "2024-12-09T22:51:12.064260",
+    "modified": "2024-12-09T22:51:12.064759",
+    "hash": "a29054a3b92a0771201970ebbbe96ce3e0915d2681a3418b7ae1b0188c33eed6",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\5e\\e6a114dcad45f2ce3cc8d0a8b7e5ca87ac5198": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\5e\\e6a114dcad45f2ce3cc8d0a8b7e5ca87ac5198",
+    "mime_type": "application/octet-stream",
+    "size": 308,
+    "created": "2024-12-19T18:57:05.711253",
+    "modified": "2024-12-19T18:57:05.711253",
+    "hash": "43090dc5c1fb28e6c4e5b9046aa7d74e80f98efc7ab5ec3973e1e7933b83a83d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\5e\\f47592d864daa40fdd6a2537ebd7ba0a3ee1ee": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\5e\\f47592d864daa40fdd6a2537ebd7ba0a3ee1ee",
+    "mime_type": "application/octet-stream",
+    "size": 171,
+    "created": "2024-12-23T20:33:15.185611",
+    "modified": "2024-12-23T20:33:15.185747",
+    "hash": "a7d847ad02056833476840e7ea089b09b5ca9cb9424f3c2d48dd1117865965dc",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\5f\\bb8a10534ea08a6f5da1af69f09fdb5f7efd80": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\5f\\bb8a10534ea08a6f5da1af69f09fdb5f7efd80",
+    "mime_type": "application/octet-stream",
+    "size": 342,
+    "created": "2024-12-10T21:33:22.617710",
+    "modified": "2024-12-10T21:33:22.617710",
+    "hash": "2edb8842e30a013961d71d9ae5813c6ccb7a5a0013bd15cc67fd055979dcd03e",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\60\\5f1455d9628f4898555ab25aa195c1b4c2829e": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\60\\5f1455d9628f4898555ab25aa195c1b4c2829e",
+    "mime_type": "application/octet-stream",
+    "size": 1064,
+    "created": "2024-12-10T21:32:46.242453",
+    "modified": "2024-12-10T21:32:46.242453",
+    "hash": "8dbd07386a6ddbde01923fe92d502e60d96d17149b533ced28aeb6c5abd031f2",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\61\\489e1da004453fe89e86b2cba0f983e21052cc": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\61\\489e1da004453fe89e86b2cba0f983e21052cc",
+    "mime_type": "application/octet-stream",
+    "size": 625,
+    "created": "2024-12-15T21:31:20.636230",
+    "modified": "2024-12-15T21:31:20.636230",
+    "hash": "41759bd6f834cc217d26ed9d10bf5b2d2b0d99a71d8cbed8ea1fddbbf42e7bc7",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\62\\001acc1513efe37a3b126db357bc9a836efc65": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\62\\001acc1513efe37a3b126db357bc9a836efc65",
+    "mime_type": "application/octet-stream",
+    "size": 615,
+    "created": "2024-12-21T22:51:58.639808",
+    "modified": "2024-12-21T22:51:58.640853",
+    "hash": "79636de652b60f385e033d7f1e0d9ac4312bc2d041af3ce6f8b1f5db6ca3cea5",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\65\\0d9ce568b16effacb8c97675ec58bc3c5bbfc1": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\65\\0d9ce568b16effacb8c97675ec58bc3c5bbfc1",
+    "mime_type": "application/octet-stream",
+    "size": 354,
+    "created": "2024-12-08T21:50:23.595547",
+    "modified": "2024-12-08T21:50:23.595547",
+    "hash": "20a2f57a7550b648f26b2074ed2ab79d84bcd34ce3b8fc4e07bb479a26406be2",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\65\\2fe86f4fafa67aa6add7b48a6289b5d5bc7715": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\65\\2fe86f4fafa67aa6add7b48a6289b5d5bc7715",
+    "mime_type": "application/octet-stream",
+    "size": 367,
+    "created": "2025-02-08T19:04:30.673353",
+    "modified": "2025-02-08T19:04:30.673743",
+    "hash": "66cbaf3cd5b5506d021c976f216e29037ebe805dcf1970b0aa78c43884ac420f",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\65\\d0c84b12341bd87b19b74d6a5ec867ad007820": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\65\\d0c84b12341bd87b19b74d6a5ec867ad007820",
+    "mime_type": "application/octet-stream",
+    "size": 5459,
+    "created": "2024-12-27T22:44:06.972033",
+    "modified": "2024-12-28T23:01:48.455788",
+    "hash": "89b71cf69a18973afec4b3bf41fd25180938897caa2f20a9b7334540008f4ebb",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\66\\93015aba95cce41278b1594c07a5f51f5863d8": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\66\\93015aba95cce41278b1594c07a5f51f5863d8",
+    "mime_type": "application/octet-stream",
+    "size": 467,
+    "created": "2025-01-04T21:16:56.129322",
+    "modified": "2025-01-04T21:16:56.129322",
+    "hash": "15ebc986a8033989ba07af64898eb6e4e8504e59ea7336f0dbea81520b0ccdff",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\69\\f524e799a8b56183df7c60286ffa6fb5b031fb": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\69\\f524e799a8b56183df7c60286ffa6fb5b031fb",
+    "mime_type": "application/octet-stream",
+    "size": 308,
+    "created": "2024-12-07T23:04:19.715367",
+    "modified": "2024-12-07T23:04:19.715367",
+    "hash": "6cc5b593386c8dfe319339dac8709a572c5dc39f78fab780b77925a18cc2b331",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\6a\\e6b87f9c95431f93211deddfaf4f133f67327b": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\6a\\e6b87f9c95431f93211deddfaf4f133f67327b",
+    "mime_type": "application/octet-stream",
+    "size": 177,
+    "created": "2024-12-22T23:39:00.792923",
+    "modified": "2024-12-22T23:39:00.792923",
+    "hash": "461ae0c2ffb4282b7a9478a4c797dbe525c8ac28facfcaf48bd2841e2649ad03",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\6a\\ef18bf0d813b51460bc5b3c7bdc17dfd5818a2": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\6a\\ef18bf0d813b51460bc5b3c7bdc17dfd5818a2",
+    "mime_type": "application/octet-stream",
+    "size": 195,
+    "created": "2025-02-11T00:34:40.992537",
+    "modified": "2025-02-11T00:34:40.992537",
+    "hash": "d1e1cb26fe782de5ddc0bdcc9b99ce3a85e2c3f92af450ee6a0381a8046f1bfc",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\6c\\022bf92a3dec4b5343b8ba860b32e0221c1831": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\6c\\022bf92a3dec4b5343b8ba860b32e0221c1831",
+    "mime_type": "application/octet-stream",
+    "size": 581,
+    "created": "2024-12-19T18:57:05.708743",
+    "modified": "2024-12-19T18:57:05.709243",
+    "hash": "7fa6e9573c1e0c446304ebcf41ba1ffb856fa9adfb46557470094b4a775fb345",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\6e\\44ec827b64dfc2c69cd998afad2f2ffabeedf7": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\6e\\44ec827b64dfc2c69cd998afad2f2ffabeedf7",
+    "mime_type": "application/octet-stream",
+    "size": 4406,
+    "created": "2024-12-12T23:45:42.007993",
+    "modified": "2024-12-12T23:45:42.008995",
+    "hash": "0b538bc6e00122d63f3bde8150e3e022a9ef823b9d747a81dcf7384d0c8ce526",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\6f\\c5544567a8b02b60697146c73e2dc9fe863746": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\6f\\c5544567a8b02b60697146c73e2dc9fe863746",
+    "mime_type": "application/octet-stream",
+    "size": 91,
+    "created": "2025-02-14T19:16:17.184068",
+    "modified": "2025-02-14T19:16:17.184068",
+    "hash": "f7bc17867e1b5a86755a59c245409360fcd6c47e4b3278adcdd6c308335e299d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\70\\db0eac83075b934f2505bab9aaa07e96db9005": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\70\\db0eac83075b934f2505bab9aaa07e96db9005",
+    "mime_type": "application/octet-stream",
+    "size": 49,
+    "created": "2025-02-07T02:56:01.912760",
+    "modified": "2025-02-07T02:56:01.912760",
+    "hash": "1dc038e0f0b5e48ca0d34020bc2635b146e7163e3707c49d795e904ab6e1c26d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\73\\20fea16969c50b5f2515bf3801720181f13c0d": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\73\\20fea16969c50b5f2515bf3801720181f13c0d",
+    "mime_type": "application/octet-stream",
+    "size": 467,
+    "created": "2025-01-12T00:02:37.303439",
+    "modified": "2025-01-12T00:02:37.303439",
+    "hash": "08c61eda71336c089113f9fdf583e34b2bfff02234a29dea307d4f15a3d157b6",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\73\\6e637d564edd7a01e0cf757ff8db978ad00804": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\73\\6e637d564edd7a01e0cf757ff8db978ad00804",
+    "mime_type": "application/octet-stream",
+    "size": 194,
+    "created": "2024-12-10T21:33:22.641856",
+    "modified": "2024-12-10T21:33:22.641856",
+    "hash": "6cb25d8eae201aea705701296a791c4757eeea6876a6688a199074af54f400a2",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\73\\f2e2fbaf8e273cfb339ca9ccf796067adcfa1b": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\73\\f2e2fbaf8e273cfb339ca9ccf796067adcfa1b",
+    "mime_type": "application/octet-stream",
+    "size": 310,
+    "created": "2024-12-17T02:40:27.184486",
+    "modified": "2024-12-17T02:40:27.184486",
+    "hash": "f1c1c3de6b17fee51d37a0099ee8431ce1a0baefe3ef311d0dc55bb42fbb5a7d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\74\\82ac3d7873ada843516d326d559b3cf9e9fb5f": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\74\\82ac3d7873ada843516d326d559b3cf9e9fb5f",
+    "mime_type": "application/octet-stream",
+    "size": 2285,
+    "created": "2024-12-23T20:29:26.167686",
+    "modified": "2024-12-23T20:29:26.167686",
+    "hash": "0a0745b2e6ca5cb2275f75a372e47df6220740cbb27ae97d050aec6867f00b59",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\75\\f125af341b9ab53ddf39eb78eee318f8da794b": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\75\\f125af341b9ab53ddf39eb78eee318f8da794b",
+    "mime_type": "application/octet-stream",
+    "size": 849,
+    "created": "2024-12-04T01:55:16.178761",
+    "modified": "2024-12-04T01:55:16.178761",
+    "hash": "d207e86af07e5e8d2db1c8b63539b5b8c69dc8aa87cecdd6f964b06ace5cb5e4",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\76\\61c99aef6714673a2534eb2afd334ac3f7b5fa": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\76\\61c99aef6714673a2534eb2afd334ac3f7b5fa",
+    "mime_type": "application/octet-stream",
+    "size": 4463,
+    "created": "2024-12-04T13:43:19.055747",
+    "modified": "2025-01-01T22:53:02.849126",
+    "hash": "b7bb4ccf35b1d5b78b702b71c62e787048087fbfb78afd37ae605725a6bec376",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\76\\6eff79f514f96d7df25ae20d827fa36793e59f": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\76\\6eff79f514f96d7df25ae20d827fa36793e59f",
+    "mime_type": "application/octet-stream",
+    "size": 7124,
+    "created": "2024-12-17T02:39:25.966415",
+    "modified": "2024-12-17T02:39:25.968245",
+    "hash": "9edcbef1ba21b4d28ac75fd0cf645216d3991785d2896d6af1f93b39a7ff316b",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\76\\a90f6b377637c867c14dcfde3e530441cd82f6": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\76\\a90f6b377637c867c14dcfde3e530441cd82f6",
+    "mime_type": "application/octet-stream",
+    "size": 123,
+    "created": "2024-12-04T13:44:04.228631",
+    "modified": "2024-12-04T13:44:04.228631",
+    "hash": "1c70c97646b43b59a37ebc683bd57c65f5521acb17b9885de5d7ffabc8477560",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\77\\de2c3ad54c1d7b90182a2c38856c89c90ffa86": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\77\\de2c3ad54c1d7b90182a2c38856c89c90ffa86",
+    "mime_type": "application/octet-stream",
+    "size": 1369,
+    "created": "2024-12-04T01:54:26.565064",
+    "modified": "2024-12-04T01:54:26.565064",
+    "hash": "87368ed060e72556209e32c204922962678c0c7f50f43e7d69c78c51771257e6",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\78\\0c78275ee9ba640fdf26da35ec7baba9ae6421": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\78\\0c78275ee9ba640fdf26da35ec7baba9ae6421",
+    "mime_type": "application/octet-stream",
+    "size": 2750,
+    "created": "2024-12-19T18:56:36.225783",
+    "modified": "2024-12-19T18:56:36.226284",
+    "hash": "c356a4a2b872c0ef7a5cad481b3f368bcfe9b623461047e52eb9a52195ecba50",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\78\\1bc1f772799192d6ec217431cdb082e5d1c12e": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\78\\1bc1f772799192d6ec217431cdb082e5d1c12e",
+    "mime_type": "application/octet-stream",
+    "size": 352,
+    "created": "2024-12-06T02:38:06.382565",
+    "modified": "2024-12-06T02:38:06.382565",
+    "hash": "7e75fc2c4fb0b09fe7120f6ed2b21ddbb9c91d2c8cda0489b041e4b9428d763f",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\78\\c33652c7bbb3c804638423deccd32731ee76a9": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\78\\c33652c7bbb3c804638423deccd32731ee76a9",
+    "mime_type": "application/octet-stream",
+    "size": 3689,
+    "created": "2024-12-04T13:43:19.081769",
+    "modified": "2024-12-04T13:43:19.082769",
+    "hash": "fd25dec6e1c8085944da2b4df25c87c586200bf7d8922cb7367576d5434b01dd",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\79\\1f1442766dbabc724ece17dd07548d46a9ae35": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\79\\1f1442766dbabc724ece17dd07548d46a9ae35",
+    "mime_type": "application/octet-stream",
+    "size": 219,
+    "created": "2024-12-12T23:45:57.533427",
+    "modified": "2024-12-12T23:45:57.533427",
+    "hash": "728c0b6b05b38f9baf30c539783152f93c97efd111eb2e7c74ae1b74f2f9dcc7",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\7b\\a3b0f77ab646784e7f66358e118c73bf8df339": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\7b\\a3b0f77ab646784e7f66358e118c73bf8df339",
+    "mime_type": "application/octet-stream",
+    "size": 1729,
+    "created": "2024-12-24T22:02:06.000462",
+    "modified": "2024-12-24T22:02:06.000462",
+    "hash": "c11bcbde18e3ad0c805715c28386fd4ea3ada3adfdff4e14dff33c80473559f6",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\7c\\5ba5852d290ae6aed8d57782dae04e60fde188": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\7c\\5ba5852d290ae6aed8d57782dae04e60fde188",
+    "mime_type": "application/octet-stream",
+    "size": 711,
+    "created": "2024-12-28T23:01:48.574094",
+    "modified": "2024-12-28T23:01:48.574594",
+    "hash": "63a47ac34a2af266215e68b3bbd8ce4384e3f36ba517fdac8f71f01adf8959c7",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\7c\\909b27403d07bb34e3fa80aa9a9ea402973696": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\7c\\909b27403d07bb34e3fa80aa9a9ea402973696",
+    "mime_type": "application/octet-stream",
+    "size": 2972,
+    "created": "2024-12-29T21:39:03.549201",
+    "modified": "2025-01-01T22:53:02.870665",
+    "hash": "5d9349ccd1a0d25735b307d3a4053df7ed0b16472f78a88d84ed817e979b77a8",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\7c\\b01d4eeea4e3bc291a41752c7fb66fa8275c92": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\7c\\b01d4eeea4e3bc291a41752c7fb66fa8275c92",
+    "mime_type": "application/octet-stream",
+    "size": 323,
+    "created": "2025-02-12T22:55:39.765653",
+    "modified": "2025-02-12T22:55:39.766463",
+    "hash": "1c9de35c61e02d7cf6efcad06516618c1a1c8639bf846db915466c6ca9781186",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\7d\\dd804157f623c802c4a415e59ca7849dc6c8ce": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\7d\\dd804157f623c802c4a415e59ca7849dc6c8ce",
+    "mime_type": "application/octet-stream",
+    "size": 558,
+    "created": "2024-12-12T23:45:57.538449",
+    "modified": "2024-12-12T23:45:57.539448",
+    "hash": "7dd342ba7443551de2de6ade9b196ec0fbf60384ff17019899d39f9f601f9ada",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\7e\\31b57b5502008c1e4c2d9a2f29d816991e8584": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\7e\\31b57b5502008c1e4c2d9a2f29d816991e8584",
+    "mime_type": "application/octet-stream",
+    "size": 1724,
+    "created": "2024-12-25T21:37:06.099111",
+    "modified": "2024-12-25T21:37:06.100138",
+    "hash": "903435112d0bc96e9f4295d98c2e588a18a958c8dc5305a00714ff150a004c29",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\7e\\de4827809c91bbe5b1e2f063025d00dcfe4671": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\7e\\de4827809c91bbe5b1e2f063025d00dcfe4671",
+    "mime_type": "application/octet-stream",
+    "size": 155,
+    "created": "2025-02-11T00:01:30.687584",
+    "modified": "2025-02-11T00:01:30.687584",
+    "hash": "bb3c85b70439a722128a624b44926887cabc1d60e6e7a935a73fa332e3fd9421",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\7f\\844b29ec9ebdf037734d2201e492b4e91b2079": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\7f\\844b29ec9ebdf037734d2201e492b4e91b2079",
+    "mime_type": "application/octet-stream",
+    "size": 382,
+    "created": "2025-02-14T19:16:17.185605",
+    "modified": "2025-02-14T19:16:17.186117",
+    "hash": "8f50b0e3f259a59935fcd18213966b2bd5e3ecfbb22565829b5b19697c989605",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\80\\189021c04e682fc10a2eef898916e79497cb7c": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\80\\189021c04e682fc10a2eef898916e79497cb7c",
+    "mime_type": "application/octet-stream",
+    "size": 9578,
+    "created": "2025-02-08T19:04:30.610692",
+    "modified": "2025-02-08T19:04:30.612270",
+    "hash": "254bccfbc3f58ea2c4f51276d608f9c22ed5427b45384409ada1ea994fb17776",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\80\\26c6da94abe225c32aa7506484e6d68c7b1796": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\80\\26c6da94abe225c32aa7506484e6d68c7b1796",
+    "mime_type": "application/octet-stream",
+    "size": 8057,
+    "created": "2024-12-30T21:29:09.644610",
+    "modified": "2025-01-01T22:53:02.868655",
+    "hash": "821c6157472084e29560a09afe6c0d37bf7012e81df4cba3916f9924978ce171",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\81\\e975de4899236a1cbbb0fb11c487cb952b3ccf": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\81\\e975de4899236a1cbbb0fb11c487cb952b3ccf",
+    "mime_type": "application/octet-stream",
+    "size": 4668,
+    "created": "2024-12-13T21:35:46.888884",
+    "modified": "2024-12-13T21:35:46.888884",
+    "hash": "3212e9ae029a602ba701a29f316b5b7a01e095d60f658e90ed8b28d759286f68",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\82\\8f22ed7c0d9760f77b856927ffb4fbecb69709": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\82\\8f22ed7c0d9760f77b856927ffb4fbecb69709",
+    "mime_type": "application/octet-stream",
+    "size": 1035,
+    "created": "2024-12-10T21:32:46.245477",
+    "modified": "2024-12-10T21:32:46.245477",
+    "hash": "c0ca5ebd3ef24f65defef85a17391be541e6aaaa3b2e0922618c10d68fcef30d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\83\\2d4eeddf521fad5d7490d7bcdce2b137ecf991": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\83\\2d4eeddf521fad5d7490d7bcdce2b137ecf991",
+    "mime_type": "application/octet-stream",
+    "size": 92,
+    "created": "2025-02-12T22:55:39.749773",
+    "modified": "2025-02-12T22:55:39.749773",
+    "hash": "5221f91bf28de7437f48a56ca99bf65a4a4659050bec292ae2cd1bd09d1bba8d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\84\\3f5fa81718b2dff4203b53bcfc55075014753e": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\84\\3f5fa81718b2dff4203b53bcfc55075014753e",
+    "mime_type": "application/octet-stream",
+    "size": 146,
+    "created": "2024-12-04T01:55:16.177138",
+    "modified": "2024-12-04T01:55:16.177138",
+    "hash": "ce9632368279c1eabd9a91fab242fa57e2a19a2d9550edb4b64b3dba323df6fe",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\84\\fe48e794cc0a85ff6411a44a9d98a626a2ccce": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\84\\fe48e794cc0a85ff6411a44a9d98a626a2ccce",
+    "mime_type": "application/octet-stream",
+    "size": 628,
+    "created": "2024-12-31T22:16:03.837522",
+    "modified": "2024-12-31T22:16:03.838023",
+    "hash": "a73e2c0f73312e041d6891ec6ff22ad9d7da71d8e88249dd37e5e753d53572eb",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\86\\ba086a05fbcfbfa8c35b1a9addfdc6a1239ba0": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\86\\ba086a05fbcfbfa8c35b1a9addfdc6a1239ba0",
+    "mime_type": "application/octet-stream",
+    "size": 1371,
+    "created": "2024-12-17T02:39:25.970250",
+    "modified": "2024-12-17T02:39:25.970250",
+    "hash": "4b8299fcfe319675b5a9f2836eded867a121c73cde68f4b9a2f2dc6afda4fd32",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\87\\2892f9331a2e7222200d0519c34e9a91394dfc": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\87\\2892f9331a2e7222200d0519c34e9a91394dfc",
+    "mime_type": "application/octet-stream",
+    "size": 309,
+    "created": "2024-12-23T20:33:15.171005",
+    "modified": "2024-12-23T20:33:15.171005",
+    "hash": "2606ac8bcb152e5fa49868c47acebef841843a2481ed670f38624290a96e7c48",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\87\\33a42d16a487361064be32d94b83151d9f1999": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\87\\33a42d16a487361064be32d94b83151d9f1999",
+    "mime_type": "application/octet-stream",
+    "size": 176,
+    "created": "2025-01-01T22:53:24.446142",
+    "modified": "2025-01-01T22:53:24.446142",
+    "hash": "99324fe7084d0c54bcf1434b82c0d21be7b889091801a932c14da7e881e3b1e0",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\88\\edc88ffcbcf78432a83797722333cdf06ec570": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\88\\edc88ffcbcf78432a83797722333cdf06ec570",
+    "mime_type": "application/octet-stream",
+    "size": 274,
+    "created": "2024-12-04T13:44:04.227625",
+    "modified": "2024-12-04T13:44:04.227625",
+    "hash": "3f125d1d69b297c98cb2d5c982ae7fa4600af2cd44ca1e974e495a3777a95ec8",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\89\\62dc4689323e5d0bde990ce8298786fe4d7b95": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\89\\62dc4689323e5d0bde990ce8298786fe4d7b95",
+    "mime_type": "application/octet-stream",
+    "size": 4676,
+    "created": "2024-12-14T22:40:31.548743",
+    "modified": "2025-02-11T00:34:16.587924",
+    "hash": "648c722a46d65acb6ef62799ddf0a49eaa5b4604106a8eb783cba1f1f0732fd0",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\89\\e134cf324c92e2fe8ff6bd513a3dd529f09bb9": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\89\\e134cf324c92e2fe8ff6bd513a3dd529f09bb9",
+    "mime_type": "application/octet-stream",
+    "size": 3075,
+    "created": "2024-12-28T23:01:48.460787",
+    "modified": "2025-01-01T22:53:02.867156",
+    "hash": "24fcac890e02f040d4d194946d2d54378878e1cf752aa27aa650e3b36ad29433",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\8e\\0dc497c8a0c918a64a63babfd9f32e1f970f62": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\8e\\0dc497c8a0c918a64a63babfd9f32e1f970f62",
+    "mime_type": "application/octet-stream",
+    "size": 204,
+    "created": "2024-12-06T02:52:18.230577",
+    "modified": "2024-12-06T02:52:18.230577",
+    "hash": "514a1fba35d756c999c2f0b3d3ebbc201491ead3fdfcfb65d1db33bbe7c4c812",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\8f\\70391263b57f35c1ef44a94d83ecbb6c842b54": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\8f\\70391263b57f35c1ef44a94d83ecbb6c842b54",
+    "mime_type": "application/octet-stream",
+    "size": 186,
+    "created": "2024-12-12T23:45:57.558478",
+    "modified": "2024-12-12T23:45:57.558478",
+    "hash": "b0e22f6caa6437d4f2c27d67577e1b52f6f47add7734d41bf1fe79b8c53bf95c",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\91\\601f320acdd29d0f39b939b8453b11c0e055b7": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\91\\601f320acdd29d0f39b939b8453b11c0e055b7",
+    "mime_type": "application/octet-stream",
+    "size": 9585,
+    "created": "2025-02-07T02:19:36.275873",
+    "modified": "2025-02-07T02:19:36.275873",
+    "hash": "94b9f8e26c3507b341dd428d70c56afb250fbb48375b5f62d6476a8139f0172d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\91\\9dc8bfe4052e74471c1529646e5c45ae5b5d5f": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\91\\9dc8bfe4052e74471c1529646e5c45ae5b5d5f",
+    "mime_type": "application/octet-stream",
+    "size": 382,
+    "created": "2025-02-07T02:59:42.065654",
+    "modified": "2025-02-07T02:59:42.065654",
+    "hash": "bc2298311b419583be3820580ef15abdafb95d1e5e83c6059a9347bf44583125",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\93\\255a59de9656ec5356b725ccdddf75a3d52148": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\93\\255a59de9656ec5356b725ccdddf75a3d52148",
+    "mime_type": "application/octet-stream",
+    "size": 1288,
+    "created": "2024-12-05T22:43:36.504728",
+    "modified": "2024-12-05T22:43:36.505728",
+    "hash": "00fdcd1785cb8e73f3621df721593302a351d3a09294e1a9094d6758a43c19aa",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\95\\b0e98b9347a18010e233841c81740752b451eb": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\95\\b0e98b9347a18010e233841c81740752b451eb",
+    "mime_type": "application/octet-stream",
+    "size": 2103,
+    "created": "2024-12-22T23:38:32.038126",
+    "modified": "2024-12-22T23:38:32.038126",
+    "hash": "ab74188ae69ee68ed6e2f00cf5416e05dd47cae5b94c99d7e9bba6e8e5ff396b",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\96\\753bdac02e366737170bd5cae1495220f2ae91": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\96\\753bdac02e366737170bd5cae1495220f2ae91",
+    "mime_type": "application/octet-stream",
+    "size": 200,
+    "created": "2025-01-04T21:16:56.127317",
+    "modified": "2025-01-04T21:16:56.127317",
+    "hash": "a72908855b2ec35816b7e3956d30a4462f8e765ff2ec3c4072a8ddcef6754ccc",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\97\\24144026098125fbdf51d5d2155236275e925e": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\97\\24144026098125fbdf51d5d2155236275e925e",
+    "mime_type": "application/octet-stream",
+    "size": 49,
+    "created": "2025-02-08T19:04:30.675251",
+    "modified": "2025-02-08T19:04:30.675251",
+    "hash": "e77e4384304f82a3248d151ab5c1b857c572b7df915e0fbd72de918caf0e3a50",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\97\\e75316ed7cbca920e51e7ee9ecfbc84ba5d75c": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\97\\e75316ed7cbca920e51e7ee9ecfbc84ba5d75c",
+    "mime_type": "application/octet-stream",
+    "size": 620,
+    "created": "2024-12-24T22:02:36.466700",
+    "modified": "2024-12-24T22:02:36.467200",
+    "hash": "a23b9bea87915ff62d8c6f613c601f6da92ca290fa6270e40e375bef17e243aa",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\9a\\0f43946201158f599c4ea0901181b55fbd99bc": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\9a\\0f43946201158f599c4ea0901181b55fbd99bc",
+    "mime_type": "application/octet-stream",
+    "size": 168,
+    "created": "2025-02-07T02:59:57.855538",
+    "modified": "2025-02-07T02:59:57.855538",
+    "hash": "fdd681838c14c5530c924f0653eb5ea12504ab812b2fda6125bd236e949b4e03",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\9a\\21ce07b68cdd4cdfbf37c0527aaae1cb1067a6": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\9a\\21ce07b68cdd4cdfbf37c0527aaae1cb1067a6",
+    "mime_type": "application/octet-stream",
+    "size": 696,
+    "created": "2025-02-12T22:52:49.259427",
+    "modified": "2025-02-12T22:52:49.259427",
+    "hash": "e6d42586a2a4ce2449beb8d63c4778ed118ccc0041c52d8d82e603d3ebf3bad3",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\9b\\1d6a22a4f61394c762bdd12df0f7ad54d44d99": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\9b\\1d6a22a4f61394c762bdd12df0f7ad54d44d99",
+    "mime_type": "application/octet-stream",
+    "size": 243,
+    "created": "2024-12-06T02:38:06.381055",
+    "modified": "2024-12-06T02:38:06.381055",
+    "hash": "37436422b4acf9ce107cb01ac6a768d98957eb244ad40ac3dbc203e17c3de778",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\9b\\c98987cdd2d5456da0139d4dc244eba9e9ca7a": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\9b\\c98987cdd2d5456da0139d4dc244eba9e9ca7a",
+    "mime_type": "application/octet-stream",
+    "size": 192,
+    "created": "2024-12-04T13:44:04.247660",
+    "modified": "2024-12-04T13:44:04.247660",
+    "hash": "526ab97d9c850d0e26f40735444e0897151e8e0a5caaf8c7629aecf094a33236",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\9e\\7d137030ba7ca32786d1f13ccda73804baa2ae": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\9e\\7d137030ba7ca32786d1f13ccda73804baa2ae",
+    "mime_type": "application/octet-stream",
+    "size": 807,
+    "created": "2024-12-04T14:31:20.159309",
+    "modified": "2024-12-04T14:31:20.159309",
+    "hash": "6fbddf7b786586e8cc5fe5fbfefb27fe2abba3cc56ecf48980242e16b1f90873",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\9f\\1ab8d27439763f18d0977d63e0ea1c95690a2e": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\9f\\1ab8d27439763f18d0977d63e0ea1c95690a2e",
+    "mime_type": "application/octet-stream",
+    "size": 177,
+    "created": "2024-12-19T18:57:05.730791",
+    "modified": "2024-12-19T18:57:05.730791",
+    "hash": "58baab6b6e26951e33fc37436012b9375185e634d0d785d049bf4793f2b2e114",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\a0\\c03d34594b8c480c2cf5d968ec237ea01e2611": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\a0\\c03d34594b8c480c2cf5d968ec237ea01e2611",
+    "mime_type": "application/octet-stream",
+    "size": 8660,
+    "created": "2024-12-19T18:56:36.208249",
+    "modified": "2024-12-19T18:56:36.209255",
+    "hash": "6523d14e35e593c1c07a2d7c820d268eab25db3983b93a89a9c72c659ce18d16",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\a0\\e65d2d4da7a0ccb95da0226b018cb0cc99aabc": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\a0\\e65d2d4da7a0ccb95da0226b018cb0cc99aabc",
+    "mime_type": "application/octet-stream",
+    "size": 382,
+    "created": "2025-02-11T00:01:30.668777",
+    "modified": "2025-02-11T00:01:30.668777",
+    "hash": "8ddb11d8d387883c22ce18b389efe9d1e81cbaead98f428d0d47d6066eaf14e3",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\a1\\3f709af3e95c24acfcd3e761481d6e3460aaaa": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\a1\\3f709af3e95c24acfcd3e761481d6e3460aaaa",
+    "mime_type": "application/octet-stream",
+    "size": 465,
+    "created": "2024-12-28T23:01:48.576100",
+    "modified": "2024-12-28T23:01:48.576100",
+    "hash": "b37022c7580b341c28c5fca06b5a26840f0be5c1ee03a86eea6c7cc6140cd2b7",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\a1\\856abcbe3e4e924238d93a806ee5ae6a6d1ee9": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\a1\\856abcbe3e4e924238d93a806ee5ae6a6d1ee9",
+    "mime_type": "application/octet-stream",
+    "size": 241,
+    "created": "2025-01-01T22:53:02.839108",
+    "modified": "2025-01-01T22:53:02.839108",
+    "hash": "e4ce8c04c29bcd77f21812c40f9ca9753264693bdf70defebcf41783d4ca4dc7",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\a2\\ec9d8fad0670c3027bfb35b1f3e72458678bf9": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\a2\\ec9d8fad0670c3027bfb35b1f3e72458678bf9",
+    "mime_type": "application/octet-stream",
+    "size": 338,
+    "created": "2025-02-07T02:56:01.911749",
+    "modified": "2025-02-07T02:56:01.911749",
+    "hash": "c7861a7649b147abbccd0181c93759710231f31d6ea42d2c02c7b5c93db1300b",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\a5\\37e51a82ad1028e36cc9df5df07e305d562285": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\a5\\37e51a82ad1028e36cc9df5df07e305d562285",
+    "mime_type": "application/octet-stream",
+    "size": 205,
+    "created": "2025-02-07T02:57:42.557936",
+    "modified": "2025-02-07T02:57:42.557936",
+    "hash": "37b9ecd234e7b0f2abd37c03b50e2e0537f21d21e54a27aa496583d5dda030d9",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\a5\\d50461d701e6dc2ae55a269e522e7465967647": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\a5\\d50461d701e6dc2ae55a269e522e7465967647",
+    "mime_type": "application/octet-stream",
+    "size": 53,
+    "created": "2024-12-28T23:01:48.570582",
+    "modified": "2024-12-28T23:01:48.571084",
+    "hash": "d968be4926cc951a104080fca0d2c8dae35c9efb1958a1689f0dd9294c546798",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\a7\\09b6d9523d521b97f4397fdf8072d28be588f6": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\a7\\09b6d9523d521b97f4397fdf8072d28be588f6",
+    "mime_type": "application/octet-stream",
+    "size": 1182,
+    "created": "2024-12-26T23:30:32.247759",
+    "modified": "2024-12-26T23:30:32.247759",
+    "hash": "01f56352486fb6031c57eb51d0c0ca567d3fe30eab9210122dbf41443d2ec6d4",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\a7\\429ddfd54f6dab690b06acad8450ba7a6a5985": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\a7\\429ddfd54f6dab690b06acad8450ba7a6a5985",
+    "mime_type": "application/octet-stream",
+    "size": 6055,
+    "created": "2025-02-06T17:59:51.826696",
+    "modified": "2025-02-06T17:59:51.827272",
+    "hash": "b311e879303f05979e77a8bb370a1b0c2b7cde49c8813a2f37aa1171dc027a74",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\a7\\7660fd258a02a0e3243b8766b18c1f4868423e": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\a7\\7660fd258a02a0e3243b8766b18c1f4868423e",
+    "mime_type": "application/octet-stream",
+    "size": 229,
+    "created": "2025-02-07T02:20:35.874033",
+    "modified": "2025-02-07T02:20:35.874367",
+    "hash": "2221162900e4199e2864a0fa899391ceaedec95006f251853b6d84790d3e47dc",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\a7\\cb4a9fa45d3ecd8ce39403017f4907d16fc8ea": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\a7\\cb4a9fa45d3ecd8ce39403017f4907d16fc8ea",
+    "mime_type": "application/octet-stream",
+    "size": 3602,
+    "created": "2024-12-06T02:36:47.587334",
+    "modified": "2024-12-06T02:36:47.587334",
+    "hash": "c20f73da80f8aa472fed72e599d5261fdce378f99650fc6729006c7d56111851",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\a7\\ef66c849b2a3b2901f3aa4e9e5cc87427d613a": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\a7\\ef66c849b2a3b2901f3aa4e9e5cc87427d613a",
+    "mime_type": "application/octet-stream",
+    "size": 152,
+    "created": "2024-12-04T14:31:41.649623",
+    "modified": "2024-12-04T14:31:41.649623",
+    "hash": "dbd2cf2ee119014ffb089f6dd03a68338819e6680575d44df84fb1184dbcb5d0",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\a8\\b8bbf1ef19bec109c9acb079b8b34a1d42b390": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\a8\\b8bbf1ef19bec109c9acb079b8b34a1d42b390",
+    "mime_type": "application/octet-stream",
+    "size": 382,
+    "created": "2025-02-07T02:19:36.333137",
+    "modified": "2025-02-07T02:19:36.333137",
+    "hash": "0ead5dea75b49ddc0a12a383a8148dcbb307df478508edfc1d4139ffdacdb202",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\a9\\b9a9deeaa5ff355359274ed1595a9bc4ce01db": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\a9\\b9a9deeaa5ff355359274ed1595a9bc4ce01db",
+    "mime_type": "application/octet-stream",
+    "size": 178,
+    "created": "2024-12-09T22:51:12.079781",
+    "modified": "2024-12-09T22:51:12.080286",
+    "hash": "3ab749910d1f1c6985c180b1209ce99cd622afbac06f4ec0c59f2fa7254d7267",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\aa\\9b984dfcd47564272d731f7617abc7248eb880": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\aa\\9b984dfcd47564272d731f7617abc7248eb880",
+    "mime_type": "application/octet-stream",
+    "size": 225,
+    "created": "2025-02-13T21:24:52.799340",
+    "modified": "2025-02-13T21:24:52.799340",
+    "hash": "cbd313a07aced770541fa69918406501b9ec86517b92ae41a2ad640a52f76537",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\ab\\0ad3c1da4d4cd2817094485dbed55969f82bff": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\ab\\0ad3c1da4d4cd2817094485dbed55969f82bff",
+    "mime_type": "application/octet-stream",
+    "size": 235,
+    "created": "2024-12-06T02:38:06.394655",
+    "modified": "2024-12-06T02:38:06.394655",
+    "hash": "9c7535adcf0afece73646e60c557a5b8de02090edcb5314605a59c35390cd5a2",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\ab\\58bca640be4ccc0affa3474724832133b0d3e5": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\ab\\58bca640be4ccc0affa3474724832133b0d3e5",
+    "mime_type": "application/octet-stream",
+    "size": 216,
+    "created": "2024-12-28T23:01:48.596633",
+    "modified": "2024-12-28T23:01:48.597133",
+    "hash": "3a58bd2e2bdbfd415c1b48fb88af98fffd1edbb141d50943d1a9344286b36b03",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\ab\\6d5daa7bb681bc65b836fac5340e57877ab989": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\ab\\6d5daa7bb681bc65b836fac5340e57877ab989",
+    "mime_type": "application/octet-stream",
+    "size": 13141,
+    "created": "2024-12-04T14:31:20.154444",
+    "modified": "2024-12-04T14:31:20.154444",
+    "hash": "34015c0fe3762ad27ba613634e04050fe35befc883dd442d67060be03d052c79",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\ac\\4aa611168bf3b3114e9a7a7ebd60021dd1a291": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\ac\\4aa611168bf3b3114e9a7a7ebd60021dd1a291",
+    "mime_type": "application/octet-stream",
+    "size": 897,
+    "created": "2024-12-30T21:30:06.706857",
+    "modified": "2024-12-30T21:30:06.706857",
+    "hash": "abee1da3004e2a0236bdda4eef7cadebf534627752ac4784386fe4e14002a752",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\ae\\616eb96e710455f48f24a7eb29eaa7c97d319b": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\ae\\616eb96e710455f48f24a7eb29eaa7c97d319b",
+    "mime_type": "application/octet-stream",
+    "size": 309,
+    "created": "2024-12-22T23:39:00.779609",
+    "modified": "2024-12-22T23:39:00.779609",
+    "hash": "3c4b072a0b7449388b36d8e8f2d8acc0e823be5b4a45c0a6c6a8e6ac0d7ba8ba",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\af\\92cc61e999e5bf0234e2c1113f1396e8030d22": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\af\\92cc61e999e5bf0234e2c1113f1396e8030d22",
+    "mime_type": "application/octet-stream",
+    "size": 660,
+    "created": "2024-12-11T22:29:46.106677",
+    "modified": "2024-12-11T22:29:46.106677",
+    "hash": "86b0df103eb07edb2ff07cff3d07a2331ddb42fbcec273cca01a8397c7e777a5",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\b0\\19a6b059ac32e4c14bafff36d6dc240b0ce1b4": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\b0\\19a6b059ac32e4c14bafff36d6dc240b0ce1b4",
+    "mime_type": "application/octet-stream",
+    "size": 174,
+    "created": "2024-12-03T22:32:59.218641",
+    "modified": "2024-12-03T22:32:59.218641",
+    "hash": "edcb4b1832ae671f6c42fbf408f0740b71b718b5960e17261c861273520a0765",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\b1\\542cdbdd52eed56b4a6dc27b3f53493a7f8f1a": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\b1\\542cdbdd52eed56b4a6dc27b3f53493a7f8f1a",
+    "mime_type": "application/octet-stream",
+    "size": 195,
+    "created": "2025-01-12T00:02:37.316720",
+    "modified": "2025-01-12T00:02:37.316720",
+    "hash": "f259e86ce2d00daf207bee0eef321e2eb76e662fae20bd2fef435ce859603a7f",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\b2\\61333e305e875bdb2ee55ced810b5abac7863a": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\b2\\61333e305e875bdb2ee55ced810b5abac7863a",
+    "mime_type": "application/octet-stream",
+    "size": 1978,
+    "created": "2024-12-30T21:29:09.649612",
+    "modified": "2024-12-30T21:29:09.649612",
+    "hash": "d90628045ba30a24fdea4af4c7d81ae84aefd721d6b8df3f7b5d9f6efa795a39",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\b2\\e0c9f51927254b9d09ae1a709722ff9b0331d0": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\b2\\e0c9f51927254b9d09ae1a709722ff9b0331d0",
+    "mime_type": "application/octet-stream",
+    "size": 2726,
+    "created": "2024-12-22T23:38:32.035616",
+    "modified": "2024-12-22T23:38:32.035616",
+    "hash": "ef78d673a4d1365eecf7016bdcdd91a1fe1398a81ba4cdd298059d4b093a310b",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\b3\\4defba81e57c41846bd89533a597190bd7d54d": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\b3\\4defba81e57c41846bd89533a597190bd7d54d",
+    "mime_type": "application/octet-stream",
+    "size": 49,
+    "created": "2025-02-07T02:19:36.333137",
+    "modified": "2025-02-07T02:19:36.333137",
+    "hash": "a8dfab0a3ecaeb62507887770412f2f2c5b499f6190442907738ca477ed8daf9",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\b3\\b26c7ae948cda2ff83b412674854089a11c09a": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\b3\\b26c7ae948cda2ff83b412674854089a11c09a",
+    "mime_type": "application/octet-stream",
+    "size": 187,
+    "created": "2024-12-06T02:52:18.224541",
+    "modified": "2024-12-06T02:52:18.224541",
+    "hash": "467881dc0888b7c2c44968a5d1573acc21476abb5e44fa89ba98184c6339ebc1",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\b3\\fd75e81c1c3bb46221a9fe15fcfadb7a84e623": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\b3\\fd75e81c1c3bb46221a9fe15fcfadb7a84e623",
+    "mime_type": "application/octet-stream",
+    "size": 306,
+    "created": "2024-12-25T21:37:19.985618",
+    "modified": "2024-12-25T21:37:19.985618",
+    "hash": "92d851f7da1ef1fdb4bb50f2e4752f1d20a62c76de7b19599f9bd49c9c333e51",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\b4\\5936adfb80e5660a7144c476c8713f9b59564f": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\b4\\5936adfb80e5660a7144c476c8713f9b59564f",
+    "mime_type": "application/octet-stream",
+    "size": 1527,
+    "created": "2025-02-13T21:23:19.416851",
+    "modified": "2025-02-14T19:15:04.698301",
+    "hash": "bc9ebd7052e0e9a703986f1deea1318ad2a451315c340a427ba21e21c5cad177",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\b4\\f3f567a5a175f0662af057837df5473d04b928": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\b4\\f3f567a5a175f0662af057837df5473d04b928",
+    "mime_type": "application/octet-stream",
+    "size": 174,
+    "created": "2024-12-04T14:31:41.648622",
+    "modified": "2024-12-04T14:31:41.648622",
+    "hash": "a72004b5b2aa7e3532a336fc09da0d22d047dcaa23d60be351bd4caf5a8f8eed",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\b6\\7c140550ad2f2ffd37d4561b6c95f3dc0da1fa": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\b6\\7c140550ad2f2ffd37d4561b6c95f3dc0da1fa",
+    "mime_type": "application/octet-stream",
+    "size": 3147,
+    "created": "2024-12-06T02:36:47.583801",
+    "modified": "2024-12-06T02:36:47.583801",
+    "hash": "d96caaa78e5468556ff990cb027252309d7a33eb1b05e31342c7aa270d8ad3ce",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\b9\\a75cf71e0580ff729fc09281feb7114b98b9ac": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\b9\\a75cf71e0580ff729fc09281feb7114b98b9ac",
+    "mime_type": "application/octet-stream",
+    "size": 2225,
+    "created": "2024-12-30T21:29:09.647610",
+    "modified": "2025-01-01T22:53:02.870161",
+    "hash": "98f10013200fc17f540f47d641d78af418a1e53fc41f4fb8bb423f0813fadcc4",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\bb\\d338a090f93d028e14c6eae78c5f6309451f18": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\bb\\d338a090f93d028e14c6eae78c5f6309451f18",
+    "mime_type": "application/octet-stream",
+    "size": 3033,
+    "created": "2024-12-19T18:56:36.224284",
+    "modified": "2025-01-01T22:53:02.865656",
+    "hash": "e3b458718ab9f76baf59084943e75f83b6c1c0f896cdf1ba571aa3c41ff18953",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\bd\\e5a68af6ffc7b7a4b1bbcfb1880103413469f3": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\bd\\e5a68af6ffc7b7a4b1bbcfb1880103413469f3",
+    "mime_type": "application/octet-stream",
+    "size": 309,
+    "created": "2024-12-24T22:02:36.468200",
+    "modified": "2024-12-24T22:02:36.468200",
+    "hash": "a8add48b2dd9547aab401ec5ae2966bf5d44cf21cc59758d43f89f1a0adb9608",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\be\\021205ad81e25d75ea58b81d5a78439d5c5c55": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\be\\021205ad81e25d75ea58b81d5a78439d5c5c55",
+    "mime_type": "application/octet-stream",
+    "size": 647,
+    "created": "2025-01-04T21:16:06.293922",
+    "modified": "2025-01-04T21:16:06.293922",
+    "hash": "00b86d05a93fd983d349a2cf62f83e25a1ee82ff269352a3bbef08b55850fe70",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\be\\b1c4944346d09bf95b63b535bad16c8e55d0e3": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\be\\b1c4944346d09bf95b63b535bad16c8e55d0e3",
+    "mime_type": "application/octet-stream",
+    "size": 2142,
+    "created": "2025-02-08T19:04:30.615276",
+    "modified": "2025-02-08T19:04:30.615276",
+    "hash": "14a14f3ad87ad780cd35dca447504b724226099e2f3fc11fbdc0076e878943cd",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\bf\\780776a1531517004dd0fc3bf1e903844e503d": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\bf\\780776a1531517004dd0fc3bf1e903844e503d",
+    "mime_type": "application/octet-stream",
+    "size": 621,
+    "created": "2024-12-25T21:37:19.988617",
+    "modified": "2024-12-25T21:37:19.988617",
+    "hash": "30e393e3bf0b2bdb7be3c096e7e5ff13de1d7dac06e731ccd88bc685938b1850",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\c1\\92846d9836080cd1b98122e145ede326d4bcac": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\c1\\92846d9836080cd1b98122e145ede326d4bcac",
+    "mime_type": "application/octet-stream",
+    "size": 195,
+    "created": "2025-01-12T00:02:37.300416",
+    "modified": "2025-01-12T00:02:37.300416",
+    "hash": "76eea01c4e8473d526df27ce6df363804fa594f8cc885101cb8ecbf89ec13700",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\c2\\ec1e94189becdeafe21a30665dc6694617966a": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\c2\\ec1e94189becdeafe21a30665dc6694617966a",
+    "mime_type": "application/octet-stream",
+    "size": 7376,
+    "created": "2025-01-04T21:16:06.290291",
+    "modified": "2025-01-04T21:16:06.291287",
+    "hash": "6f7ab23cc506c43547974f0aab0ed5a855efe0b26753e345c0a0c4466f349931",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\c4\\0e6e8830b0ac10b86b7c1277aa379fef1b320d": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\c4\\0e6e8830b0ac10b86b7c1277aa379fef1b320d",
+    "mime_type": "application/octet-stream",
+    "size": 2369,
+    "created": "2024-12-04T01:54:26.567699",
+    "modified": "2024-12-04T01:54:26.567699",
+    "hash": "2ce19a04a4fd7ae4a30918245496736afdc4e9fb3b647ea5fbe06e51d142f887",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\c4\\97a206dd00762826b90cce1db7e9aa78457bfd": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\c4\\97a206dd00762826b90cce1db7e9aa78457bfd",
+    "mime_type": "application/octet-stream",
+    "size": 232,
+    "created": "2025-01-06T10:43:40.029047",
+    "modified": "2025-01-06T10:43:40.030053",
+    "hash": "e6354a9cd3606351a25b6af92c9c4b06679cb10117136acbd7bb9291e331e3d9",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\c4\\c85558c04c1b8c42ef321e51d7703916c184f4": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\c4\\c85558c04c1b8c42ef321e51d7703916c184f4",
+    "mime_type": "application/octet-stream",
+    "size": 4437,
+    "created": "2025-02-07T02:56:01.855532",
+    "modified": "2025-02-07T02:56:01.857166",
+    "hash": "b7fc01dfbec6b805a30f8f0e5d87be4c0a0a3caa4ec240c70822a1ea12ab1428",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\c7\\b7e7f4f4b768b9469947b8a4502e93b707016e": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\c7\\b7e7f4f4b768b9469947b8a4502e93b707016e",
+    "mime_type": "application/octet-stream",
+    "size": 178,
+    "created": "2024-12-04T14:31:41.666622",
+    "modified": "2024-12-04T14:31:41.666622",
+    "hash": "2b578d3eea145dd5bb9e6d1779d8e63a304ad0b91a3f9bc86b5360fb6e2a3d9d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\c9\\09bbfb8d82f6efc35ffdd9a9823adecda528a4": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\c9\\09bbfb8d82f6efc35ffdd9a9823adecda528a4",
+    "mime_type": "application/octet-stream",
+    "size": 467,
+    "created": "2025-01-01T22:53:24.433621",
+    "modified": "2025-01-01T22:53:24.433621",
+    "hash": "88f05c3b53658885800f96215549ce19e14bf273561b675d87133651f9b6f0b7",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\c9\\3b0938a54a9e9cdbe485fbb7c0d147cde74ed7": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\c9\\3b0938a54a9e9cdbe485fbb7c0d147cde74ed7",
+    "mime_type": "application/octet-stream",
+    "size": 4694,
+    "created": "2024-12-26T23:30:32.244992",
+    "modified": "2024-12-26T23:30:32.246749",
+    "hash": "d6f83a6f593fb109abce5d5e4856c86f271738b2fe5fe8f6b55cd1781a2d586e",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\ca\\264910e379c7f109492d2532ba426bfc036dee": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\ca\\264910e379c7f109492d2532ba426bfc036dee",
+    "mime_type": "application/octet-stream",
+    "size": 2138,
+    "created": "2024-12-04T01:54:26.566065",
+    "modified": "2024-12-04T01:54:26.566065",
+    "hash": "e72eebee4bb6f67a07786f3bbe2185a09edf4a7d722f4598fa0158c183732328",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\ca\\65ef369c2764693ddb1c4ea9965203963bfc19": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\ca\\65ef369c2764693ddb1c4ea9965203963bfc19",
+    "mime_type": "application/octet-stream",
+    "size": 222,
+    "created": "2024-12-09T22:51:12.062759",
+    "modified": "2024-12-09T22:51:12.063259",
+    "hash": "7b154ecd691694aff9fa80feb60f2ca816a6d0ae1c4c42548054e1ed7d4b1a85",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\cb\\e7399b50203b0a6133c607c8a013881270f848": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\cb\\e7399b50203b0a6133c607c8a013881270f848",
+    "mime_type": "application/octet-stream",
+    "size": 222,
+    "created": "2024-12-07T23:04:19.713368",
+    "modified": "2024-12-07T23:04:19.713368",
+    "hash": "fa564cdc5fcd79590abefec4378a174151c2c4063dbea789509f293c7c7e3d65",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\cb\\ee82117f91a4990d3479a17d738503da6fc81b": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\cb\\ee82117f91a4990d3479a17d738503da6fc81b",
+    "mime_type": "application/octet-stream",
+    "size": 779,
+    "created": "2025-01-01T22:53:02.840618",
+    "modified": "2025-01-01T22:53:02.840618",
+    "hash": "6ab81e756fe1082be87d8dbda2a68aef66e1a5674a81a124b6e06b67085664a6",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\cc\\fe79ddef0c3adfee8daad9d4fc7196b8611640": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\cc\\fe79ddef0c3adfee8daad9d4fc7196b8611640",
+    "mime_type": "application/octet-stream",
+    "size": 49,
+    "created": "2025-02-11T00:02:22.389427",
+    "modified": "2025-02-11T00:02:22.389427",
+    "hash": "459cec6d4393020ecf0279daf4d373711bb6879c4d355b1bcdfbf5f5ac716443",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\cd\\3fba59618336b97b7cae06379e1dc0a26f265d": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\cd\\3fba59618336b97b7cae06379e1dc0a26f265d",
+    "mime_type": "application/octet-stream",
+    "size": 309,
+    "created": "2024-12-21T22:51:58.641854",
+    "modified": "2024-12-21T22:51:58.641854",
+    "hash": "8c44a1d594d7bd14a2c8ac07a849382ac0940327dc041466e32a36da4f92e741",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\ce\\281094b43dbe34d2f0df1fbf479c8a61b1f240": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\ce\\281094b43dbe34d2f0df1fbf479c8a61b1f240",
+    "mime_type": "application/octet-stream",
+    "size": 828,
+    "created": "2024-12-10T21:32:46.240331",
+    "modified": "2025-01-01T22:53:02.850633",
+    "hash": "559140d3e4d51661a948337b20f52fcd019c9ae100251d5d346ffc1a283e8b79",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\d0\\8e6ec53a20739d277e8800c641d75ed158029b": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\d0\\8e6ec53a20739d277e8800c641d75ed158029b",
+    "mime_type": "application/octet-stream",
+    "size": 194,
+    "created": "2025-02-14T19:16:17.199098",
+    "modified": "2025-02-14T19:16:17.199098",
+    "hash": "f01adc33e234de2a83aa78b6d7e2a8adf8d51f84862f46a193342e8fa14a9ea1",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\d0\\d724c2502236eaa1d769fe2748ba91ee602856": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\d0\\d724c2502236eaa1d769fe2748ba91ee602856",
+    "mime_type": "application/octet-stream",
+    "size": 376,
+    "created": "2025-02-11T00:02:22.386883",
+    "modified": "2025-02-11T00:02:22.387395",
+    "hash": "bdb9258731247d662a591f365b6a69f3b6ac0dedd220a8aa2c7d60425d45ae72",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\d1\\dd7b66d5fb264f823baaad3829ce325694c3c0": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\d1\\dd7b66d5fb264f823baaad3829ce325694c3c0",
+    "mime_type": "application/octet-stream",
+    "size": 309,
+    "created": "2024-12-05T22:43:55.248392",
+    "modified": "2024-12-05T22:43:55.248392",
+    "hash": "1e5e63c17bce2c04ce0a690bcd25082b85ad7cba79d962b58b995d61f673ef2f",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\d2\\f34e14c31cd663530c395b2f4166390160718d": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\d2\\f34e14c31cd663530c395b2f4166390160718d",
+    "mime_type": "application/octet-stream",
+    "size": 51,
+    "created": "2025-02-06T17:59:51.906441",
+    "modified": "2025-02-06T17:59:51.908005",
+    "hash": "1fc852a9c1eb50abb0018f6ed62a83acae72c57cf1e137db7aa25f97b7c2d18f",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\d4\\0eadc310dcfca5a9e3de2654fa06974dc418eb": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\d4\\0eadc310dcfca5a9e3de2654fa06974dc418eb",
+    "mime_type": "application/octet-stream",
+    "size": 3636,
+    "created": "2024-12-06T02:51:46.299538",
+    "modified": "2025-01-04T21:16:06.296427",
+    "hash": "17919af3b91f3bb304b26255858a65c1e3d36121c42291a2240984f9612a2cbe",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\d5\\f07eb55c6242c49c86d6128be8adcf5b5dfbfe": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\d5\\f07eb55c6242c49c86d6128be8adcf5b5dfbfe",
+    "mime_type": "application/octet-stream",
+    "size": 382,
+    "created": "2025-02-11T00:34:40.975480",
+    "modified": "2025-02-11T00:34:40.976480",
+    "hash": "6c9357176c46884f5ffb7fca86de3061a5a707b93dc58a27710a62bc43f062fd",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\d6\\a4bb95828e4a667d2442f0307493779c6d4215": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\d6\\a4bb95828e4a667d2442f0307493779c6d4215",
+    "mime_type": "application/octet-stream",
+    "size": 703,
+    "created": "2024-12-03T22:32:59.200299",
+    "modified": "2024-12-03T22:32:59.205564",
+    "hash": "2893388b3464a977cea5573b35a9ca95b493a6a8dadd9e8eccdacc60465ababc",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\d6\\cae83ee917fddfd7f27963859386b3da6762be": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\d6\\cae83ee917fddfd7f27963859386b3da6762be",
+    "mime_type": "application/octet-stream",
+    "size": 383,
+    "created": "2024-12-04T01:55:16.180269",
+    "modified": "2024-12-04T01:55:16.180269",
+    "hash": "feb4b7c36241fac80f14d2f3c9f33ed3a5afb8a34a73a65f9f7a385e37de7ee9",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\d7\\374568820113b4c3f79692e32adc5685427b69": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\d7\\374568820113b4c3f79692e32adc5685427b69",
+    "mime_type": "application/octet-stream",
+    "size": 2637,
+    "created": "2024-12-06T02:36:47.583801",
+    "modified": "2025-01-01T22:53:02.867656",
+    "hash": "2ecfeb38fd90b926d43389133bfd0873a37278c7c18c12a06ff0cbff8fd466c5",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\d7\\394d74f4d914fcbb0288507e1471d0dccb0544": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\d7\\394d74f4d914fcbb0288507e1471d0dccb0544",
+    "mime_type": "application/octet-stream",
+    "size": 163,
+    "created": "2025-02-08T19:04:45.671743",
+    "modified": "2025-02-08T19:04:45.672108",
+    "hash": "f88194d04f7faabb17ae26bc0229429ea9d96010263857c772a8f482371934f3",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\d7\\e4df137334a867ddab6545227e0171edd5c489": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\d7\\e4df137334a867ddab6545227e0171edd5c489",
+    "mime_type": "application/octet-stream",
+    "size": 3453,
+    "created": "2024-12-25T21:37:06.101142",
+    "modified": "2024-12-25T21:37:06.101142",
+    "hash": "c1a1217dc22859762bb4ab2c560e9d5f315e9db8f1a318c69bef31edb3fe248f",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\d8\\d01b99d02a3204c18ca8e5a9b274c6d036c980": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\d8\\d01b99d02a3204c18ca8e5a9b274c6d036c980",
+    "mime_type": "application/octet-stream",
+    "size": 172,
+    "created": "2024-12-16T22:07:48.600622",
+    "modified": "2024-12-16T22:07:48.600622",
+    "hash": "90823f8ab08ec80379c4c154fa2db4b4caa368763cc113a10834898b554f7f6c",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\dc\\a7a001e96c6ac175b93f8fc6daa7481c32f0a3": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\dc\\a7a001e96c6ac175b93f8fc6daa7481c32f0a3",
+    "mime_type": "application/octet-stream",
+    "size": 2046,
+    "created": "2024-12-11T22:29:46.075631",
+    "modified": "2025-01-01T22:53:02.867656",
+    "hash": "9d66480c385a81878b4303ac6e1a9ae72f4c41d0299fbb611bc0cb29fc2f5c7c",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\dd\\e371974994bcd4dd4981a1524257899f994416": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\dd\\e371974994bcd4dd4981a1524257899f994416",
+    "mime_type": "application/octet-stream",
+    "size": 467,
+    "created": "2025-01-04T19:53:42.730102",
+    "modified": "2025-01-04T19:53:42.730102",
+    "hash": "88f25a4d23fc0ccdcb8a3bdf37cc46ed6c58362b5f04e4cd592613a72dc82af4",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\e0\\27c92ecac6a03ec52f1443cbd97e5c7b78a8fb": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\e0\\27c92ecac6a03ec52f1443cbd97e5c7b78a8fb",
+    "mime_type": "application/octet-stream",
+    "size": 1465,
+    "created": "2024-12-11T22:29:46.096660",
+    "modified": "2024-12-11T22:29:46.097160",
+    "hash": "4a684080abf1713e08c38fd4619d0affb1a5dac13a8ece94d985d4f39d3631f6",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\e3\\10efae534437f731fdfd0f447eb35ca8fa511a": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\e3\\10efae534437f731fdfd0f447eb35ca8fa511a",
+    "mime_type": "application/octet-stream",
+    "size": 467,
+    "created": "2024-12-31T22:16:35.137197",
+    "modified": "2024-12-31T22:16:35.137197",
+    "hash": "23912943a64f66d28ccd7e138c5004255624b19ddc1f268790c818259aef042e",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\e3\\171414b0dce4abf037c82c387bc7c3dfe8eef2": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\e3\\171414b0dce4abf037c82c387bc7c3dfe8eef2",
+    "mime_type": "application/octet-stream",
+    "size": 2673,
+    "created": "2024-12-19T18:56:36.258856",
+    "modified": "2025-01-01T22:53:02.869156",
+    "hash": "af1d304f42aa0d446016c08b86dd09f55f06baad3cfbc504a741c603beec5606",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\e3\\99540ebf3cfbfe0461d6b63bf8546977383007": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\e3\\99540ebf3cfbfe0461d6b63bf8546977383007",
+    "mime_type": "application/octet-stream",
+    "size": 8728,
+    "created": "2024-12-20T23:51:51.278889",
+    "modified": "2024-12-20T23:51:51.279890",
+    "hash": "b4210d9984296a830fa46d1682979b4fde965aeabedf39c273bdb5cb2f3bbc8e",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\e3\\da8167751cea20e071afcd709b30d919c66f22": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\e3\\da8167751cea20e071afcd709b30d919c66f22",
+    "mime_type": "application/octet-stream",
+    "size": 8002,
+    "created": "2025-02-07T02:19:36.273608",
+    "modified": "2025-02-07T02:19:36.273608",
+    "hash": "e127f6f4cdb6b7c0506e970d0f9878ff0737a2bb71f38193767249dad870a07e",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\e4\\1cb0574c6255a98b46dd5defcf3fff44939578": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\e4\\1cb0574c6255a98b46dd5defcf3fff44939578",
+    "mime_type": "application/octet-stream",
+    "size": 1271,
+    "created": "2024-12-17T02:39:25.969249",
+    "modified": "2024-12-17T02:39:25.969249",
+    "hash": "500fd12f3df7eec5efd1e40def42717224e2cf56a636130a01236a2407dbae32",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\e4\\73692e7a62f00a3459385827875860aefe603e": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\e4\\73692e7a62f00a3459385827875860aefe603e",
+    "mime_type": "application/octet-stream",
+    "size": 438,
+    "created": "2024-12-30T21:30:06.708357",
+    "modified": "2024-12-30T21:30:06.708856",
+    "hash": "d6164bcdcac19b17853a5729dcb8ef16dbaacb99750fb5ad9abb870fa887590c",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\e4\\9256fe846ceca9aca7bb3a26be214074b1af9d": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\e4\\9256fe846ceca9aca7bb3a26be214074b1af9d",
+    "mime_type": "application/octet-stream",
+    "size": 309,
+    "created": "2024-12-04T13:44:04.230632",
+    "modified": "2024-12-04T13:44:04.230632",
+    "hash": "73dc6052ee8f5cb23719fb0a0d56c29f7d501b6f0f85aa4d313d8edd34a480f4",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\e6\\388e32e6366deba43865a8b62471f78409c31c": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\e6\\388e32e6366deba43865a8b62471f78409c31c",
+    "mime_type": "application/octet-stream",
+    "size": 49,
+    "created": "2025-02-11T00:34:40.973424",
+    "modified": "2025-02-11T00:34:40.974480",
+    "hash": "64e9cca9278b1e27fe399a1a427bf879d67691936ca21471c06ca7caae4fd1dd",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\e6\\7301444a24fcbb16849011767da639db74081e": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\e6\\7301444a24fcbb16849011767da639db74081e",
+    "mime_type": "application/octet-stream",
+    "size": 161,
+    "created": "2025-02-11T00:02:22.446037",
+    "modified": "2025-02-11T00:02:22.446037",
+    "hash": "32564d8f2d764aad03a835334976e2231c11e4f61e3d05cd591fd29f78f840b2",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\e6\\8c86a368dd0a4672246ab2b752c554f17c9181": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\e6\\8c86a368dd0a4672246ab2b752c554f17c9181",
+    "mime_type": "application/octet-stream",
+    "size": 213,
+    "created": "2025-01-04T21:16:56.141718",
+    "modified": "2025-01-04T21:16:56.141718",
+    "hash": "0a2e05263544b28a45f67cc8051b939c085ed2bc6040d6d2607f1d5084370872",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\e6\\a43489722adbf0fce4e3e144ffd016eea676e5": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\e6\\a43489722adbf0fce4e3e144ffd016eea676e5",
+    "mime_type": "application/octet-stream",
+    "size": 188,
+    "created": "2024-12-09T22:51:12.060753",
+    "modified": "2024-12-09T22:51:12.061259",
+    "hash": "dcc119b6ccc5b6400570e46f3c4ceff0211a4e23965b45b58832022afc6875bf",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\e7\\9333df8aff3a06cc770ebd784fbedbcd5d6ed6": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\e7\\9333df8aff3a06cc770ebd784fbedbcd5d6ed6",
+    "mime_type": "application/octet-stream",
+    "size": 309,
+    "created": "2024-12-14T22:41:31.963421",
+    "modified": "2024-12-14T22:41:31.963921",
+    "hash": "220ba949d23622c7165597ebb28ba05c9f6765d8b88ba37e559cf7ccc815c5d0",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\e8\\4ea151d5c7a73d11cfe5f00e5a3fd88a0d02a0": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\e8\\4ea151d5c7a73d11cfe5f00e5a3fd88a0d02a0",
+    "mime_type": "application/octet-stream",
+    "size": 309,
+    "created": "2024-12-10T21:33:22.625830",
+    "modified": "2024-12-10T21:33:22.625830",
+    "hash": "01cb4d1247350d1ec915bbb79c3c95494a209a718949c9e08c1a8a97d73b2468",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\e8\\e1ecef9326027c360d2958aff7d5f0d72f00ee": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\e8\\e1ecef9326027c360d2958aff7d5f0d72f00ee",
+    "mime_type": "application/octet-stream",
+    "size": 383,
+    "created": "2024-12-03T22:32:59.206348",
+    "modified": "2024-12-03T22:32:59.206348",
+    "hash": "5f9277bb07c177c8d0039bee024bdc57a16942a9bb167a520f2905dc216b2ffd",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\e9\\0a373a88684cefd32582e339660c03f3988de4": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\e9\\0a373a88684cefd32582e339660c03f3988de4",
+    "mime_type": "application/octet-stream",
+    "size": 832,
+    "created": "2025-01-01T22:53:24.430614",
+    "modified": "2025-01-01T22:53:24.430614",
+    "hash": "43cd9050b85dcf3ad4a83493070a50e22bd1eec7c5410e404700880ab5094704",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\e9\\cf216c58ddbb3088bcc63cacdf8834a748269e": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\e9\\cf216c58ddbb3088bcc63cacdf8834a748269e",
+    "mime_type": "application/octet-stream",
+    "size": 596,
+    "created": "2024-12-14T22:41:31.961923",
+    "modified": "2024-12-14T22:41:31.961923",
+    "hash": "1465abb731107a0f259d051ba65fd0679f45865ad181cfb1b27b6fe78bdfb913",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\eb\\4ace9af4f4229a9d34ba8c0b585b7632ebb5bf": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\eb\\4ace9af4f4229a9d34ba8c0b585b7632ebb5bf",
+    "mime_type": "application/octet-stream",
+    "size": 1051,
+    "created": "2024-12-23T20:29:26.156148",
+    "modified": "2025-01-01T22:53:02.865155",
+    "hash": "d2240875100c0459471b60a4ec24996bd7d779ea3d87b9f44a3783c49e136335",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\eb\\ff38d54895a504e6b3bc1c7d3f130615df8a71": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\eb\\ff38d54895a504e6b3bc1c7d3f130615df8a71",
+    "mime_type": "application/octet-stream",
+    "size": 382,
+    "created": "2025-02-11T00:02:22.390453",
+    "modified": "2025-02-11T00:02:22.390453",
+    "hash": "9f65e3095c7a89f44180818b1aadea68e670c93962a9e74e6a9f6fdbd92a5150",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\ec\\b29a340114ceb3e73397f1230eb5c3b023dc71": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\ec\\b29a340114ceb3e73397f1230eb5c3b023dc71",
+    "mime_type": "application/octet-stream",
+    "size": 436,
+    "created": "2025-02-13T21:24:52.771048",
+    "modified": "2025-02-13T21:24:52.771048",
+    "hash": "404629941513f642d48ff9a91407fb8f2526bbbedf74047423d29d677bb46d45",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\ed\\cf663788cc45d103f0de47929abdd5684cbda3": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\ed\\cf663788cc45d103f0de47929abdd5684cbda3",
+    "mime_type": "application/octet-stream",
+    "size": 195,
+    "created": "2024-12-04T01:55:16.192280",
+    "modified": "2024-12-04T01:55:16.192280",
+    "hash": "e35b72f05045313c3d9823c9c18d2669965d6e0d398e94b8a0a2cdc57b6abbdf",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\ed\\f728165617c830765297ab26ba1af17f90901d": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\ed\\f728165617c830765297ab26ba1af17f90901d",
+    "mime_type": "application/octet-stream",
+    "size": 176,
+    "created": "2024-12-29T21:39:22.160246",
+    "modified": "2024-12-29T21:39:22.160246",
+    "hash": "731170d6670e053cee5885df6818a3af3de45b00fdb8f7ca835e9835804e0b1b",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\ee\\6d9ed7294000e046a4e51610c49dd32b89587b": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\ee\\6d9ed7294000e046a4e51610c49dd32b89587b",
+    "mime_type": "application/octet-stream",
+    "size": 220,
+    "created": "2024-12-13T21:36:24.162215",
+    "modified": "2024-12-13T21:36:24.163221",
+    "hash": "cffee63da7d40bcf5e1bea52513781d8e73d5a2d1bce56a93855086485569c41",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\ee\\b31ce4e1eccda6da2a969920e4a5a00b577f65": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\ee\\b31ce4e1eccda6da2a969920e4a5a00b577f65",
+    "mime_type": "application/octet-stream",
+    "size": 11963,
+    "created": "2025-02-12T22:52:49.257489",
+    "modified": "2025-02-12T22:52:49.258149",
+    "hash": "d809e880f3c442bf451ff30f8fea37a8bc6860fa5631fab0338214e0ae9ba248",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\ef\\4a8d2fab18a4c2e0ca2c15f60ca60fd1d909a7": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\ef\\4a8d2fab18a4c2e0ca2c15f60ca60fd1d909a7",
+    "mime_type": "application/octet-stream",
+    "size": 309,
+    "created": "2024-12-16T22:07:48.586585",
+    "modified": "2024-12-16T22:07:48.587583",
+    "hash": "4145499c5c8cb0737d230d4c6b9d34a4ac6006e593cb329c2b0919bb645f75a6",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\ef\\acacad7208fa19c48b6a80c8a280c3c81798f4": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\ef\\acacad7208fa19c48b6a80c8a280c3c81798f4",
+    "mime_type": "application/octet-stream",
+    "size": 409,
+    "created": "2024-12-27T22:44:14.868118",
+    "modified": "2024-12-27T22:44:14.868118",
+    "hash": "fbd98adadc2da9825e897c8e1e71540535336216bd099d2687b3ac2b9c3d20f4",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\f0\\706fd6ab0b94494267123b638dbe9222aeb155": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\f0\\706fd6ab0b94494267123b638dbe9222aeb155",
+    "mime_type": "application/octet-stream",
+    "size": 930,
+    "created": "2024-12-31T22:16:35.135696",
+    "modified": "2024-12-31T22:16:35.135696",
+    "hash": "240687fba5feaeeb550530d15a8cc0f1f9eb0b7495b4c6983f0094a9bf344e8b",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\f1\\770ad694e0499cc2d8e0f3b05d9315f7d47c27": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\f1\\770ad694e0499cc2d8e0f3b05d9315f7d47c27",
+    "mime_type": "application/octet-stream",
+    "size": 578,
+    "created": "2024-12-28T23:01:48.456286",
+    "modified": "2024-12-28T23:01:48.456286",
+    "hash": "2d02c2c6d6b10e6777ffbc42d355af4cf267c6cc41df9f1b59441757b04daa83",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\f3\\192218b064b58a785f72a015a572b07f060f5d": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\f3\\192218b064b58a785f72a015a572b07f060f5d",
+    "mime_type": "application/octet-stream",
+    "size": 9055,
+    "created": "2024-12-30T21:29:09.641106",
+    "modified": "2024-12-30T21:29:09.642106",
+    "hash": "4febd19065e2c364ecf976988d5045a1bf33e5ebb75979ae3280e6ea1bad4510",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\f3\\e4afc2581d393a86e229e33eb9db1433a5fab9": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\f3\\e4afc2581d393a86e229e33eb9db1433a5fab9",
+    "mime_type": "application/octet-stream",
+    "size": 5631,
+    "created": "2024-12-04T13:43:19.080769",
+    "modified": "2024-12-04T13:43:19.080769",
+    "hash": "28f430e54803a2d17243dbb83d66603a77ed195183c1ae86871ca2bddaee9ba4",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\f5\\dc8fa7995abdd8604b4746839c6cc95cacec86": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\f5\\dc8fa7995abdd8604b4746839c6cc95cacec86",
+    "mime_type": "application/octet-stream",
+    "size": 391,
+    "created": "2024-12-16T22:07:48.585550",
+    "modified": "2024-12-16T22:07:48.585550",
+    "hash": "28a41df3840a17896c27c6234ba4d4bff1e3f805b1b2e2b65d637bf4a437b09d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\f5\\e1429025367068edcb9f4ea42d654bb007bd5b": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\f5\\e1429025367068edcb9f4ea42d654bb007bd5b",
+    "mime_type": "application/octet-stream",
+    "size": 200,
+    "created": "2024-12-30T21:30:06.724961",
+    "modified": "2024-12-30T21:30:06.724961",
+    "hash": "b2ac4e8472fdb89ba177f9187aecdd8c4158d08a92a3207493a576d182062165",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\f8\\ccd801a02b70cad2295d78b4f25b1c9a219a6a": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\f8\\ccd801a02b70cad2295d78b4f25b1c9a219a6a",
+    "mime_type": "application/octet-stream",
+    "size": 674,
+    "created": "2024-12-22T23:39:00.776669",
+    "modified": "2024-12-22T23:39:00.776669",
+    "hash": "2a9b1fab35f10297adc3e412baa0ddb4150d744957c1b56f95cf10cc4973a12e",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\f9\\b194ecc0e7a8dfe1a801485d5c7a126457b17e": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\f9\\b194ecc0e7a8dfe1a801485d5c7a126457b17e",
+    "mime_type": "application/octet-stream",
+    "size": 914,
+    "created": "2024-12-10T21:32:46.244480",
+    "modified": "2024-12-10T21:32:46.244480",
+    "hash": "9a7f966b104ae2014847f6b74edcd214929ceae72c75f34fd01acb05f6aba538",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\f9\\f0cb1e4aa3a6977411554209c12a9ea07418d3": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\f9\\f0cb1e4aa3a6977411554209c12a9ea07418d3",
+    "mime_type": "application/octet-stream",
+    "size": 183,
+    "created": "2024-12-17T02:40:27.197486",
+    "modified": "2024-12-17T02:40:27.197486",
+    "hash": "12ca1622cf602b234591eae4c3649b2cab5a9aa7f9f41023f5943122e97b3d3d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\fb\\19a174fae66a6175bc22e1226672b944e8a1ae": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\fb\\19a174fae66a6175bc22e1226672b944e8a1ae",
+    "mime_type": "application/octet-stream",
+    "size": 797,
+    "created": "2025-01-06T10:43:40.026035",
+    "modified": "2025-01-06T10:43:40.028543",
+    "hash": "22d99e8a741f3e82fd954b7b11027a287c3e4bae1fae5f2de3f3791ec26236a3",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\fb\\3f8b67ddb9be64326bfd9a28621247f223b184": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\fb\\3f8b67ddb9be64326bfd9a28621247f223b184",
+    "mime_type": "application/octet-stream",
+    "size": 187,
+    "created": "2024-12-06T02:38:06.378786",
+    "modified": "2024-12-06T02:38:06.378786",
+    "hash": "767be0d3f1f32ac078187f8bcedcf4945bd65de19060809b83f6f6f94ffb1d40",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\fb\\984c51f901971c7b29d1c49291471ce066f324": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\fb\\984c51f901971c7b29d1c49291471ce066f324",
+    "mime_type": "application/octet-stream",
+    "size": 187,
+    "created": "2024-12-31T22:16:35.154730",
+    "modified": "2024-12-31T22:16:35.154730",
+    "hash": "beb9a057125adda5e9c9706d9877e447d4d156dd3f4be5ba99a3ff784c2a717f",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\fb\\99a34921a42d2008776c59c101b8bd61f74f76": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\fb\\99a34921a42d2008776c59c101b8bd61f74f76",
+    "mime_type": "application/octet-stream",
+    "size": 49,
+    "created": "2025-02-11T00:01:30.667777",
+    "modified": "2025-02-11T00:01:30.667777",
+    "hash": "af6b145039b5af28d56ace10bb780097b93b401fec8117ce33a18a13ff89598d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\fc\\b6392677ad7b6c27bf35fd37b885312b7cd6dd": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\fc\\b6392677ad7b6c27bf35fd37b885312b7cd6dd",
+    "mime_type": "application/octet-stream",
+    "size": 3113,
+    "created": "2025-02-14T19:15:04.697300",
+    "modified": "2025-02-14T19:15:04.697300",
+    "hash": "7026df607c63ddb8d6d454a1f018ff4d16bed87e43b27ea56d77e034696de0b9",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\fd\\a03ea6dbab88af6784dc7da4849c7348661403": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\fd\\a03ea6dbab88af6784dc7da4849c7348661403",
+    "mime_type": "application/octet-stream",
+    "size": 160,
+    "created": "2025-01-01T22:53:24.432121",
+    "modified": "2025-01-01T22:53:24.432620",
+    "hash": "f6b3c1d1ed9f04eceaa851f663bfb360f417d625f057f540cfe8e4e23b4f6938",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\fe\\33017eaba484501b0776b103eda954d49b1a08": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\fe\\33017eaba484501b0776b103eda954d49b1a08",
+    "mime_type": "application/octet-stream",
+    "size": 90,
+    "created": "2025-02-06T17:59:51.901426",
+    "modified": "2025-02-06T17:59:51.906441",
+    "hash": "5e472f3f846bc251dabd8d7f781724b891a371d410488c63991305a8109d6430",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\fe\\36f79a4b611bbfe9214cb1be83311f09b930c5": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\fe\\36f79a4b611bbfe9214cb1be83311f09b930c5",
+    "mime_type": "application/octet-stream",
+    "size": 382,
+    "created": "2025-02-13T21:24:52.783839",
+    "modified": "2025-02-13T21:24:52.783839",
+    "hash": "107d1fc99af44cdc759bdfe92b07ea17477b5a34eb40facba0c33e80ec6fc4d9",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\fe\\9fead58d27e6a7540ea51aeb5c44d515fea447": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\fe\\9fead58d27e6a7540ea51aeb5c44d515fea447",
+    "mime_type": "application/octet-stream",
+    "size": 2032,
+    "created": "2024-12-04T01:54:26.561495",
+    "modified": "2024-12-04T01:54:26.561495",
+    "hash": "4bf8454b0d342dd3b22887680e13f689d7e705f9eb0459ae6bfef50376b44747",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\fe\\ebc99eec106a075beb9d6c62be153f8e6edeed": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\fe\\ebc99eec106a075beb9d6c62be153f8e6edeed",
+    "mime_type": "application/octet-stream",
+    "size": 1665,
+    "created": "2024-12-07T23:03:30.953934",
+    "modified": "2024-12-07T23:03:30.954935",
+    "hash": "59b16674344e698382415567a844efdc956ac34dca2b72c5294a374c8288340d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\ff\\b9a743af3af35ca50a0111d651611e30a4577e": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\ff\\b9a743af3af35ca50a0111d651611e30a4577e",
+    "mime_type": "application/octet-stream",
+    "size": 4221,
+    "created": "2025-02-14T19:15:04.694652",
+    "modified": "2025-02-14T19:15:04.694652",
+    "hash": "0b56108fa7eff345f91b01f0d10be252cba26e8dfe302d69dee62f4e7953432d",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\pack\\pack-37cfbb186a8c22543f4ffa26b09f31497a770f04.idx": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\pack\\pack-37cfbb186a8c22543f4ffa26b09f31497a770f04.idx",
+    "mime_type": "application/octet-stream",
+    "size": 5636,
+    "created": "2025-02-11T00:02:04.732761",
+    "modified": "2025-02-11T00:02:04.732761",
+    "hash": "62f450c6800e9cc1f4fc4f6bc857fbe2b6d130f5100e61cf97a277c8632f5e69",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\pack\\pack-37cfbb186a8c22543f4ffa26b09f31497a770f04.pack": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\pack\\pack-37cfbb186a8c22543f4ffa26b09f31497a770f04.pack",
+    "mime_type": "application/octet-stream",
+    "size": 739276,
+    "created": "2025-02-11T00:02:04.494907",
+    "modified": "2025-02-11T00:34:16.586924",
+    "hash": "91a3427b1fde52fc3b0307921c64c56ef4c274d9589a69469ac1db8c75b85d04",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\pack\\pack-37cfbb186a8c22543f4ffa26b09f31497a770f04.rev": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\pack\\pack-37cfbb186a8c22543f4ffa26b09f31497a770f04.rev",
+    "mime_type": "application/octet-stream",
+    "size": 704,
+    "created": "2025-02-11T00:02:04.733750",
+    "modified": "2025-02-11T00:02:04.733750",
+    "hash": "3fe6936b4a28abbec2b1da60d0b829abea972ca535ad3f6d3a9b73401e7498ab",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\pack\\pack-9e43b3413d8e3ace964bfde2b41838cabade0f45.idx": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\pack\\pack-9e43b3413d8e3ace964bfde2b41838cabade0f45.idx",
+    "mime_type": "application/octet-stream",
+    "size": 90504,
+    "created": "2024-12-03T22:24:52.568396",
+    "modified": "2024-12-03T22:24:52.573401",
+    "hash": "0454302307d84259c3009544334a271bbd56e0d97c3d4d5bf0586ee3fb380693",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\pack\\pack-9e43b3413d8e3ace964bfde2b41838cabade0f45.pack": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\pack\\pack-9e43b3413d8e3ace964bfde2b41838cabade0f45.pack",
+    "mime_type": "application/octet-stream",
+    "size": 2940149,
+    "created": "2024-12-03T22:24:52.123302",
+    "modified": "2025-02-11T00:34:16.587924",
+    "hash": "e4fd3873dd5195e07564ebe80d5adca7b4cdba35a3adaccf22aa45dfc5a0a76c",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\objects\\pack\\pack-9e43b3413d8e3ace964bfde2b41838cabade0f45.rev": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\objects\\pack\\pack-9e43b3413d8e3ace964bfde2b41838cabade0f45.rev",
+    "mime_type": "application/octet-stream",
+    "size": 12828,
+    "created": "2024-12-03T22:24:52.573401",
+    "modified": "2024-12-03T22:24:52.573401",
+    "hash": "c63066e4360559110f94664fd4f163f5d556adfe488f7216e7964da9aa808699",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\logs\\refs\\heads\\cognosis2": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\logs\\refs\\heads\\cognosis2",
+    "mime_type": "application/octet-stream",
+    "size": 9603,
+    "created": "2024-12-03T22:24:52.618468",
+    "modified": "2025-02-14T19:16:17.203424",
+    "hash": "24eecef70e5e048f696ac0b1e78d1bed58bb6a6effbd7e9e1187a4c7299b0438",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\logs\\refs\\remotes\\origin\\cognosis2": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\logs\\refs\\remotes\\origin\\cognosis2",
+    "mime_type": "application/octet-stream",
+    "size": 6960,
+    "created": "2024-12-03T22:33:08.668923",
+    "modified": "2025-02-14T19:16:27.217145",
+    "hash": "f7c777dfaafc24602d424e0123152c7874d1628a2ca018962a8b7f21c3889828",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\logs\\refs\\remotes\\origin\\HEAD": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\logs\\refs\\remotes\\origin\\HEAD",
+    "mime_type": "application/octet-stream",
+    "size": 188,
+    "created": "2024-12-03T22:24:52.608450",
+    "modified": "2024-12-03T22:24:52.613456",
+    "hash": "29a3c290db8f587d7cc86379bc29cc183e4700793d3470132a27b41a8f5cd76c",
+    "symlinks": [],
+    "has_content": false
+  },
+  ".git\\logs\\refs\\remotes\\origin\\kitchen": {
+    "path": "C:\\Users\\DEV\\cognosis\\.git\\logs\\refs\\remotes\\origin\\kitchen",
+    "mime_type": "application/octet-stream",
+    "size": 152,
+    "created": "2025-02-11T00:02:04.825995",
+    "modified": "2025-02-11T00:02:04.825995",
+    "hash": "9ab25b151b94fb807c8f82a7729455d0780e19038b7ebefedaf8ae92c0088c27",
+    "symlinks": [],
+    "has_content": false
+  }
+}

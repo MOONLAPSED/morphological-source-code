@@ -1,15 +1,35 @@
+from __future__ import annotations
+"""
+Monolithic application logic that combines dynamic module loading, metadata registry, and
+multi-domain interaction across platform FFI calls, networking (IPv6 datagrams), and runtime states.
+"""
 import os
+import io
 import sys
+import json
+import mmap
+import hashlib
 import ctypes
 import socket
 import platform
 import asyncio
 import subprocess
+import socket
+import struct
+import platform
+import mimetypes
+import importlib.util
+from datetime import datetime
 from pathlib import Path
+from dataclasses import dataclass
+from typing import Dict, Optional, Any
 
-# Constants for platform checks
 IS_WINDOWS = os.name == 'nt'
 IS_POSIX = os.name == 'posix'
+
+if IS_WINDOWS:
+    from ctypes import windll, wintypes
+
 
 # Platform-specific FFI example
 if IS_POSIX:
@@ -42,7 +62,7 @@ def embed_file_content(file_path: Path) -> str:
     \"""
     """
 
-# ASGI scope handler example
+# ASGI scope handler
 async def asgi_app(scope, receive, send):
     assert scope['type'] == 'http'
 
@@ -56,7 +76,7 @@ async def asgi_app(scope, receive, send):
         'body': b'Hello from ASGI app',
     })
 
-# IPv6 Datagram example
+# IPv6 Datagram
 def create_ipv6_server():
     sock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
     server_address = ('::1', 10000)
@@ -69,7 +89,7 @@ def create_ipv6_server():
         if data:
             sock.sendto(b"Acknowledged", address)
 
-# Shell integration example
+# Shell integration
 def run_shell_command(command: str):
     result = subprocess.run(
         command, shell=True, capture_output=True, text=True, executable='/bin/bash' if IS_POSIX else None
@@ -77,54 +97,6 @@ def run_shell_command(command: str):
     print("Command Output:", result.stdout)
     if result.stderr:
         print("Error Output:", result.stderr)
-
-# Demonstration of platform and application logic handling
-def main():
-    # File Embedding Example
-    file_path = Path("example.txt")
-    try:
-        print(embed_file_content(file_path))
-    except FileNotFoundError as e:
-        print(e)
-
-    # Run a simple shell command
-    run_shell_command("echo 'Hello from shell'")
-
-    # Start an ASGI app for demonstration
-    asyncio.run(asgi_app({'type': 'http'}, None, None))
-
-    # Uncomment to run IPv6 server (blocking operation)
-    # create_ipv6_server()
-
-if __name__ == "__main__":
-    main()
-
-from __future__ import annotations
-"""
-Monolithic application logic that combines dynamic module loading, metadata registry, and
-multi-domain interaction across platform FFI calls, networking (IPv6 datagrams), and runtime states.
-"""
-import os
-import io
-import sys
-import json
-import mmap
-import hashlib
-import socket
-import struct
-import platform
-import mimetypes
-import importlib.util
-from datetime import datetime
-from pathlib import Path
-from dataclasses import dataclass
-from typing import Dict, Optional, Any
-
-IS_WINDOWS = os.name == 'nt'
-IS_POSIX = os.name == 'posix'
-
-if IS_WINDOWS:
-    from ctypes import windll, wintypes
 
 @dataclass
 class FileMetadata:
