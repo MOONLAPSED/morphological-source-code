@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import math
+import time
 import cmath
 import random
 import json
@@ -49,13 +50,12 @@ class MerkleNode:
     def _calculate_hash(self) -> str:
         hasher = sha256()
         hasher.update(str(self.data).encode())
-        # Sort children by hash for consistency
-        for child in sorted(self.children, key=lambda x: x.hash):
+        for child in sorted(self.children, key=hash):
             hasher.update(child.hash.encode())
         return hasher.hexdigest()
 
     def add_child(self, child: 'MerkleNode'):
-        self.children.add(child)
+        self.children = self.children | {child}  # Create a new immutable set
         self.hash = self._calculate_hash()
 
 class RuntimeState:
@@ -179,10 +179,11 @@ class OllamaClient:
         return centroid
 
     def _cosine_similarity(self, v1: array.array, v2: array.array) -> float:
-        dot_product = sum(a * b for a, b in zip(v1, v2))
         norm1 = math.sqrt(sum(x * x for x in v1))
-        norm2 = math.sqrt(sum(x * x for x in v2))
-        return dot_product / (norm1 * norm2) if norm1 > 0 and norm2 > 0 else 0.0
+        norm2 = math.sqrt(sum(y * y for y in v2))
+        if norm1 == 0 or norm2 == 0:
+            return 0.0
+        return sum(a * b for a, b in zip(v1, v2)) / (norm1 * norm2)
 
     async def _update_merkle_state(self):
         system_state = {
@@ -228,7 +229,7 @@ class OllamaClient:
         high_bytes = self.runtime_state.merkle_root.hash[:2]
         low_bytes = self.runtime_state.merkle_root.hash[2:4]
         # Define the path based on high and low bytes
-        path = Path('states') / high_bytes / low_bytes
+        path = Path('states') / high_bytes / low_bytes / f"state_{self.runtime_state.merkle_root.hash}.json"
         path.mkdir(parents=True, exist_ok=True)
         logger.info(f"Saving state file to directory with high bytes: {high_bytes} and low bytes: {low_bytes}")
         with open(path / f"{self.runtime_state.merkle_root.hash}.json", 'w') as f:
@@ -310,16 +311,13 @@ class OllamaClient:
             ]
         }
 
-# Example usage:
-if __name__ == "__main__":
-    async def main():
-        client = OllamaClient()
-        # Add a document to the system
-        doc = await client.add_document("This is a test document.", {"source": "example"})
-        if doc:
-            logger.info(f"Added document with UUID: {doc.uuid}")
-        # Query the system
-        result = await client.query("What is this document about?")
-        logger.info(f"Query result: {result}")
+async def main():
+    client = OllamaClient()
+    document = await client.add_document("This is a sample document.")
+    if document:
+        print(f"Added document: {document.uuid}")
+    result = await client.query("What is this document about?")
+    print(f"Query result: {result}")
 
+if __name__ == "__main__":
     asyncio.run(main())
