@@ -13,12 +13,14 @@ import time
 import json
 import math
 import uuid
+import array
 import shlex
 import struct
 import shutil
 import pickle
 import ctypes
 import logging
+import weakref
 import tomllib
 import pathlib
 import asyncio
@@ -48,9 +50,7 @@ from typing import (
     Any, Dict, List, Optional, Union, Callable, TypeVar, Tuple, Generic, Set,
     Coroutine, Type, NamedTuple, ClassVar, Protocol, runtime_checkable
 )
-#------------------------------------------------------------------------------
 # Logging Configuration
-#------------------------------------------------------------------------------
 class CustomFormatter(logging.Formatter):
     """Custom formatter for colored console output."""
     COLORS = {
@@ -101,9 +101,7 @@ class AdminLogger(logging.LoggerAdapter):
     def process(self, msg, kwargs):
         return f"{self.extra.get('name', 'Admin')}: {msg}", kwargs
 logger = AdminLogger(logging.getLogger(__name__))
-#------------------------------------------------------------------------------
 # Security
-#------------------------------------------------------------------------------
 AccessLevel = Enum('AccessLevel', 'READ WRITE EXECUTE ADMIN USER')
 @dataclass
 class AccessPolicy:
@@ -141,9 +139,7 @@ class SecurityValidator(ast.NodeVisitor):
             if not self.security_context.access_policy.can_access(node.func.id, "execute"):
                 raise PermissionError(f"Access denied to function: {node.func.id}")
         self.generic_visit(node)
-#------------------------------------------------------------------------------
 # Runtime Namespace Management
-#------------------------------------------------------------------------------
 class RuntimeNamespace:
     """Manages hierarchical runtime namespaces with security controls."""
     def __init__(self, name: str = "root", parent: Optional['RuntimeNamespace'] = None):
@@ -181,30 +177,28 @@ elif WORD_SIZE == 2:
 elif WORD_SIZE >= 3:
     StateHash = bytes  # Large-scale data incl. vectors, embeddings, multimedia
 StateHash = str  # possibility of hashing with Int16.. etc, we use CPython str by default
-def least_significant_unit(state: StateHash, word_size: int):
-    if word_size == 1:  # Digit-based resolution
-        return state[-1] if isinstance(state, str) else str(state)[-1]
-    elif word_size == 2:  # Byte-based resolution
-        if isinstance(state, int):
-            return state & 0xFF  # Extract least significant byte
-        elif isinstance(state, bytes):
-            return state[-1]
-        elif isinstance(state, str):
-            return state.encode()[-1]  # Convert to bytes, take last byte
-    elif word_size == 3:  # Hash-based resolution
-        if isinstance(state, (str, bytes)):
-            hash_value = hashlib.sha256(state.encode() if isinstance(state, str) else state).digest()
-            return hash_value[-1]  # Extract least significant byte of the hash
-        elif isinstance(state, dict):
-            return min(state.keys())  # Take the lexicographically smallest key
-    else:
-        raise ValueError("Unsupported WORD_SIZE")
-# Example usage
+# def least_significant_unit(state: StateHash, word_size: int):
+#     if word_size == 1:  # Digit-based resolution
+#         return state[-1] if isinstance(state, str) else str(state)[-1]
+#     elif word_size == 2:  # Byte-based resolution
+#         if isinstance(state, int):
+#             return state & 0xFF  # Extract least significant byte
+#         elif isinstance(state, bytes):
+#             return state[-1]
+#         elif isinstance(state, str):
+#             return state.encode()[-1]  # Convert to bytes, take last byte
+#     elif word_size == 3:  # Hash-based resolution
+#         if isinstance(state, (str, bytes)):
+#             hash_value = hashlib.sha256(state.encode() if isinstance(state, str) else state).digest()
+#             return hash_value[-1]  # Extract least significant byte of the hash
+#         elif isinstance(state, dict):
+#             return min(state.keys())  # Take the lexicographically smallest key
+#     else:
+#         raise ValueError("Unsupported WORD_SIZE")
 # print(least_significant_unit("12345", 1))  # Should return '5'
 # print(least_significant_unit(0xABCD, 2))   # Should return 0xCD
 # print(least_significant_unit("hello", 3))  # Should return least significant byte of SHA256("hello")
 # print(least_significant_unit({10: "a", 2: "b", 7: "c"}, 3))  # Should return 2 (smallest key)
-
 SESSION_TIMEOUT = WORD_SIZE * 60  # 1 minute per byte-word
 T = TypeVar('T', bound=any) # T for TypeVar, V for ValueVar. Homoicons are T+V.
 V = TypeVar('V', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type])
@@ -220,10 +214,13 @@ class MemoryState(StrEnum):
     DEALLOCATED = auto()   # Memory has been freed
 @dataclass
 class QuantumCell:
-    """Binary-memory cell with quantum state tracking for dynamic kernel and virtual memory"""
+    address: int
+    segment: int
     value: bytes = b'\x00' * WORD_SIZE
-    state: MemoryState = MemoryState.QUANTUM
+    state: Optional[str] = None
     commit_hash: Optional[str] = None
+    data: Optional[array.array] = None
+    metadata: Optional[Dict] = None
 @dataclass
 class MemoryVector:
     """Represents the quantum state of virtual memory regions"""
@@ -232,6 +229,24 @@ class MemoryVector:
     entanglement: float    # Degree of entanglement with other memory regions
     state: MemoryState
     size: int             # Size of memory region in bytes
+class QuantumSegment:
+    data: Optional[array.array] = None
+    state_hash: Optional[str] = None
+    data_reference: Optional[str] = None
+    metadata: Optional[Dict] = None
+    embeddings_reference: Optional[str] = None
+
+    def superpose(self):
+        return QuantumSegment(self.data.copy(), None)
+
+    def commit(self, hash_val: str):
+        self.state_hash = hash_val
+
+    def manipulate_data(self, operation: str):
+        if operation == "invert":
+            self.data = array.array('B', [~byte & 0xFF for byte in self.data])
+        elif operation == "increment":
+            self.data = array.array('B', [(byte + 1) & 0xFF for byte in self.data])
 class QuantumPage:
     """Represents a page in virtual memory with quantum properties"""
     def __init__(self, size: int):
@@ -289,7 +304,7 @@ class HttpMiddleware(ABC):
 # --- Request Object ---
 current_request: contextvars.ContextVar[Any] = contextvars.ContextVar("current_request")
 class Request:
-    """Represents an HTTP request."""
+    """Represents an HTTP request"""
 
     def __init__(self, scope: Dict[str, Any]) -> None:
         self.scope: Dict[str, Any] = scope
@@ -301,9 +316,218 @@ class Request:
         self.files: Dict[str, Any] = {}
         self.quantum_memory: Optional[QuantumMemoryFS] = None # Add quantum memory
 
-
-
-
+# --- Abstract Base Object/Class ---
+class PyObjectLike(ABC):
+    """Abstract Base Class for PyObject-like objects (including __Atom__)."""
+    @abstractmethod
+    def __getattribute__(self, name: str) -> Any:
+        raise NotImplementedError
+    @abstractmethod
+    def __setattr__(self, name: str, value: Any) -> None:
+        raise NotImplementedError
+    @abstractmethod
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        raise NotImplementedError
+    @abstractmethod
+    def __repr__(self) -> str:
+        raise NotImplementedError
+    @abstractmethod
+    def __str__(self) -> str:
+        raise NotImplementedError
+    @property
+    @abstractmethod
+    def __class__(self) -> type:
+        raise NotImplementedError
+    @property
+    @abstractmethod
+    def ob_refcnt(self) -> int:
+        """Returns the object's reference count."""
+        raise NotImplementedError
+    @ob_refcnt.setter
+    @abstractmethod
+    def ob_refcnt(self, value: int) -> None:
+        """Sets the object's reference count."""
+        raise NotImplementedError
+    @property
+    @abstractmethod
+    def ob_ttl(self) -> Optional[int]:
+        """Returns the object's time-to-live (in seconds or None)."""
+        raise NotImplementedError
+    @ob_ttl.setter
+    @abstractmethod
+    def ob_ttl(self, value: Optional[int]) -> None:
+        """Sets the object's time-to-live."""
+        raise NotImplementedError
+class __Atom__(PyObjectLike):
+    """
+    Represents a homoiconic unit of code and data.  Behaves like a PyObject.
+    """
+    def __init__(self, code: str, value: Optional[Any] = None, ttl: Optional[int] = None):
+        self._code = code
+        self._value = value
+        self._local_env = {}
+        self._refcount = 1
+        self._ttl = ttl
+        self._created_at = time.time()
+        self._local_env = {}  # Local environment for execution
+    def __getattribute__(self, name: str) -> Any:
+        if name in ('_code', '_value', '_local_env', '_refcount', '_ttl', '_created_at'):  # Direct access to internal attributes
+            return super().__getattribute__(name)
+        # Attribute lookup in the local environment
+        if name in self._local_env:
+            return self._local_env[name]
+        # Evaluate code if the attribute is not found
+        try:
+            # Execute code in the local environment
+            exec(self._code, globals(), self._local_env)
+            return self._local_env[name]
+        except Exception as e:
+            raise AttributeError(f"Attribute '{name}' not found: {e}")
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name in ('_code', '_value', '_local_env', '_refcount', '_ttl', '_created_at'):
+            super().__setattr__(name, value)
+        else:
+            self._local_env[name] = value
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        # Execute the code with the given arguments and keyword arguments
+        local_env = self._local_env.copy()  # Create a copy for the call
+        try:
+            # Use inspect.signature to handle default values and variable arguments
+            sig = inspect.signature(eval(self._code))
+            bound_args = sig.bind(*args, **kwargs)
+            bound_args.apply_defaults()
+            local_env.update(bound_args.arguments)
+        except Exception as e:
+            raise RuntimeError(f"Error binding arguments: {e}")
+        try:
+            exec(self._code, globals(), local_env)
+            # Find the return value (if any)
+            for k, v in local_env.items():
+                if k.startswith('__return__'):  # Convention for return values
+                    return v
+            return None  # No explicit return
+        except Exception as e:
+            raise RuntimeError(f"Error executing __Atom__ code: {e}")
+    def __repr__(self) -> str:
+        return f"__Atom__(code='{self._code}', value={self._value})"
+    def __str__(self) -> str:
+        return self.__repr__()
+    @property
+    def __class__(self) -> type:
+        return __Atom__
+    @property
+    def ob_refcnt(self) -> int:
+        return self._refcount
+    @ob_refcnt.setter
+    def ob_refcnt(self, value: int) -> None:
+        self._refcount = value
+    @property
+    def ob_ttl(self) -> Optional[int]:
+        return self._ttl
+    @ob_ttl.setter
+    def ob_ttl(self, value: Optional[int]) -> None:
+        self._ttl = value
+    def is_expired(self) -> bool:
+        if self._ttl is None:
+            return False
+        now = time.time()
+        return now - self._created_at > self._ttl
+class RuntimeMemory(Generic[T, V, C]):
+    """Integrates quantum memory management with runtime behavior"""
+    def __init__(self, memory_size: int):
+        self.memory_manager = __Atom__(memory_size)
+        self.page_size = 4096  # Standard page size
+        self.runtime_id = id(self)
+        self.allocated_pages: Dict[int, QuantumPage] = {}
+    def allocate_memory(self, size: int) -> Optional[QuantumPage]:
+        """Allocate memory for this runtime"""
+        page = self.memory_manager.allocate(size)
+        if page:
+            self.allocated_pages[id(page)] = page
+        return page
+    def share_with_runtime(self, 
+                          other_runtime: 'RuntimeMemory[T, V, C]',
+                          page: QuantumPage) -> bool:
+        """Share memory with another runtime"""
+        return self.memory_manager.share_memory(
+            self.runtime_id,
+            other_runtime.runtime_id,
+            page
+        )
+    def __post_init__(self,
+                     total_memory: int,
+                     source_runtime_id: int,
+                     target_runtime_id: int,
+                     memory_size: int,
+                     page_size: int,
+                     page: QuantumPage) -> bool:
+        self.total_memory = total_memory
+        self.allocated_memory = 0
+        self.pages: Dict[int, QuantumPage] = {}
+    def allocate(self, size: int) -> Optional[QuantumPage]:
+        """Allocate a quantum page of specified size"""
+        if self.allocated_memory + size > self.total_memory:
+            logger.error(f"Memory allocation failed: Not enough space for {size} bytes.")
+            return None
+        # Round up to nearest page size
+        pages_needed = (size + self.page_size - 1) // self.page_size
+        total_size = pages_needed * self.page_size
+        page = QuantumPage(total_size)
+        page_id = id(page)
+        self.pages[page_id] = page
+        self.allocated_memory += total_size
+        return page
+    def share_memory(self, 
+                     source_runtime_id: int,
+                     target_runtime_id: int,
+                     page: QuantumPage) -> bool:
+        """Share memory between runtimes, establishing quantum entanglement"""
+        if page.vector.state == MemoryState.DEALLOCATED:
+            logger.warning("Attempting to share deallocated memory.")
+            return False
+        # Create weak references to track runtime usage
+        page.references[source_runtime_id] = weakref.ref(source_runtime_id)
+        page.references[target_runtime_id] = weakref.ref(target_runtime_id)
+        # Update memory state to reflect sharing
+        page.vector.state = MemoryState.SHARED
+        # Reduce coherence due to sharing
+        page.vector.coherence *= 0.9
+        return True
+    def measure_memory_state(self, page: QuantumPage) -> MemoryVector:
+        """Measure the quantum state of a memory page"""
+        page.vector.coherence *= 0.8
+        # If coherence drops too low, force a page to disk
+        if page.vector.coherence < 0.3 and page.vector.state != MemoryState.PAGED:
+            page.vector.state = MemoryState.PAGED
+            logger.info(f"Page {id(page)} paged due to low coherence.")
+        return page.vector
+    def deallocate(self, page: QuantumPage):
+        """Deallocate a quantum page, handling entanglement"""
+        page_id = id(page)
+        if page.vector.state == MemoryState.DEALLOCATED:
+            logger.warning(f"Page {page_id} already deallocated.")
+            return
+        # Handle entangled pages
+        if page.vector.entanglement > 0:
+            for ref in page.references.values():
+                runtime_id = ref()
+                if runtime_id is not None:
+                    runtime_page = self.pages.get(runtime_id)
+                    if runtime_page:
+                        runtime_page.vector.coherence *= (1 - page.vector.entanglement)
+        
+        page.vector.state = MemoryState.DEALLOCATED
+        self.allocated_memory -= page.vector.size
+        del self.pages[page_id]
+        logger.info(f"Page {page_id} deallocated.")
+    def __enter__(self):
+        """Initialize runtime memory context"""
+        return self
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Cleanup runtime memory, handling entangled states"""
+        for page in list(self.allocated_pages.values()):
+            self.memory_manager.deallocate(page)
+        self.allocated_pages.clear()
 
 
 class QuantumMemoryFS(Generic[T]):
@@ -526,121 +750,6 @@ class OllamaClient:
             if cell.state == MemoryState.QUANTUM:
                 self.write(address, cell.value, quantum=False)
         logger.info("Flushed all quantum cells to classical state.")
-
-class QuantumMemoryManager(Generic[T, V, C]):
-    """Manages virtual memory with quantum-like properties"""
-    
-    def __init__(self, total_memory: int):
-        self.total_memory = total_memory
-        self.allocated_memory = 0
-        self.pages: Dict[int, QuantumPage] = {}
-        self.page_size = 4096  # Standard page size
-        
-    def allocate(self, size: int) -> Optional[QuantumPage]:
-        """Allocate a quantum page of specified size"""
-        if self.allocated_memory + size > self.total_memory:
-            logger.error(f"Memory allocation failed: Not enough space for {size} bytes.")
-            return None
-            
-        # Round up to nearest page size
-        pages_needed = (size + self.page_size - 1) // self.page_size
-        total_size = pages_needed * self.page_size
-        
-        page = QuantumPage(total_size)
-        page_id = id(page)
-        self.pages[page_id] = page
-        self.allocated_memory += total_size
-        
-        return page
-        
-    def share_memory(self, 
-                     source_runtime_id: int,
-                     target_runtime_id: int,
-                     page: QuantumPage) -> bool:
-        """Share memory between runtimes, establishing quantum entanglement"""
-        if page.vector.state == MemoryState.DEALLOCATED:
-            logger.warning("Attempting to share deallocated memory.")
-            return False
-            
-        # Create weak references to track runtime usage
-        page.references[source_runtime_id] = weakref.ref(source_runtime_id)
-        page.references[target_runtime_id] = weakref.ref(target_runtime_id)
-        
-        # Update memory state to reflect sharing
-        page.vector.state = MemoryState.SHARED
-        # Reduce coherence due to sharing
-        page.vector.coherence *= 0.9
-        
-        return True
-        
-    def measure_memory_state(self, page: QuantumPage) -> MemoryVector:
-        """Measure the quantum state of a memory page"""
-        page.vector.coherence *= 0.8
-        
-        # If coherence drops too low, force a page to disk
-        if page.vector.coherence < 0.3 and page.vector.state != MemoryState.PAGED:
-            page.vector.state = MemoryState.PAGED
-            logger.info(f"Page {id(page)} paged due to low coherence.")
-            
-        return page.vector
-        
-    def deallocate(self, page: QuantumPage):
-        """Deallocate a quantum page, handling entanglement"""
-        page_id = id(page)
-        
-        if page.vector.state == MemoryState.DEALLOCATED:
-            logger.warning(f"Page {page_id} already deallocated.")
-            return
-        
-        # Handle entangled pages
-        if page.vector.entanglement > 0:
-            for ref in page.references.values():
-                runtime_id = ref()
-                if runtime_id is not None:
-                    runtime_page = self.pages.get(runtime_id)
-                    if runtime_page:
-                        runtime_page.vector.coherence *= (1 - page.vector.entanglement)
-        
-        page.vector.state = MemoryState.DEALLOCATED
-        self.allocated_memory -= page.vector.size
-        del self.pages[page_id]
-        logger.info(f"Page {page_id} deallocated.")
-
-class QuantumRuntimeMemory(Generic[T, V, C]):
-    """Integrates quantum memory management with runtime behavior"""
-    
-    def __init__(self, memory_size: int):
-        self.memory_manager = QuantumMemoryManager(memory_size)
-        self.runtime_id = id(self)
-        self.allocated_pages: Dict[int, QuantumPage] = {}
-        
-    def allocate_memory(self, size: int) -> Optional[QuantumPage]:
-        """Allocate memory for this runtime"""
-        page = self.memory_manager.allocate(size)
-        if page:
-            self.allocated_pages[id(page)] = page
-        return page
-        
-    def share_with_runtime(self, 
-                          other_runtime: 'QuantumRuntimeMemory[T, V, C]',
-                          page: QuantumPage) -> bool:
-        """Share memory with another runtime"""
-        return self.memory_manager.share_memory(
-            self.runtime_id,
-            other_runtime.runtime_id,
-            page
-        )
-        
-    def __enter__(self):
-        """Initialize runtime memory context"""
-        return self
-        
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        """Cleanup runtime memory, handling entangled states"""
-        for page in list(self.allocated_pages.values()):
-            self.memory_manager.deallocate(page)
-        self.allocated_pages.clear()
-
 
 def main():
     # Create a new QuantumMemoryFS instance
