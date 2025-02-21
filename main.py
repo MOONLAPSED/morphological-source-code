@@ -11,6 +11,7 @@
 import re
 import os
 import io
+import abc
 import dis
 import sys
 import ast
@@ -174,6 +175,23 @@ class RuntimeNamespace:
 #------------------------------------------------------------------------------
 # Type Definitions
 #------------------------------------------------------------------------------
+"""Homoiconism dictates that, upon runtime validation, all objects are code and data.
+To facilitate; we utilize first class functions and a static typing system.
+This maps perfectly to the three aspects of nominative invariance:
+    Identity preservation, T: Type structure (static)
+    Content preservation, V: Value space (dynamic)
+    Behavioral preservation, C: Computation space (transformative)
+    [[T (Type) ←→ V (Value) ←→ C (Callable)]] == 'quantum infodynamics, a tripartite element; our __Atom__()(s)'
+    Meta-Language (High Level)
+      ↓ [First Collapse - Compilation]
+    Intermediate Form (Like a quantum superposition)
+      ↓ [Second Collapse - Runtime]
+    Executed State (Measured Reality)
+What's conserved across these transformations:
+    Nominative relationships
+    Information content
+    Causal structure
+    Computational potential"""
 WORD_SIZE = 1  # 1-byte ('high' is most significant, 'low' is least significant)
 # WORD_SIZE = 2  # 16-bit word ('high' is significant byte..)
 # WORD_SIZE = 3  # 32-bit word ('low' is least significant byte..)
@@ -202,30 +220,20 @@ def least_significant_unit(state: StateHash, word_size: int):
             return min(state.keys())  # Take the lexicographically smallest key
     else:
         raise ValueError("Unsupported WORD_SIZE")
-SESSION_TIMEOUT = WORD_SIZE * 60  # 1 minute per byte-word
+SESSION_TIMEOUT = WORD_SIZE * 60  # 1 minute per byte-word default scale-factor
 T = TypeVar('T', bound=any) # T for TypeVar, V for ValueVar. Homoicons are T+V.
 V = TypeVar('V', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type])
 C = TypeVar('C', bound=Callable[..., Any])  # callable 'T'/'V' first class function interface
-"""Homoiconism dictates that, upon runtime validation, all objects are code and data.
-To facilitate; we utilize first class functions and a static typing system.
-This maps perfectly to the three aspects of nominative invariance:
-    Identity preservation, T: Type structure (static)
-    Content preservation, V: Value space (dynamic)
-    Behavioral preservation, C: Computation space (transformative)
-    [[T (Type) ←→ V (Value) ←→ C (Callable)]] == 'quantum infodynamics, a triparte element; our Atom()(s)'
-    Meta-Language (High Level)
-      ↓ [First Collapse - Compilation]
-    Intermediate Form (Like a quantum superposition)
-      ↓ [Second Collapse - Runtime]
-    Executed State (Measured Reality)
-What's conserved across these transformations:
-    Nominative relationships
-    Information content
-    Causal structure
-    Computational potential"""
-T = TypeVar('T', bound=any) # T for TypeVar, V for ValueVar. Homoicons are T+V.
-V = TypeVar('V', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type])
-C = TypeVar('C', bound=Callable[..., Any])  # callable 'T'/'V' first class function interface
+class FrameModel(Generic[T, V, C], ABC):
+    """A frame model is a data structure that contains the data of a frame aka a chunk of text contained by dilimiters.
+        Delimiters are defined as '---' and '\n' or its analogues (EOF) or <|in_end|> or "..." etc for the start and end of a frame respectively.)
+        the frame model is a data structure that is independent of the source of the data.
+        portability note: "dilimiters" are established by the type of encoding and the arbitrary writing-style of the source data. eg: ASCII
+    """
+    @abstractmethod
+    def to_bytes(self) -> bytes:
+        """Return the frame data as bytes."""
+        pass
 """py objects are implemented as C structures.
 typedef struct _object {
     Py_ssize_t ob_refcnt;
@@ -240,21 +248,8 @@ Both function and method are subclasses of object
 homoiconism dictates the need for a way to represent all Python constructs as first class citizen(fcc):
     (functions, classes, control structures, operations, primitive values)
 nominative 'true OOP'(SmallTalk) and my specification demands code as data and value as logic, structure.
-The Atom(), our polymorph of object and fcc-apparent at runtime, always represents the literal source code
-    which makes up their logic and possess the ability to be stateful source code data structure. """
-# HOMOICONISTIC morphological source code displays 'modified quine' behavior
-# within a validated runtime, if and only if the valid python interpreter
-# has r/w/x permissions to the source code file and some method of writing
-# state to the source code file is available. Any interruption of the
-# '__exit__` method or misuse of '__enter__' will result in a runtime error
-# AP (Availability + Partition Tolerance): A system that prioritizes availability and partition
-# tolerance may use a distributed architecture with eventual consistency (e.g., Cassandra or Riak).
-# This ensures that the system is always available (availability), even in the presence of network
-# partitions (partition tolerance). However, the system may sacrifice consistency, as nodes may have
-# different views of the data (no consistency). A homoiconic piece of source code is eventually
-# consistent, assuming it is able to re-instantiated.
-# Enums for type system
-# --- Abstract Base Object/Class ---
+The __Atom__()(s), our polymorph of object and fcc-apparent at runtime, always represents the literal source
+    cod which makes up their logic and possess the ability to be stateful source code data structure. """
 class PyObjectLike(ABC):
     """Abstract Base Class for PyObject-like objects (including __Atom__)."""
     @abstractmethod
@@ -373,7 +368,6 @@ class __Atom__(PyObjectLike):
                     validator.visit(ast_node)
                 except PermissionError as e:
                     return {"status": "error", "message": str(e)}
-
             result = atom()  # Execute
             return {"status": "success", "result": result}
         else:
@@ -405,6 +399,10 @@ class __Atom__(PyObjectLike):
             return None  # No explicit return
         except Exception as e:
             raise RuntimeError(f"Error executing __Atom__ code: {e}")
+    def __frmr__(self) -> FrameModel:
+        """Convert this Atom to its frame representation"""
+        # Implementation of 'framer' conversion
+        pass
     def __repr__(self) -> str:
         return f"__Atom__(code='{self._code}', value={self._value})"
     def __str__(self) -> str:
@@ -432,6 +430,17 @@ class __Atom__(PyObjectLike):
 #------------------------------------------------------------------------------
 # Enums and Data Classes for Symmetries, Hamiltonians, Lagrangians and Manifolds
 #------------------------------------------------------------------------------
+# HOMOICONISTIC morphological source code displays 'modified quine' behavior
+# within a validated runtime, if and only if the valid python interpreter
+# has r/w/x permissions to the source code file and some method of writing
+# state to the source code file is available. Any interruption of the
+# '__exit__` method or misuse of '__enter__' will result in a runtime error
+# AP (Availability + Partition Tolerance): A system that prioritizes availability and partition
+# tolerance may use a distributed architecture with eventual consistency (e.g., Cassandra or Riak).
+# This ensures that the system is always available (availability), even in the presence of network
+# partitions (partition tolerance). However, the system may sacrifice consistency, as nodes may have
+# different views of the data (no consistency). A homoiconic piece of source code is eventually
+# consistent, assuming it is able to re-instantiated.
 class Symmetry(Enum):
     TRANSLATION = "Translation"
     ROTATION = "Rotation"
@@ -599,26 +608,15 @@ class Request:
         self.session: Dict[str, Any] = {}
         self.files: Dict[str, Any] = {}
         self.quantum_memory: Optional[QuantumMemoryFS] = None # Add quantum memory
-#------------------------------------------------------------------------------
-# Runtime Type Definitions
-#------------------------------------------------------------------------------
-class FrameModel(ABC):
-    """A frame model is a data structure that contains the data of a frame aka a chunk of text contained by dilimiters.
-        Delimiters are defined as '---' and '\n' or its analogues (EOF) or <|in_end|> or "..." etc for the start and end of a frame respectively.)
-        the frame model is a data structure that is independent of the source of the data.
-        portability note: "dilimiters" are established by the type of encoding and the arbitrary writing-style of the source data. eg: ASCII
-    """
-    @abstractmethod
-    def to_bytes(self) -> bytes:
-        """Return the frame data as bytes."""
-        pass
-class SerialObject(FrameModel, ABC):
-    """SerialObject is an abstract class that defines the interface for serializable objects within the abstract data model.
-        Inputs:
-            AbstractDataModel: The base class for the SerialObject class
-        Returns:
-            SerialObject object
-    """
+class SerialObject(Generic[T, V, C], __Atom__, FrameModel[T, V, C]):
+    """SerialObject is an abstract class that defines the interface for serializable objects.
+    Generic[T,V,C]    
+        |           
+    SerialObject -----> FrameModel[T,V,C]
+        |
+    __Atom__
+        |
+    PyObjectLike"""
     @abstractmethod
     def dict(self) -> dict:
         """Return a dictionary representation of the model."""
@@ -627,38 +625,6 @@ class SerialObject(FrameModel, ABC):
     def json(self) -> str:
         """Return a JSON string representation of the model."""
         pass
-@dataclass
-class ConcreteModel(SerialObject):
-    """
-    This concrete implementation of SerialObject ensures that instances can
-    be used wherever a FrameModel or SerialObject is required,
-    hence demonstrating polymorphism.
-        Inputs:
-            SerialObject: The base class for the ConcreteModel class
-        Returns:
-            ConcreteModel object        
-    """
-    name: str
-    age: int
-    timestamp: datetime = field(default_factory=datetime.now)
-    def to_bytes(self) -> bytes:
-        """Return the JSON representation as bytes."""
-        return self.json().encode()
-    def to_str(self) -> str:
-        """Return the JSON representation as a string."""
-        return self.json()
-    def dict(self) -> dict:
-        """Return a dictionary representation of the model."""
-        return {
-            "name": self.name,
-            "age": self.age,
-            "timestamp": self.timestamp.isoformat(),
-        }
-    def json(self) -> str:
-        """Return a JSON representation of the model as a string."""
-        return json.dumps(self.dict())
-# Abstract Base Class for models
-class AtomicModel(ConcreteModel, ABC):
     @abstractmethod
     def get_properties(self) -> Dict[str, Any]:
         """Method to get properties of the AtomicModel instance."""
@@ -683,19 +649,47 @@ class AtomicModel(ConcreteModel, ABC):
     def __eq__(self, other: Any) -> bool:
         """Equality comparison between two models."""
         pass
-class Condition(AtomicModel, ABC):
+@dataclass
+class AtomicModel(SerialObject[T, V, C]):
+    """Concrete implementation of SerialObject."""
+    name: str
+    age: int
+    timestamp: datetime = field(default_factory=datetime.now)
+    def to_bytes(self) -> bytes:
+        """Return the JSON representation as bytes."""
+        return self.json().encode()
+    def to_str(self) -> str:
+        """Return the JSON representation as a string."""
+        return self.json()
+    def dict(self) -> dict:
+        """Return a dictionary representation of the model."""
+        return {
+            "name": self.name,
+            "age": self.age,
+            "timestamp": self.timestamp.isoformat(),
+        }
+    def json(self) -> str:
+        """Return a JSON representation of the model as a string."""
+        return json.dumps(self.dict())
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary."""
+        return self.dict()
+    def atomic_method(self) -> None:
+        """An atomic method."""
+        pass
+class Condition(AtomicModel[T, V, C], ABC):
     """Represents a state or condition in the system."""
     attributes: Dict[str, Any]
     @abstractmethod
     def __repr__(self):
         return f"Condition({self.attributes})"
-class Action(Condition, ABC):
+class Action(Condition[T, V, C], ABC):
     """Abstract base class for an elementary action or reaction."""
     @abstractmethod
     def execute(self, input_condition: Condition) -> Condition:
         """Transform an input condition into an output condition."""
         pass
-class Reaction(Action, ABC):
+class Reaction(Action[T, V, C], ABC):
     """Concrete implementation of an elementary reaction."""
     transformation: Callable[[Condition], Condition]
     @abstractmethod
@@ -707,16 +701,32 @@ class Reaction(Action, ABC):
 class Agency:
     """Represents an invariant agency catalyzing actions."""
     name: str
-    rules: Dict[str, Action] = field(default_factory=dict)
-    def perform_action(self, action_key: str, input_condition: Condition) -> Condition:
+    rules: Dict[str, Action[T, V, C]] = field(default_factory=dict)
+    def perform_action(self, action_key: str, input_condition: Condition[T, V, C]) -> Condition[T, V, C]:
         if action_key not in self.rules:
             raise ValueError(f"Action {action_key} is not defined for agency {self.name}.")
         action = self.rules[action_key]
         print(f"Agency '{self.name}' performing action '{action_key}'...")
         return action.execute(input_condition)
-    def add_action(self, action_key: str, action: Action):
+    def add_action(self, action_key: str, action: Action[T, V, C]):
         self.rules[action_key] = action
         print(f"Action '{action_key}' added to agency '{self.name}'.")
+#------------------------------------------------------------------------------
+# Deamon/Kernel
+#------------------------------------------------------------------------------
+"""The Heisenberg Uncertainty Principle tells us that we can’t precisely measure both the position and momentum of a particle. In computation, we encounter similar trade-offs between precision and performance:
+    For instance, with approximate computing or probabilistic algorithms, we trade off exact accuracy for faster or less resource-intensive computation.
+    Quantum computing itself takes advantage of this principle, allowing certain computations to run probabilistically rather than deterministically.
+The idea that data could be "uncertain" in some way until acted upon or observed might open new doors in software architecture. Just as quantum computing uses uncertainty productively, conventional computing might benefit from intentionally embracing imprecise states or probabilistic pathways in specific contexts, especially in AI, optimization, and real-time computation.
+Zero-copy and immutable data structures are, in a way, a step toward this quantum principle. By reducing the “work” done on data, they minimize thermodynamic loss. We could imagine architectures that go further, preserving computational history or chaining operations in such a way that information isn't “erased” but transformed, making the process more like a conservation of informational “energy.”
+If algorithms were seen as “wavefunctions” representing possible computational outcomes, then choosing a specific outcome (running the algorithm) would be like collapsing a quantum state. In this view:
+    Each step of an algorithm could be seen as an evolution of the wavefunction, transforming the data structure through time.
+    Non-deterministic algorithms could explore multiple “paths” through data, and the most efficient or relevant one could be selected probabilistically.
+    Treating data and computation as probabilistic, field-like entities rather than fixed operations on fixed memory.
+    Embracing superpositions, potential operations, and entanglement within software architecture, allowing for context-sensitive, energy-efficient, and exploratory computation.
+    Leveraging thermodynamic principles more deeply, designing architectures that conserve “informational energy” by reducing unnecessary state changes and maximizing information flow efficiency."""
+# The Markovian or non-Markovian behavior at runtime, quinetime, or in IR-form is itself a probabilistic process
+# This is reflected in the use of probabilistic data structures and algorithms throughout
 class RuntimeMemory(Generic[T, V, C]):
     """Integrates quantum memory management with runtime behavior"""
     def __init__(self, memory_size: int):
@@ -812,9 +822,6 @@ class RuntimeMemory(Generic[T, V, C]):
         for page in list(self.allocated_pages.values()):
             self.memory_manager.deallocate(page)
         self.allocated_pages.clear()
-#------------------------------------------------------------------------------
-# Deamon/Kernel
-#------------------------------------------------------------------------------
 class MorphologicalKernel:
     """
     Central to running feedback-driven transformations.
@@ -848,19 +855,6 @@ class HoloiconicTransform(Generic[T, V, C]):
     def flop(computation: C) -> V:
         """Transform computation to value (outside-in)"""
         return computation()
-"""
-The Heisenberg Uncertainty Principle tells us that we can’t precisely measure both the position and momentum of a particle. In computation, we encounter similar trade-offs between precision and performance:
-    For instance, with approximate computing or probabilistic algorithms, we trade off exact accuracy for faster or less resource-intensive computation.
-    Quantum computing itself takes advantage of this principle, allowing certain computations to run probabilistically rather than deterministically.
-The idea that data could be "uncertain" in some way until acted upon or observed might open new doors in software architecture. Just as quantum computing uses uncertainty productively, conventional computing might benefit from intentionally embracing imprecise states or probabilistic pathways in specific contexts, especially in AI, optimization, and real-time computation.
-Zero-copy and immutable data structures are, in a way, a step toward this quantum principle. By reducing the “work” done on data, they minimize thermodynamic loss. We could imagine architectures that go further, preserving computational history or chaining operations in such a way that information isn't “erased” but transformed, making the process more like a conservation of informational “energy.”
-If algorithms were seen as “wavefunctions” representing possible computational outcomes, then choosing a specific outcome (running the algorithm) would be like collapsing a quantum state. In this view:
-    Each step of an algorithm could be seen as an evolution of the wavefunction, transforming the data structure through time.
-    Non-deterministic algorithms could explore multiple “paths” through data, and the most efficient or relevant one could be selected probabilistically.
-    Treating data and computation as probabilistic, field-like entities rather than fixed operations on fixed memory.
-    Embracing superpositions, potential operations, and entanglement within software architecture, allowing for context-sensitive, energy-efficient, and exploratory computation.
-    Leveraging thermodynamic principles more deeply, designing architectures that conserve “informational energy” by reducing unnecessary state changes and maximizing information flow efficiency.
-"""
 """Self-Adjoint Operators on a Hilbert Space: In quantum mechanics, the state space of a system is typically modeled as a Hilbert space—a complete vector space equipped with an inner product. States within this space can be represented as vectors (ket vectors, ∣ψ⟩∣ψ⟩), and observables (like position, momentum, or energy) are modeled by self-adjoint operators.
 
     Self-adjoint operators are crucial because they guarantee that the eigenvalues (which represent possible measurement outcomes in quantum mechanics) are real numbers, which is a necessary condition for observable quantities in a physical theory. In quantum mechanics, the evolution of a state ∣ψ⟩∣ψ⟩ under an observable A^A^ can be described as the action of the operator A^A^ on ∣ψ⟩∣ψ⟩, and these operators must be self-adjoint to maintain physical realism.
