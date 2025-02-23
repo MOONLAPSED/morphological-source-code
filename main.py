@@ -221,7 +221,7 @@ def least_significant_unit(state: StateHash, word_size: int):
     else:
         raise ValueError("Unsupported WORD_SIZE")
 SESSION_TIMEOUT = WORD_SIZE * 60  # 1 minute per byte-word default scale-factor
-T = TypeVar('T', bound=any) # T for TypeVar, V for ValueVar. Homoicons are T+V.
+T = TypeVar('T', bound=Any) # T for TypeVar, V for ValueVar. Homoicons are T+V.
 V = TypeVar('V', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type])
 C = TypeVar('C', bound=Callable[..., Any])  # callable 'T'/'V' first class function interface
 class FrameModel(Generic[T, V, C], ABC):
@@ -291,7 +291,7 @@ class PyObjectLike(ABC):
     def ob_ttl(self, value: Optional[int]) -> None:
         """Sets the object's time-to-live."""
         raise NotImplementedError
-class __Atom__(PyObjectLike):
+class __Atom__(Generic[T, V, C], PyObjectLike):
     """
     Represents a homoiconic unit of code and data.  Behaves like a PyObject.
     """
@@ -614,9 +614,9 @@ class SerialObject(Generic[T, V, C], __Atom__, FrameModel[T, V, C]):
         |           
     SerialObject -----> FrameModel[T,V,C]
         |
-    __Atom__
+    PyObjectLike
         |
-    PyObjectLike"""
+    __Atom__(optional [T, V, C])"""
     @abstractmethod
     def dict(self) -> dict:
         """Return a dictionary representation of the model."""
