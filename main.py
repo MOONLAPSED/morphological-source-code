@@ -1,3 +1,4 @@
+from __future__ import annotations
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #------------------------------------------------------------------------------
@@ -33,10 +34,11 @@ import asyncio
 import inspect
 import hashlib
 import platform
-import traceback
+import importlib
 import functools
 import linecache
-import importlib
+import traceback
+import mimetypes
 import threading
 import subprocess
 import contextvars
@@ -172,6 +174,68 @@ class RuntimeNamespace:
             return self._children.get(parts[0])
         child = self._children.get(parts[0])
         return child.get_child(parts[1]) if child and len(parts) > 1 else None
+@dataclass
+class FileMetadata:
+    path: pathlib.Path
+    mime_type: str
+    size: int
+    created: datetime
+    modified: datetime
+    content_hash: str
+    symlinks: list[pathlib.Path] = None
+class ContentManager:
+    def __init__(self, root_dir: pathlib.Path):
+        self.root_dir = root_dir
+        self.metadata_cache: Dict[pathlib.Path, FileMetadata] = {}
+        self.module_cache: Dict[str, Any] = {}
+    def compute_hash(self, path: pathlib.Path) -> str:
+        hasher = hashlib.sha256()
+        with open(path, 'rb') as f:
+            while chunk := f.read(8192):
+                hasher.update(chunk)
+        return hasher.hexdigest()
+    def get_metadata(self, path: pathlib.Path) -> FileMetadata:
+        if path in self.metadata_cache:
+            return self.metadata_cache[path]
+        stat = path.stat()
+        mime_type, _ = mimetypes.guess_type(path)
+        symlinks = [p for p in path.parent.glob('*') if p.is_symlink() and p.resolve() == path]
+        metadata = FileMetadata(
+            path=path,
+            mime_type=mime_type or 'application/octet-stream',
+            size=stat.st_size,
+            created=datetime.fromtimestamp(stat.st_ctime),
+            modified=datetime.fromtimestamp(stat.st_mtime),
+            content_hash=self.compute_hash(path),
+            symlinks=symlinks
+        )
+        self.metadata_cache[path] = metadata
+        return metadata
+    def load_module(self, path: pathlib.Path) -> Optional[Any]:
+        module_name = f"content_{path.stem}"
+        if module_name in self.module_cache:
+            return self.module_cache[module_name]
+        metadata = self.get_metadata(path)
+        content = path.read_text() if path.suffix in {'.txt', '.py', '.md'} else None
+        spec = importlib.util.spec_from_file_location(module_name, str(path))
+        if spec and spec.loader:
+            module = importlib.util.module_from_spec(spec)
+            setattr(module, '__metadata__', metadata)
+            if content:
+                setattr(module, '__content__', content)
+            spec.loader.exec_module(module)
+            self.module_cache[module_name] = module
+            return module
+        return None
+    def scan_directory(self):
+        for path in self.root_dir.rglob('*'):
+            if path.is_file():
+                try:
+                    if module := self.load_module(path):
+                        module_name = f"content_{path.stem}"
+                        sys.modules[module_name] = module
+                except Exception as e:
+                    print(f"Error loading {path}: {e}")
 #------------------------------------------------------------------------------
 # Type Definitions
 #------------------------------------------------------------------------------
@@ -1184,4 +1248,7 @@ def main():
         return Condition(attributes=new_attributes)
 
 if __name__ == '__main__':
-    main()
+    root = pathlib.Path(__file__).parent
+    manager = ContentManager(root)
+    manager.scan_directory()
+    sys.exit(main())
