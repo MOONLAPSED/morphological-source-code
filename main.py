@@ -151,7 +151,7 @@ class SecurityValidator(ast.NodeVisitor):
         self.generic_visit(node)
 # Runtime Namespace Management
 class RuntimeNamespace:
-    """Manages hierarchical runtime namespaces with security controls."""
+    """Manages hierarchical runtime namespaces with security controls and custom delimiter support."""
     def __init__(self, name: str = "root", parent: Optional['RuntimeNamespace'] = None):
         self._name = name
         self._parent = parent
@@ -159,6 +159,7 @@ class RuntimeNamespace:
         self._content = SimpleNamespace()
         self._security_context: Optional[SecurityContext] = None
         self.available_modules: Dict[str, Any] = {}
+        self.frame_model: Optional[FrameModel] = None  # Reference to a FrameModel instance
     @property
     def full_path(self) -> str:
         if self._parent:
@@ -174,6 +175,21 @@ class RuntimeNamespace:
             return self._children.get(parts[0])
         child = self._children.get(parts[0])
         return child.get_child(parts[1]) if child and len(parts) > 1 else None
+    def set_frame_model(self, frame_model: FrameModel):
+        """Set the FrameModel for this namespace."""
+        self.frame_model = frame_model
+    def embed_content(self, raw_content: str):
+        """Embed content into the namespace using the configured FrameModel."""
+        if not self.frame_model:
+            raise ValueError("No FrameModel configured for this namespace.")
+        if not self.frame_model.validate_content(raw_content):
+            raise ValueError("Content validation failed. Invalid delimiters or format.")
+        self._content.embedded_data = self.frame_model.parse_content(raw_content)
+    def retrieve_content(self) -> str:
+        """Retrieve the embedded content from the namespace."""
+        if hasattr(self._content, "embedded_data"):
+            return self.frame_model.start_delimiter + self._content.embedded_data + self.frame_model.end_delimiter
+        raise ValueError("No content embedded in this namespace.")
 @dataclass
 class FileMetadata:
     path: pathlib.Path
@@ -236,6 +252,18 @@ class ContentManager:
                         sys.modules[module_name] = module
                 except Exception as e:
                     print(f"Error loading {path}: {e}")
+class ContentTransformationReaction(Reaction):
+    """Concrete implementation of an elementary reaction for content transformation."""
+    def __init__(self, transformation: Callable[[str], str]):
+        self.transformation = transformation
+    def execute(self, input_condition: Condition) -> Condition:
+        """Transform the input condition's content using the defined transformation function."""
+        if not isinstance(input_condition.attributes.get("content"), str):
+            raise ValueError("Input condition must contain valid string content.")
+        transformed_content = self.transformation(input_condition.attributes["content"])
+        output_condition = Condition(attributes={"content": transformed_content})
+        print(f"Reaction: {input_condition} -> {output_condition}")
+        return output_condition
 #------------------------------------------------------------------------------
 # Type Definitions
 #------------------------------------------------------------------------------
@@ -289,15 +317,44 @@ T = TypeVar('T', bound=Any) # T for TypeVar, V for ValueVar. Homoicons are T+V.
 V = TypeVar('V', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type])
 C = TypeVar('C', bound=Callable[..., Any])  # callable 'T'/'V' first class function interface
 class FrameModel(Generic[T, V, C], ABC):
-    """A frame model is a data structure that contains the data of a frame aka a chunk of text contained by dilimiters.
-        Delimiters are defined as '---' and '\n' or its analogues (EOF) or <|in_end|> or "..." etc for the start and end of a frame respectively.)
-        the frame model is a data structure that is independent of the source of the data.
-        portability note: "dilimiters" are established by the type of encoding and the arbitrary writing-style of the source data. eg: ASCII
-    """
+    """A frame model is a data structure that contains the data of a frame aka a chunk of text contained by delimiters"""
+    def __init__(self, start_delimiter: str = "<<CONTENT>>", end_delimiter: str = "<<END_CONTENT>>"):
+        self.start_delimiter = start_delimiter
+        self.end_delimiter = end_delimiter
     @abstractmethod
     def to_bytes(self) -> bytes:
         """Return the frame data as bytes."""
         pass
+    @abstractmethod
+    def parse_content(self, raw_content: str) -> str:
+        """Parse the raw content using custom delimiters."""
+        pass
+    def validate_content(self, content: str) -> bool:
+        """Validate the content based on delimiters."""
+        if not content.startswith(self.start_delimiter) or not content.endswith(self.end_delimiter):
+            return False
+        return True
+@dataclass
+class CustomDelimiterFrame(FrameModel):
+    content: str
+    def to_bytes(self) -> bytes:
+        """Return the frame data as bytes."""
+        return self.content.encode()
+    def parse_content(self, raw_content: str) -> str:
+        """Parse the raw content using custom delimiters."""
+        # Extract content between delimiters
+        start_index = raw_content.find(self.start_delimiter)
+        end_index = raw_content.rfind(self.end_delimiter)
+        if start_index == -1 or end_index == -1 or start_index >= end_index:
+            raise ValueError("Invalid content format: Missing or mismatched delimiters.")
+        return raw_content[start_index + len(self.start_delimiter):end_index]
+    def validate_content(self, content: str) -> bool:
+        """Validate the content based on delimiters."""
+        try:
+            parsed_content = self.parse_content(content)
+            return self.start_delimiter + parsed_content + self.end_delimiter == content
+        except ValueError:
+            return False
 """py objects are implemented as C structures.
 typedef struct _object {
     Py_ssize_t ob_refcnt;
@@ -520,6 +577,7 @@ class State:
     computation_space: C
     symmetry: Symmetry
     conservation: Conservation
+    order_parameter: Optional[OrderParameter] = None  # Track symmetry breaking
 class MemoryState(StrEnum):
     QUANTUM = auto()       # Superposition state, uncommitted changes
     CLASSICAL = auto()     # Committed state (persisted to Git)
@@ -567,20 +625,40 @@ FieldType = TypeVar('AtomType', bound=Field)
 class Gauge:
     """
     Manages the field's influence on type, value, and computation manifolds.
+    T = TypeVar('T')  # Temporal symmetry (maps to RelationalAgency's T)
+    V = TypeVar('V')  # Value/state symmetry (maps to OrderParameter's value)
+    C = TypeVar('C')  # Configuration symmetry (maps to Gauge's fields)
+    Guage flavors:
+        Monoids : 
+            Sequential transformations form a monoid structure.
+            The Dirac delta function serves as the identity for state transitions.
+        Abelian Groups : 
+            Reversible transformations ensure conservation laws.
+            Symmetry-preserving operations commute, reflecting abelian group properties.
+        Algebraic Topology : 
+            Symmetry groups classify system behaviors.
+            Boundary-bulk duality connects type systems and runtime dynamics.
     """
     def __init__(self, local: State, global_: State, emergent: State):
         self.fields = [local, global_, emergent]
-
     def apply_transformation(self, state: State) -> State:
         transformed_state = state
         for field in self.fields:
             transformed_state = self._combine_states(transformed_state, field)
+        # Apply probabilistic symmetry breaking
+        if transformed_state.order_parameter:
+            for sym in transformed_state.order_parameter.preserved_symmetries.copy():
+                delta_energy = self._calculate_energy_change(transformed_state, sym)
+                transition_prob = math.exp(-delta_energy / self.temperature)
+                if random.random() < transition_prob:
+                    transformed_state.order_parameter.break_symmetry(sym)
         return transformed_state
-
+    def _calculate_energy_change(self, state: State, symmetry: str) -> float:
+        # Simplified energy calculation
+        return abs(state.value_space) ** 2
     def _combine_states(self, state_a: State, state_b: State) -> State:
         # Apply computation from state_b to the value space of state_a
         new_value = [state_b.computation_space(val) for val in state_a.value_space]
-
         return State(
             type_space=state_a.type_space,
             value_space=new_value,
@@ -893,8 +971,11 @@ class MorphologicalKernel:
     """
     def __init__(self):
         self.state_history = []
-    def run(self, initial_state: State, gauge: Gauge, steps: int) -> State:
+        self.time_steps = 0
+        self.temperature = 1.0  # Default temperature
+    def run(self, initial_state: State, gauge: Gauge, steps: int, temperature: float = 1.0) -> State:
         current_state = initial_state
+        self.temperature = temperature
         for _ in range(steps):
             current_state = gauge.apply_transformation(current_state)
             self.state_history.append(current_state)
