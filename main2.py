@@ -323,6 +323,9 @@ interpreting the "measured reality"."""
 @dataclass
 class CustomDelimiterFrame(FrameModel):
     content: str
+    def __post_init__(self):
+        # Set default delimiters
+        self.init()
     def to_bytes(self) -> bytes:
         """Return the frame data as bytes."""
         return self.content.encode()
@@ -427,7 +430,17 @@ class RuntimeNamespace:
     def set_frame_model(self, frame_model: FrameModel):
         """Set the FrameModel for this namespace."""
         self.frame_model = frame_model
-    def embed_content(self, raw_content: str):
+    def embed_content(self, raw_content: str) -> None: 
+        """Embed raw content using the defined FrameModel."""
+        if not self.frame_model:
+            raise ValueError("No FrameModel set for this namespace.")
+        parsed_content = self.frame_model.parse_content(raw_content)
+        setattr(self._content, "embedded_data", parsed_content)
+        def extract_content(self) -> str:
+            """Extracts embedded content."""
+            if not hasattr(self._content, "embedded_data"):
+                raise ValueError("No embedded content found.")
+            return getattr(self._content, "embedded_data")
         """Embed content into the namespace using the configured FrameModel."""
         if not self.frame_model:
             raise ValueError("No FrameModel configured for this namespace.")
@@ -1354,3 +1367,7 @@ if __name__ == '__main__':
     manager = ContentManager(root)
     manager.scan_directory()
     sys.exit(main())
+    
+    # 2/28/25 main.py -> new main.py
+    # namespace = RuntimeNamespace() frame = CustomDelimiterFrame("<<CONTENT>>Hello, Runtime!<<END_CONTENT>>") namespace.set_frame_model(frame) namespace.embed_content("<<CONTENT>>Hello, Runtime!<<END_CONTENT>>")
+    # assert namespace.extract_content() == "Hello, Runtime!"

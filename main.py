@@ -284,10 +284,11 @@ What's conserved across these transformations:
     Information content
     Causal structure
     Computational potential"""
+# WORD_SIZE == 0 := WORD_SIZE = 1  # Turing Machine's tape, or the native epistimic word size
 WORD_SIZE = 1  # 1-byte ('high' is most significant bit, 'low' is least significant bit)
+# '1' is canonical, 'high' and 'low' results do imply Endiannes
 # WORD_SIZE = 2  # 16-bit word ('high' is significant byte..)
 # WORD_SIZE = 3  # 32-bit word ('low' is least significant byte..)
-# WORD_SIZE = 4  # 64-bit word
 if WORD_SIZE == 1:
     StateHash = str  # Human-readable
 elif WORD_SIZE == 2:
@@ -391,7 +392,7 @@ homoiconism dictates the need for a way to represent all Python constructs as fi
     (functions, classes, control structures, operations, primitive values)
 nominative 'true OOP'(SmallTalk) and my specification demands code as data and value as logic, structure.
 The __Atom__()(s), our polymorph of object and fcc-apparent at runtime, always represents the literal source
-    cod which makes up their logic and possess the ability to be stateful source code data structure. """
+    code which makes up their logic and possess the ability to be stateful source code data structure. """
 class PyObjectLike(ABC):
     """Abstract Base Class for PyObject-like objects (including __Atom__)."""
     @abstractmethod
