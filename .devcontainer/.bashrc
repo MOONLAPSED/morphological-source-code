@@ -27,7 +27,7 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 alias ip='ip --color=auto'
 alias ll='ls -alF --color=auto'
-alias la='ls -A --color=auto'
+alias lll='ls -A --color=auto'
 alias l='ls -CF --color=auto'
 alias kex='kex --win -s'
 # ==========================================================
