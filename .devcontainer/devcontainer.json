@@ -1,5 +1,5 @@
 {
-    "name": "Py 3.13 with Jupyter kernel + JLab, R, B, M, and Docker + VScode/dev-env/git CICD",
+    "name": "Py 3.13 with Jupyter, UV, Nox, and Dev Tools",
     "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
     "customizations": {
         "vscode": {
@@ -16,15 +16,16 @@
                 "charliermarsh.ruff",
                 "ms-python.black-formatter",
                 "matangover.mypy",
-                "ms-python.debugpy"
+                "ms-python.debugpy",
+                "ms-toolsai.jupyter"
             ]
         }
     },
-    "postCreateCommand": "bash .devcontainer/provisioning.sh && bash .devcontainer/setup.sh && cp .devcontainer/.bashrc ~/.bashrc && source ~/.bashrc && pip install -e . || true",
-    "postStartCommand": "jupyter-lab --ip=0.0.0.0 --no-browser --allow-root",
+    "onCreateCommand": "if [ \"$CODESPACES\" = \"true\" ]; then echo 'In Codespaces: Running minimal setup'; else bash .devcontainer/provisioning.sh; fi || true",
+    "postCreateCommand": "bash .devcontainer/provisioning.sh && bash .devcontainer/setup.sh && cp .devcontainer/.bashrc ~/.bashrc && source ~/.bashrc && curl -LsSf https://astral.sh/uv/install.sh | sh && uv venv .venv && source .venv/bin/activate && uv pip install -U jupyterlab nox",
+    "postStartCommand": "source .venv/bin/activate && jupyter-lab --ip=0.0.0.0 --no-browser --allow-root",
     "forwardPorts": [8000, 8888, 8341],
     "runArgs": ["--network=host"],
-    "onCreateCommand": "if [ \"$CODESPACES\" = \"true\" ]; then echo 'In Codespaces: Running minimal setup'; else bash .devcontainer/provisioning.sh; fi || true",
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind",
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
     "remoteUser": "vscode",
@@ -36,3 +37,4 @@
     "remoteEnv": {
         "OLLAMA_SERVER": "http://host.docker.internal:11434"
     }
+}
