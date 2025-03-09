@@ -59,7 +59,7 @@ from typing import Any, Dict, Generic, TypeVar, Callable, Union, List, Optional
 from abc import ABC
 from datetime import datetime, timezone
 from dataclasses import dataclass
-from enum import IntEnum, auto, IntFlag, StrEnum
+from enum import IntEnum, auto, IntFlag, StrEnum, Enum
 from concurrent.futures import ThreadPoolExecutor
 IS_WINDOWS = os.name == 'nt'
 IS_POSIX = os.name == 'posix'
