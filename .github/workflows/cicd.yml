@@ -2,7 +2,7 @@ name: python-app
 
 on:
   schedule:
-    - cron: "0 * * * *"  # Runs every hour
+    - cron: "0 0 * * *" # Runs at 00:00 (midnight) every day
   workflow_dispatch:  # Allows manual execution
   push:
     branches: [ "staging" ]
