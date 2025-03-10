@@ -1,3 +1,14 @@
+from __future__ import annotations
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#------------------------------------------------------------------------------
+# Standard Library Imports - 3.13 std libs **ONLY**
+#------------------------------------------------------------------------------
+# 'triple-double-quoted' strings are docstrings OR 'future-participle'
+# syntax which is code which is 'written at runtime', or dynamically generated and also
+# which is the only code that adheres-fully to style-guides (I don't like <br>'s)
+# [[double-bracketed]] strings (within strings) are NLP/LLM/KB (Obsidian) syntax, it's
+# 'associative' symlinks (for documentation) that has no-effect in python whatsoever
 import re
 import os
 import io
@@ -15,7 +26,6 @@ import struct
 import shutil
 import pickle
 import ctypes
-import random
 import logging
 import weakref
 import tomllib
@@ -43,7 +53,7 @@ from functools import wraps, lru_cache
 from dataclasses import dataclass, field
 from concurrent.futures import ThreadPoolExecutor
 from importlib.util import spec_from_file_location, module_from_spec
-from types import SimpleNamespace, ModuleType, MethodType, FunctionType, CodeType, TracebackType, FrameType
+from types import SimpleNamespace, ModuleType,  MethodType, FunctionType, CodeType, TracebackType, FrameType
 from typing import (
     Any, Dict, List, Optional, Union, Callable, TypeVar, Tuple, Generic, Set,
     Coroutine, Type, NamedTuple, ClassVar, Protocol, runtime_checkable
@@ -139,6 +149,47 @@ class SecurityValidator(ast.NodeVisitor):
             if not self.security_context.access_policy.can_access(node.func.id, "execute"):
                 raise PermissionError(f"Access denied to function: {node.func.id}")
         self.generic_visit(node)
+# Runtime Namespace Management
+class RuntimeNamespace:
+    """Manages hierarchical runtime namespaces with security controls and custom delimiter support."""
+    def __init__(self, name: str = "root", parent: Optional['RuntimeNamespace'] = None):
+        self._name = name
+        self._parent = parent
+        self._children: Dict[str, 'RuntimeNamespace'] = {}
+        self._content = SimpleNamespace()
+        self._security_context: Optional[SecurityContext] = None
+        self.available_modules: Dict[str, Any] = {}
+        self.frame_model: Optional[FrameModel] = None  # Reference to a FrameModel instance
+    @property
+    def full_path(self) -> str:
+        if self._parent:
+            return f"{self._parent.full_path}.{self._name}"
+        return self._name
+    def add_child(self, name: str) -> 'RuntimeNamespace':
+        child = RuntimeNamespace(name, self)
+        self._children[name] = child
+        return child
+    def get_child(self, path: str) -> Optional['RuntimeNamespace']:
+        parts = path.split(".", 1)
+        if len(parts) == 1:
+            return self._children.get(parts[0])
+        child = self._children.get(parts[0])
+        return child.get_child(parts[1]) if child and len(parts) > 1 else None
+    def set_frame_model(self, frame_model: FrameModel):
+        """Set the FrameModel for this namespace."""
+        self.frame_model = frame_model
+    def embed_content(self, raw_content: str):
+        """Embed content into the namespace using the configured FrameModel."""
+        if not self.frame_model:
+            raise ValueError("No FrameModel configured for this namespace.")
+        if not self.frame_model.validate_content(raw_content):
+            raise ValueError("Content validation failed. Invalid delimiters or format.")
+        self._content.embedded_data = self.frame_model.parse_content(raw_content)
+    def retrieve_content(self) -> str:
+        """Retrieve the embedded content from the namespace."""
+        if hasattr(self._content, "embedded_data"):
+            return self.frame_model.start_delimiter + self._content.embedded_data + self.frame_model.end_delimiter
+        raise ValueError("No content embedded in this namespace.")
 @dataclass
 class FileMetadata:
     path: pathlib.Path
@@ -201,25 +252,10 @@ class ContentManager:
                         sys.modules[module_name] = module
                 except Exception as e:
                     print(f"Error loading {path}: {e}")
-
-@dataclass
-class Condition:
-    attributes: Dict[str, Any]
-
-class Reaction(ABC):
-    """Abstract base class for all reactions."""
-
-    @abstractmethod
-    def execute(self, input_condition: Condition) -> Condition:
-        """Executes the reaction on the input condition and returns a new condition."""
-        pass
-
 class ContentTransformationReaction(Reaction):
     """Concrete implementation of an elementary reaction for content transformation."""
-
     def __init__(self, transformation: Callable[[str], str]):
         self.transformation = transformation
-
     def execute(self, input_condition: Condition) -> Condition:
         """Transform the input condition's content using the defined transformation function."""
         if not isinstance(input_condition.attributes.get("content"), str):
@@ -239,19 +275,20 @@ This maps perfectly to the three aspects of nominative invariance:
     Behavioral preservation, C: Computation space (transformative)
     [[T (Type) ←→ V (Value) ←→ C (Callable)]] == 'quantum infodynamics, a tripartite element; our __Atom__()(s)'
     Meta-Language (High Level)
-        ↓ [First Collapse - Compilation]
+      ↓ [First Collapse - Compilation]
     Intermediate Form (Like a quantum superposition)
-        ↓ [Second Collapse - Runtime]
+      ↓ [Second Collapse - Runtime]
     Executed State (Measured Reality)
 What's conserved across these transformations:
     Nominative relationships
     Information content
     Causal structure
     Computational potential"""
+# WORD_SIZE == 0 := WORD_SIZE = 1  # Turing Machine's tape, or the native epistimic word size
 WORD_SIZE = 1  # 1-byte ('high' is most significant bit, 'low' is least significant bit)
+# '1' is canonical, 'high' and 'low' results do imply Endiannes
 # WORD_SIZE = 2  # 16-bit word ('high' is significant byte..)
 # WORD_SIZE = 3  # 32-bit word ('low' is least significant byte..)
-# WORD_SIZE = 4  # 64-bit word
 if WORD_SIZE == 1:
     StateHash = str  # Human-readable
 elif WORD_SIZE == 2:
@@ -312,8 +349,7 @@ class FrameModel(Generic[T, V, C], ABC):
         pass
     @abstractmethod
     def parse_content(self, raw_content: str) -> str:
-        """Parse the raw content using custom delimiters,
-interpreting the "measured reality"."""
+        """Parse the raw content using custom delimiters, interpreting the "measured reality"."""
         pass
     def validate_content(self, content: str) -> bool:
         """Validate the content based on delimiters, ensuring the "measurement" is valid."""
@@ -323,9 +359,6 @@ interpreting the "measured reality"."""
 @dataclass
 class CustomDelimiterFrame(FrameModel):
     content: str
-    def __post_init__(self):
-        # Set default delimiters
-        self.init()
     def to_bytes(self) -> bytes:
         """Return the frame data as bytes."""
         return self.content.encode()
@@ -359,7 +392,7 @@ homoiconism dictates the need for a way to represent all Python constructs as fi
     (functions, classes, control structures, operations, primitive values)
 nominative 'true OOP'(SmallTalk) and my specification demands code as data and value as logic, structure.
 The __Atom__()(s), our polymorph of object and fcc-apparent at runtime, always represents the literal source
-    cod which makes up their logic and possess the ability to be stateful source code data structure. """
+    code which makes up their logic and possess the ability to be stateful source code data structure. """
 class PyObjectLike(ABC):
     """Abstract Base Class for PyObject-like objects (including __Atom__)."""
     @abstractmethod
@@ -401,57 +434,6 @@ class PyObjectLike(ABC):
     def ob_ttl(self, value: Optional[int]) -> None:
         """Sets the object's time-to-live."""
         raise NotImplementedError
-# Runtime Namespace Management
-class RuntimeNamespace:
-    """Manages hierarchical runtime namespaces with security controls and custom delimiter support."""
-    def __init__(self, name: str = "root", parent: Optional['RuntimeNamespace'] = None):
-        self._name = name
-        self._parent = parent
-        self._children: Dict[str, 'RuntimeNamespace'] = {}
-        self._content = SimpleNamespace()
-        self._security_context: Optional[SecurityContext] = None
-        self.available_modules: Dict[str, Any] = {}
-        self.frame_model: Optional[FrameModel] = None  # Reference to a FrameModel instance
-    @property
-    def full_path(self) -> str:
-        if self._parent:
-            return f"{self._parent.full_path}.{self._name}"
-        return self._name
-    def add_child(self, name: str) -> 'RuntimeNamespace':
-        child = RuntimeNamespace(name, self)
-        self._children[name] = child
-        return child
-    def get_child(self, path: str) -> Optional['RuntimeNamespace']:
-        parts = path.split(".", 1)
-        if len(parts) == 1:
-            return self._children.get(parts[0])
-        child = self._children.get(parts[0])
-        return child.get_child(parts[1]) if child and len(parts) > 1 else None
-    def set_frame_model(self, frame_model: FrameModel):
-        """Set the FrameModel for this namespace."""
-        self.frame_model = frame_model
-    def embed_content(self, raw_content: str) -> None: 
-        """Embed raw content using the defined FrameModel."""
-        if not self.frame_model:
-            raise ValueError("No FrameModel set for this namespace.")
-        parsed_content = self.frame_model.parse_content(raw_content)
-        setattr(self._content, "embedded_data", parsed_content)
-        def extract_content(self) -> str:
-            """Extracts embedded content."""
-            if not hasattr(self._content, "embedded_data"):
-                raise ValueError("No embedded content found.")
-            return getattr(self._content, "embedded_data")
-        """Embed content into the namespace using the configured FrameModel."""
-        if not self.frame_model:
-            raise ValueError("No FrameModel configured for this namespace.")
-        if not self.frame_model.validate_content(raw_content):
-            raise ValueError("Content validation failed. Invalid delimiters or format.")
-        self._content.embedded_data = self.frame_model.parse_content(raw_content)
-    def retrieve_content(self) -> str:
-        """Retrieve the embedded content from the namespace."""
-        if hasattr(self._content, "embedded_data"):
-            return self.frame_model.start_delimiter + self._content.embedded_data + self.frame_model.end_delimiter
-        raise ValueError("No content embedded in this namespace.")
 class __Atom__(Generic[T, V, C], PyObjectLike):
     """
     Represents a homoiconic unit of code and data.  Behaves like a PyObject.
@@ -621,22 +603,6 @@ class Conservation(Enum):
     COHERENCE = "Coherence"
     BEHAVIORAL = "Behavioral"
 @dataclass
-class OrderParameter:
-    """Tracks symmetry breaking in a phase transition system."""
-    value: complex
-    preserved_symmetries: Set[str]
-    broken_symmetries: Set[str]
-    def break_symmetry(self, sym: str) -> None:
-        """Move symmetry from preserved to broken."""
-        if sym in self.preserved_symmetries:
-            self.preserved_symmetries.remove(sym)
-            self.broken_symmetries.add(sym)
-    def restore_symmetry(self, sym: str) -> None:
-        """Move symmetry from broken back to preserved."""
-        if sym in self.broken_symmetries:
-            self.broken_symmetries.remove(sym)
-            self.preserved_symmetries.add(sym)
-@dataclass
 class State:
     type_space: T
     value_space: V
@@ -645,14 +611,14 @@ class State:
     conservation: Conservation
     order_parameter: Optional[OrderParameter] = None  # Track symmetry breaking
 class MemoryState(StrEnum):
-    QUANTUM = auto()      # Superposition state, uncommitted changes
-    CLASSICAL = auto()    # Committed state (persisted to Git)
-    CACHED = auto()       # Loaded from disk; may be out-of-date
-    ALLOCATED = auto()    # Memory is allocated but not yet initialized
-    INITIALIZED = auto()  # Memory is initialized with data
-    PAGED = auto()        # Memory is paged to secondary storage
-    SHARED = auto()       # Memory is shared between multiple runtimes
-    DEALLOCATED = auto()  # Memory has been freed
+    QUANTUM = auto()       # Superposition state, uncommitted changes
+    CLASSICAL = auto()     # Committed state (persisted to Git)
+    CACHED = auto()        # Loaded from disk; may be out-of-date
+    ALLOCATED = auto()     # Memory is allocated but not yet initialized
+    INITIALIZED = auto()   # Memory is initialized with data
+    PAGED = auto()         # Memory is paged to secondary storage
+    SHARED = auto()        # Memory is shared between multiple runtimes
+    DEALLOCATED = auto()   # Memory has been freed
 @dataclass
 class QuantumCell:
     address: int
@@ -666,10 +632,10 @@ class QuantumCell:
 class MemoryVector:
     """Represents the quantum state of virtual memory regions"""
     address_space: complex  # Complex number representing memory location probability
-    coherence: float      # Memory coherence across runtime boundaries
-    entanglement: float   # Degree of entanglement with other memory regions
+    coherence: float       # Memory coherence across runtime boundaries
+    entanglement: float    # Degree of entanglement with other memory regions
     state: MemoryState
-    size: int            # Size of memory region in bytes
+    size: int             # Size of memory region in bytes
 @runtime_checkable
 class Field(Protocol):
     """
@@ -768,219 +734,41 @@ class QuantumPage:
         other.vector.entanglement = entanglement_strength
         return entanglement_strength
 #------------------------------------------------------------------------------
-# Virtual Memory Ontology
+# Helper-Classes
 #------------------------------------------------------------------------------
-class QuantumMemoryFS(Generic[T]):
-    """
-    Quantum-aware virtual memory filesystem that combines git-based
-    state management with filesystem-based memory addressing.
-    """
-    def __init__(self, base_path: Optional[str] = None):
-        self.base_path = Path(base_path or os.path.join(os.getcwd(), 'qmem'))
-        self.word_max = 0xFFFF
-        self.memory_map: Dict[int, QuantumCell] = {}
-        self.repo_id = uuid.uuid4().hex
-        # Initialize the repository and directory structure
-        # self._init_quantum_repository()
-        # self._init_directory_structure()
-    def _run_git(self, args: list, cwd: Optional[str] = None) -> Optional[str]:
-        """Helper to run git commands and return output, logging errors if any."""
-        try:
-            result = subprocess.check_output(['git'] + args, cwd=cwd or str(self.base_path))
-            return result.decode().strip()
-        except subprocess.CalledProcessError as e:
-            logger.error(f"Git command error: {e} with args: {args}")
-            return None
-    def _init_quantum_repository(self):
-        """Initialize Git repository for state tracking."""
-        self.base_path.mkdir(parents=True, exist_ok=True)
-        subprocess.run(['git', 'init', '--quiet'], cwd=str(self.base_path))
-        subprocess.run(['git', 'config', 'user.name', 'Quantum Memory Manager'], cwd=str(self.base_path))
-        subprocess.run(['git', 'config', 'user.email', 'qmem@state.local'], cwd=str(self.base_path))
-        # Create initial commit with a README
-        readme = self.base_path / 'README.md'
-        readme.write_text(f'# Quantum Memory Repository\nID: {self.repo_id}\nInitialized: {datetime.now().isoformat()}')
-        subprocess.run(['git', 'add', 'README.md'], cwd=str(self.base_path))
-        subprocess.run(['git', 'commit', '-m', 'Initialize quantum memory', '--quiet'], cwd=str(self.base_path))
-    def _init_directory_structure(self):
-        """Create hierarchical memory structure with dynamic quantum segments."""
-        for high_byte in range(0x100):
-            dir_path = self.base_path / f"{high_byte:02x}"
-            dir_path.mkdir(exist_ok=True)
-            # Create quantum-aware __init__.py if not exists
-            init_file = dir_path / "__init__.py"
-            if not init_file.exists():
-                init_content = f"""\
-import importlib.util
-import json
-import array
-from dataclasses import dataclass
-from typing import Optional, List, Dict
-import http.client
-import asyncio
-
-@dataclass
-class QuantumSegment:
-    data: Optional[array.array] = None
-    state_hash: Optional[str] = None
-    data_reference: Optional[str] = None
-    metadata: Optional[Dict] = None
-    embeddings_reference: Optional[str] = None
-
-    def superpose(self):
-        return QuantumSegment(self.data.copy(), None)
-
-    def commit(self, hash_val: str):
-        self.state_hash = hash_val
-
-    def manipulate_data(self, operation: str):
-        if operation == "invert":
-            self.data = array.array('B', [~byte & 0xFF for byte in self.data])
-        elif operation == "increment":
-            self.data = array.array('B', [(byte + 1) & 0xFF for byte in self.data])
-
-class OllamaClient:
-    def __init__(self, host: str = "localhost", port: int = 11434):
-        self.host = host
-        self.port = port
-
-    async def _post_request(self, endpoint: str, payload: Dict) -> Optional[Dict]:
-        try:
-            conn = http.client.HTTPConnection(self.host, self.port)
-            headers = {{'Content-Type': 'application/json'}}
-            json_payload = json.dumps(payload)
-            conn.request("POST", endpoint, json_payload, headers)
-            response = conn.getresponse()
-            if response.status != 200:
-                print(f"API error: {{response.status}} - {{response.read().decode()}}")
-                return None
-            return json.loads(response.read().decode())
-        except Exception as e:
-            print(f"HTTP request error: {{e}}")
-            return None
-        finally:
-            conn.close()
-
-    async def generate_embedding(self, text: str, model: str = "nomic-embed-text") -> Optional[List[float]]:
-        result = await self._post_request("/api/embeddings", {{"model": model, "prompt": text}})
-        return result.get('embedding') if result else None
-"""
-                init_file.write_text(init_content)
-            # Create memory files for each low_byte in the range.
-            for low_byte in range(0x100):
-                file_path = dir_path / f"{low_byte:02x}.qmem"
-                if not file_path.exists():
-                    file_path.touch()
-    def _commit_state(self, address: int, value: bytes, metadata: Optional[Dict] = None) -> str:
-        """Commit memory state to Git and update segment metadata."""
-        path = self._address_to_path(address)
-        # Stage the file and commit
-        self._run_git(['add', str(path)])
-        commit_msg = f"Update memory at {address:04x}: {value.hex()}"
-        self._run_git(['commit', '-m', commit_msg, '--quiet'])
-        commit_hash = self._run_git(['rev-parse', 'HEAD'])
-        if commit_hash is None:
-            raise RuntimeError("Failed to retrieve commit hash.")
-        # Update segment state for the corresponding directory
-        high_byte = (address >> 8) & 0xFF
-        segment = self.get_directory_segment(high_byte)
-        # Update segment metadata with commit hash and cell metadata
-        if segment.metadata is None:
-            segment.metadata = {}  # Initialize if not present
-        segment.metadata[str(address)] = { # Store metadata per cell
-            "commit_hash": commit_hash,
-            "metadata": metadata
-        }
-        segment.commit(commit_hash) # Commit segment metadata
-        return commit_hash
-    def _address_to_path(self, address: int) -> Path:
-        """Convert a memory address to a quantum-aware file path."""
-        if not 0 <= address <= self.word_max:
-            raise ValueError(f"Address {address:04x} out of range")
-        high_byte = (address >> 8) & 0xFF
-        low_byte = address & 0xFF
-        return self.base_path / f"{high_byte:02x}" / f"{low_byte:02x}.qmem"
-    def read(self, address: int) -> QuantumCell:
-        """Read a quantum memory cell from a given address."""
-        # If already loaded, return from memory map.
-        if address in self.memory_map:
-            return self.memory_map[address]
-        path = self._address_to_path(address)
-        try:
-            with open(path, "rb") as f:
-                value = f.read(WORD_SIZE)
-                if not value: # added check for empty file
-                    value = b'\x00'*WORD_SIZE # initialize if empty
-                cell = QuantumCell(address, (address >> 8) & 0xFF, value) # missing segment
-                self.memory_map[address] = cell
-                return cell
-        except FileNotFoundError:
-            logger.error(f"Memory cell not found at {address:04x}")
-            return QuantumCell(address, (address >> 8) &
-0xFF, b'\x00'*WORD_SIZE) # Return an empty cell to avoid crashing.
-        except Exception as e: # catch other exceptions
-            logger.error(f"Error reading memory cell at {address:04x}: {e}")
-            return QuantumCell(address, (address >> 8) & 0xFF, b'\x00'*WORD_SIZE)
-        # Try to get the latest commit hash for this file.
-        try:
-            commit_hash = self._run_git(['log', '-n', '1', '--pretty=format:%H', '--', str(path)])
-        except Exception:
-            commit_hash = None
-        state = MemoryState.CLASSICAL if commit_hash else MemoryState.CACHED
-        cell = QuantumCell(value=data, state=state, commit_hash=commit_hash)
-        self.memory_map[address] = cell
-        return cell
-    def write(self, address: int, value: bytes, metadata: Optional[Dict] = None):
-        """Write a quantum memory cell to a given address."""
-        if not isinstance(value, bytes):
-            raise TypeError("Value must be bytes")
-        if len(value) != WORD_SIZE:
-            raise ValueError(f"Value must be {WORD_SIZE} bytes long")
-        path = self._address_to_path(address)
-        try:
-            with open(path, "wb") as f:
-                f.write(value)
-                commit_hash = self._commit_state(address, value, metadata)
-                if address in self.memory_map:
-                    self.memory_map[address].value = value
-                    self.memory_map[address].commit_hash = commit_hash # update commit hash
-                    self.memory_map[address].metadata = metadata # update metadata
-                else: # if it is not in the map, create a new cell and add it
-                    cell = QuantumCell(address, (address >> 8) & 0xFF, value, commit_hash=commit_hash, metadata=metadata)
-                    self.memory_map[address] = cell
-        except Exception as e:
-            logger.error(f"Error writing memory cell at {address:04x}: {e}")
-    def get_directory_segment(self, high_byte: int):
-        """Get the quantum memory segment (as a Python module) for a given directory."""
-        if not 0 <= high_byte <= 0xFF:
-            raise ValueError("Invalid directory address")
-        dir_path = self.base_path / f"{high_byte:02x}"
-        if not dir_path.exists():
-            raise ValueError("Directory does not exist")
-        module_name = f"qmem_{high_byte:02x}"
-        spec = importlib.util.spec_from_file_location(module_name, str(dir_path / "__init__.py"))
-        if spec is None or spec.loader is None:
-            raise ImportError(f"Could not load segment {high_byte:02x}")
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        return module.segment
-    def refresh(self, address: int):
-        """Force a refresh of a quantum cell from disk (e.g. if the file was externally updated)."""
-        if address in self.memory_map:
-            del self.memory_map[address]
-        return self.read(address)
-    def flush(self):
-        """
-        Flush all quantum memory cells (if in QUANTUM state) to classical state,
-        committing them to Git.
-        """
-        for address, cell in self.memory_map.items():
-            if cell.state == MemoryState.QUANTUM:
-                self.write(address, cell.value, quantum=False)
-        logger.info("Flushed all quantum cells to classical state.")
-#------------------------------------------------------------------------------
-# API Morphology
-#------------------------------------------------------------------------------
+class SessionBackend(ABC):
+    @abstractmethod
+    async def load(self, session_id: str) -> Dict[str, Any]:
+        """Load session data given a session ID."""
+        pass
+    @abstractmethod
+    async def save(self, session_id: str, data: Dict[str, Any], timeout: int) -> None:
+        """Save session data."""
+        pass
+class InMemorySessionBackend(SessionBackend):
+    def __init__(self):
+        self.sessions: Dict[str, Dict[str, Any]] = {}
+        self.last_access: Dict[str, float] = {}
+    async def load(self, session_id: str) -> Dict[str, Any]:
+        now = time.time()
+        if session_id in self.sessions and (now - self.last_access.get(session_id, now)) < SESSION_TIMEOUT:
+            self.last_access[session_id] = now
+            return self.sessions[session_id]
+        return {}
+    async def save(self, session_id: str, data: Dict[str, Any], timeout: int) -> None:
+        self.sessions[session_id] = data
+        self.last_access[session_id] = time.time()
+# --- Middleware Abstraction ---
+class HttpMiddleware(ABC):
+    """Pluggable middleware class."""
+    @abstractmethod
+    async def before_request(self, request: "Request") -> None:
+        """Called before the request is processed."""
+        pass
+    @abstractmethod
+    async def after_request(self, request: "Request", status_code: int, response_body: Any, extra_headers: List[Tuple[str, str]]) -> None:
+        """Called after the request is processed."""
+        pass
 # --- Request Object ---
 current_request: contextvars.ContextVar[Any] = contextvars.ContextVar("current_request")
 class Request:
@@ -1250,12 +1038,222 @@ class HoloiconicTransform(Generic[T, V, C]):
     
     In-other words, self-adjoint operators are equal to their Hermitian conjugates."""
 #------------------------------------------------------------------------------
+# Virtual Memory Ontology
+#------------------------------------------------------------------------------
+class QuantumMemoryFS(Generic[T]):
+    """
+    Quantum-aware virtual memory filesystem that combines git-based
+    state management with filesystem-based memory addressing.
+    """
+    def __init__(self, base_path: Optional[str] = None):
+        self.base_path = Path(base_path or os.path.join(os.getcwd(), 'qmem'))
+        self.word_max = 0xFFFF
+        self.memory_map: Dict[int, QuantumCell] = {}
+        self.repo_id = uuid.uuid4().hex
+        # Initialize the repository and directory structure
+        # self._init_quantum_repository()
+        # self._init_directory_structure()
+    def _run_git(self, args: list, cwd: Optional[str] = None) -> Optional[str]:
+        """Helper to run git commands and return output, logging errors if any."""
+        try:
+            result = subprocess.check_output(['git'] + args, cwd=cwd or str(self.base_path))
+            return result.decode().strip()
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Git command error: {e} with args: {args}")
+            return None
+    def _init_quantum_repository(self):
+        """Initialize Git repository for state tracking."""
+        self.base_path.mkdir(parents=True, exist_ok=True)
+        subprocess.run(['git', 'init', '--quiet'], cwd=str(self.base_path))
+        subprocess.run(['git', 'config', 'user.name', 'Quantum Memory Manager'], cwd=str(self.base_path))
+        subprocess.run(['git', 'config', 'user.email', 'qmem@state.local'], cwd=str(self.base_path))
+        # Create initial commit with a README
+        readme = self.base_path / 'README.md'
+        readme.write_text(f'# Quantum Memory Repository\nID: {self.repo_id}\nInitialized: {datetime.now().isoformat()}')
+        subprocess.run(['git', 'add', 'README.md'], cwd=str(self.base_path))
+        subprocess.run(['git', 'commit', '-m', 'Initialize quantum memory', '--quiet'], cwd=str(self.base_path))
+    def _init_directory_structure(self):
+        """Create hierarchical memory structure with dynamic quantum segments."""
+        for high_byte in range(0x100):
+            dir_path = self.base_path / f"{high_byte:02x}"
+            dir_path.mkdir(exist_ok=True)
+            # Create quantum-aware __init__.py if not exists
+            init_file = dir_path / "__init__.py"
+            if not init_file.exists():
+                init_content = f"""\
+import importlib.util
+import json
+import array
+from dataclasses import dataclass
+from typing import Optional, List, Dict
+import http.client
+import asyncio
+
+@dataclass
+class QuantumSegment:
+    data: Optional[array.array] = None
+    state_hash: Optional[str] = None
+    data_reference: Optional[str] = None
+    metadata: Optional[Dict] = None
+    embeddings_reference: Optional[str] = None
+
+    def superpose(self):
+        return QuantumSegment(self.data.copy(), None)
+
+    def commit(self, hash_val: str):
+        self.state_hash = hash_val
+
+    def manipulate_data(self, operation: str):
+        if operation == "invert":
+            self.data = array.array('B', [~byte & 0xFF for byte in self.data])
+        elif operation == "increment":
+            self.data = array.array('B', [(byte + 1) & 0xFF for byte in self.data])
+
+class OllamaClient:
+    def __init__(self, host: str = "localhost", port: int = 11434):
+        self.host = host
+        self.port = port
+
+    async def _post_request(self, endpoint: str, payload: Dict) -> Optional[Dict]:
+        try:
+            conn = http.client.HTTPConnection(self.host, self.port)
+            headers = {{'Content-Type': 'application/json'}}
+            json_payload = json.dumps(payload)
+            conn.request("POST", endpoint, json_payload, headers)
+            response = conn.getresponse()
+            if response.status != 200:
+                print(f"API error: {{response.status}} - {{response.read().decode()}}")
+                return None
+            return json.loads(response.read().decode())
+        except Exception as e:
+            print(f"HTTP request error: {{e}}")
+            return None
+        finally:
+            conn.close()
+
+    async def generate_embedding(self, text: str, model: str = "nomic-embed-text") -> Optional[List[float]]:
+        result = await self._post_request("/api/embeddings", {{"model": model, "prompt": text}})
+        return result.get('embedding') if result else None
+"""
+                init_file.write_text(init_content)
+            # Create memory files for each low_byte in the range.
+            for low_byte in range(0x100):
+                file_path = dir_path / f"{low_byte:02x}.qmem"
+                if not file_path.exists():
+                    file_path.touch()
+    def _commit_state(self, address: int, value: bytes, metadata: Optional[Dict] = None) -> str:
+        """Commit memory state to Git and update segment metadata."""
+        path = self._address_to_path(address)
+        # Stage the file and commit
+        self._run_git(['add', str(path)])
+        commit_msg = f"Update memory at {address:04x}: {value.hex()}"
+        self._run_git(['commit', '-m', commit_msg, '--quiet'])
+        commit_hash = self._run_git(['rev-parse', 'HEAD'])
+        if commit_hash is None:
+            raise RuntimeError("Failed to retrieve commit hash.")
+        # Update segment state for the corresponding directory
+        high_byte = (address >> 8) & 0xFF
+        segment = self.get_directory_segment(high_byte)
+        # Update segment metadata with commit hash and cell metadata
+        if segment.metadata is None:
+            segment.metadata = {}  # Initialize if not present
+        segment.metadata[str(address)] = { # Store metadata per cell
+            "commit_hash": commit_hash,
+            "metadata": metadata
+        }
+        segment.commit(commit_hash) # Commit segment metadata
+        return commit_hash
+    def _address_to_path(self, address: int) -> Path:
+        """Convert a memory address to a quantum-aware file path."""
+        if not 0 <= address <= self.word_max:
+            raise ValueError(f"Address {address:04x} out of range")
+        high_byte = (address >> 8) & 0xFF
+        low_byte = address & 0xFF
+        return self.base_path / f"{high_byte:02x}" / f"{low_byte:02x}.qmem"
+    def read(self, address: int) -> QuantumCell:
+        """Read a quantum memory cell from a given address."""
+        # If already loaded, return from memory map.
+        if address in self.memory_map:
+            return self.memory_map[address]
+        path = self._address_to_path(address)
+        try:
+            with open(path, "rb") as f:
+                value = f.read(WORD_SIZE)
+                if not value: # added check for empty file
+                    value = b'\x00'*WORD_SIZE # initialize if empty
+                cell = QuantumCell(address, (address >> 8) & 0xFF, value) # missing segment
+                self.memory_map[address] = cell
+                return cell
+        except FileNotFoundError:
+            logger.error(f"Memory cell not found at {address:04x}")
+            return QuantumCell(address, (address >> 8) & 0xFF, b'\x00'*WORD_SIZE) # Return an empty cell to avoid crashing.
+        except Exception as e: # catch other exceptions
+            logger.error(f"Error reading memory cell at {address:04x}: {e}")
+            return QuantumCell(address, (address >> 8) & 0xFF, b'\x00'*WORD_SIZE)
+        # Try to get the latest commit hash for this file.
+        try:
+            commit_hash = self._run_git(['log', '-n', '1', '--pretty=format:%H', '--', str(path)])
+        except Exception:
+            commit_hash = None
+        state = MemoryState.CLASSICAL if commit_hash else MemoryState.CACHED
+        cell = QuantumCell(value=data, state=state, commit_hash=commit_hash)
+        self.memory_map[address] = cell
+        return cell
+    def write(self, address: int, value: bytes, metadata: Optional[Dict] = None):
+        """Write a quantum memory cell to a given address."""
+        if not isinstance(value, bytes):
+            raise TypeError("Value must be bytes")
+        if len(value) != WORD_SIZE:
+            raise ValueError(f"Value must be {WORD_SIZE} bytes long")
+        path = self._address_to_path(address)
+        try:
+            with open(path, "wb") as f:
+                f.write(value)
+                commit_hash = self._commit_state(address, value, metadata)
+                if address in self.memory_map:
+                    self.memory_map[address].value = value
+                    self.memory_map[address].commit_hash = commit_hash # update commit hash
+                    self.memory_map[address].metadata = metadata # update metadata
+                else: # if it is not in the map, create a new cell and add it
+                    cell = QuantumCell(address, (address >> 8) & 0xFF, value, commit_hash=commit_hash, metadata=metadata)
+                    self.memory_map[address] = cell
+        except Exception as e:
+            logger.error(f"Error writing memory cell at {address:04x}: {e}")
+    def get_directory_segment(self, high_byte: int):
+        """Get the quantum memory segment (as a Python module) for a given directory."""
+        if not 0 <= high_byte <= 0xFF:
+            raise ValueError("Invalid directory address")
+        dir_path = self.base_path / f"{high_byte:02x}"
+        if not dir_path.exists():
+            raise ValueError("Directory does not exist")
+        module_name = f"qmem_{high_byte:02x}"
+        spec = importlib.util.spec_from_file_location(module_name, str(dir_path / "__init__.py"))
+        if spec is None or spec.loader is None:
+            raise ImportError(f"Could not load segment {high_byte:02x}")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module.segment
+    def refresh(self, address: int):
+        """Force a refresh of a quantum cell from disk (e.g. if the file was externally updated)."""
+        if address in self.memory_map:
+            del self.memory_map[address]
+        return self.read(address)
+    def flush(self):
+        """
+        Flush all quantum memory cells (if in QUANTUM state) to classical state,
+        committing them to Git.
+        """
+        for address, cell in self.memory_map.items():
+            if cell.state == MemoryState.QUANTUM:
+                self.write(address, cell.value, quantum=False)
+        logger.info("Flushed all quantum cells to classical state.")
+#------------------------------------------------------------------------------
 # Example Usage
 #------------------------------------------------------------------------------
 def visualize_state_history(state_history):
     """
     Visualizes the evolution of the state transformations over time.
-
+    
     This function takes the state history from the MorphologicalKernel's execution
     and generates a simple line plot representing the "value space" at each
     transformation step. This is a simplistic visualization to help illustrate
@@ -1264,12 +1262,12 @@ def visualize_state_history(state_history):
 
     Parameters:
     - state_history: A list of State objects created during the kernel's run.
-        Each State object represents the system's configuration at a specific point
-        in time.
+      Each State object represents the system's configuration at a specific point
+      in time.
 
     Returns:
     - Matplotlib Figure showcasing the value space over time.
-
+    
     Raises:
     - ValueError: If the state_history is not provided or is empty.
     """
@@ -1294,20 +1292,20 @@ def main():
 
     Steps included:
     1. Definition of the initial state as a combination of type, value, and computation
-        spaces, decorated with symmetry and conservation laws.
+       spaces, decorated with symmetry and conservation laws.
     2. Setup of Gauge states: local, global, and emergent, each providing specific
-        transformation rules for manipulating system configurations.
+       transformation rules for manipulating system configurations.
     3. Initialization and execution of the Morphological Kernel, running a series of
-        transformations over the specified steps.
+       transformations over the specified steps.
     4. Display of the final state and visualization of the state history to illustrate
-        the cumulative impact of transformation steps.
+       the cumulative impact of transformation steps.
 
     Outputs:
     - Terminal output of the final state configuration after running the kernel.
     - A visual plot showing Value Space evolution for ease of conceptual understanding.
     """
     print(least_significant_unit("12345", 1))  # Should return '5'
-    print(least_significant_unit(0xABCD, 2))  # Should return 0xCD
+    print(least_significant_unit(0xABCD, 2))   # Should return 0xCD
     print(least_significant_unit("hello", 3))  # Should return least significant byte of SHA256("hello")
     print(least_significant_unit({10: "a", 2: "b", 7: "c"}, 3))  # Should return 2 (smallest key)
 
@@ -1344,12 +1342,12 @@ def main():
     )
 
     gauge = Gauge(local=local_gauge, global_=global_gauge, emergent=emergent_gauge)
-
+    
     kernel = MorphologicalKernel()
     final_state = kernel.run(initial_state, gauge, steps=10)
-
+    
     print(f"Final state: {final_state}")
-
+    
     visualize_state_history(kernel.state_history)
 
     def collapse_wave_function(condition: Condition) -> Condition:
@@ -1367,7 +1365,3 @@ if __name__ == '__main__':
     manager = ContentManager(root)
     manager.scan_directory()
     sys.exit(main())
-    
-    # 2/28/25 main.py -> new main.py
-    # namespace = RuntimeNamespace() frame = CustomDelimiterFrame("<<CONTENT>>Hello, Runtime!<<END_CONTENT>>") namespace.set_frame_model(frame) namespace.embed_content("<<CONTENT>>Hello, Runtime!<<END_CONTENT>>")
-    # assert namespace.extract_content() == "Hello, Runtime!"
