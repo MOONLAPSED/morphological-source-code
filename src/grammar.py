@@ -50,58 +50,8 @@ from typing import (
     Any, Dict, List, Optional, Union, Callable, TypeVar, Tuple, Generic, Set,
     Coroutine, Type, NamedTuple, ClassVar, Protocol, runtime_checkable
 )
-"""
-## Physical and informational phenomena at diverse scales naturally organize into two mathematical frameworks.
-1. **Markovian/Monoidal Systems**: Forward-evolving, memoryless processes characterized by irreversibility
-2. **Non-Markovian/Abelian Systems**: Reversible processes with "memory" characterized by symmetry and conservation
-
-### Markovian/Monoidal Framework
-- **Mathematical Structure**: Monoids (associative operation with identity)
-- **Key Operations**: Convolution, sifting, hashing
-- **Physical Manifestations**: Dissipative processes, entropy generation, irreversible dynamics
-- **Examples**: Heat diffusion, classical probability flows, viscous fluid dynamics
-
-### Non-Markovian/Abelian Framework
-- **Mathematical Structure**: Abelian groups (associative, commutative operation with identity and inverses)
-- **Key Operations**: Fourier transforms, group characters, unitary operations
-- **Physical Manifestations**: Conservation laws, symmetries, reversible dynamics
-- **Examples**: Harmonic oscillators, quantum wavefunctions, electromagnetic fields
-
-### Unifying Concepts & Duality Transformations (Invariants)
-The frameworks are connected through various dualities:
-- Fourier transforms convert convolution (monoidal) to multiplication (Abelian)
-- Time-reversal maps between irreversible and reversible descriptions
-- Statistical vs. quantum mechanical descriptions of the same systems
-
-### Historical Context, Physical Realizations & Contemporary Language
-These mathematical structures manifest across diverse phenomena:
-1. **Elastic Deformations**: Ideal elasticity (Markovian) vs. viscoelasticity (non-Markovian)
-2. **Particle Interactions**: Electromagnetic (separable) vs. strong force (history-dependent)
-3. **Thermodynamic Systems**: Entropy production (Markovian) vs. conservation laws (Abelian)
-
-This dichotomy echoes historical debates in physics:
-- Boltzmann vs. Loschmidt on time-reversibility
-- Einstein vs. Bohr on determinism vs. probability
-- Classical vs. quantum descriptions of reality
-
-In modern physics terminology, this dichotomy relates to:
-- **Ergodicity**: Whether a system explores all possible states (Markovian) or maintains correlations (non-Markovian)
-- **Enthalpy vs. Entropy**: Energy conservation (Abelian) vs. disorder increase (monoidal)
-- **Symmetry Breaking**: Transition between reversible and irreversible descriptions
-
-Method Resolution Order (MRO) and Abelian vs. Non-Abelian Structures
-Python's C3 linearization algorithm transforms what could be a non-commutative inheritance structure (non-Abelian) into a deterministic, linearized path (making it more "Abelian-like" in behavior):
-Inheritance Graphs as Category Structures
-Without linearization, multiple inheritance creates a complex graph where the order of operations (method calls) becomes ambiguous
-C3 linearization creates a consistent total ordering that preserves local precedence
-Raw inheritance relationships can be path-dependent (non-Markovian)
-After linearization, method resolution becomes deterministic and context-free (Markovian)
-The C3 linearization algorithm particularly stands out as a concrete example of transforming potentially non-commutative (non-Abelian) structures into deterministic, consistent paths - essentially "abelianizing" inheritance hierarchies.
-"""
 IS_WINDOWS = os.name == 'nt'
 IS_POSIX = os.name == 'posix'
-
-
 class PlatformFactory:
     """Factory class to create platform-specific instances."""
     @staticmethod
@@ -406,41 +356,6 @@ class ContentManager:
                         sys.modules[module_name] = module
                 except Exception as e:
                     print(f"Error loading {path}: {e}")
-
-
-@dataclass
-class Condition:
-    attributes: Dict[str, Any]
-
-
-class Reaction(ABC):
-    """Abstract base class for all reactions."""
-
-    @abstractmethod
-    def execute(self, input_condition: Condition) -> Condition:
-        """Executes the reaction on the input condition and returns a new condition."""
-        pass
-
-
-class ContentTransformationReaction(Reaction):
-    """Concrete implementation of an elementary reaction for content transformation."""
-
-    def __init__(self, transformation: Callable[[str], str]):
-        self.transformation = transformation
-
-    def execute(self, input_condition: Condition) -> Condition:
-        """Transform the input condition's content using the defined transformation function."""
-        if not isinstance(input_condition.attributes.get("content"), str):
-            raise ValueError(
-                "Input condition must contain valid string content.")
-        transformed_content = self.transformation(
-            input_condition.attributes["content"])
-        output_condition = Condition(
-            attributes={"content": transformed_content})
-        print(f"Reaction: {input_condition} -> {output_condition}")
-        return output_condition
-
-
 # ------------------------------------------------------------------------------
 # Type Definitions
 # ------------------------------------------------------------------------------
@@ -505,15 +420,7 @@ def least_significant_unit(state: StateHash, word_size: int):
     else:
         raise ValueError("Unsupported WORD_SIZE")
 
-
 SESSION_TIMEOUT = WORD_SIZE * 60  # 1 minute per byte-word default scale-factor
-# T for TypeVar, V for ValueVar. Homoicons are T+V.
-T = TypeVar('T', bound=Any)
-V = TypeVar('V', bound=Union[int, float, str, bool,
-            list, dict, tuple, set, object, Callable, type])
-# callable 'T'/'V' first class function interface
-C = TypeVar('C', bound=Callable[..., Any])
-
 
 class FrameModel(Generic[T, V, C], ABC):
     """
