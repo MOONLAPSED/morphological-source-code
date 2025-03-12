@@ -53,6 +53,7 @@ logger = logging.getLogger(__name__)
 if IS_WINDOWS:
     from ctypes import windll, wintypes
     from ctypes.wintypes import HANDLE
+
     def set_process_priority(priority: int) -> None:
         windll.kernel32.SetPriorityClass(HANDLE(-1), priority)
     if __name__ == '__main__':
@@ -62,17 +63,20 @@ elif IS_POSIX:
         try:
             os.nice(priority)
         except PermissionError:
-            print("Warning: Unable to set process priority. Running with default priority.")
+            print(
+                "Warning: Unable to set process priority. Running with default priority.")
     if __name__ == '__main__':
         set_process_priority(1)
 
 # --- Utility Functions for Networking and ANSI Colors ---
+
 
 def is_port_available(port: int) -> bool:
     """Check if a given port is available."""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         result = sock.connect_ex(('127.0.0.1', port))
         return result != 0  # non-zero means the port is available
+
 
 def find_available_port(start_port: int) -> int:
     """Find an available port starting from {{start_port}}."""
@@ -82,6 +86,7 @@ def find_available_port(start_port: int) -> int:
         port += 1
     logger.info(f"Found available port: {port}")
     return port
+
 
 def generate_ansi_color(c: str) -> str:
     """Generate an ANSI escape code for colored text."""
@@ -98,10 +103,11 @@ def generate_ansi_color(c: str) -> str:
 
 # --- Fire-Immediately Function (executes on import) ---
 
-@ (lambda f: f())
+
+@(lambda f: f())
 def FireFirst() -> None:
     """Function that fires on import.
-    
+
     Checks for an available port starting at 8420 and logs the result.
     """
     PORT = 8420
@@ -116,25 +122,26 @@ def FireFirst() -> None:
 
 # --- System Profiling and Benchmarking Classes ---
 
+
 class SystemProfiler:
     """Handles system profiling and performance measurements."""
     _instance = None
     _lock = threading.Lock()
-    
+
     def __new__(cls) -> SystemProfiler:
         with cls._lock:
             if cls._instance is None:
                 cls._instance = super().__new__(cls)
                 cls._instance._initialize()
             return cls._instance
-    
+
     def _initialize(self) -> None:
         self.profiler = cProfile.Profile()
         self.start_time = time.monotonic()
-        
+
     def start(self) -> None:
         self.profiler.enable()
-        
+
     def stop(self) -> str:
         self.profiler.disable()
         s = StringIO()
@@ -142,15 +149,17 @@ class SystemProfiler:
         ps.print_stats()
         return s.getvalue()
 
+
 class ProcessExecutor:
     """[[ProcessExecutor]] – Platform-independent process execution."""
-    
+
     @staticmethod
     def _windows_run_command(command: List[str], timeout: Optional[float], env: Optional[Dict[str, str]]):
         from ctypes import windll, wintypes
-        
+
         def set_priority():
-            windll.kernel32.SetPriorityClass(wintypes.HANDLE(-1), 0x00008000)  # ABOVE_NORMAL_PRIORITY_CLASS
+            windll.kernel32.SetPriorityClass(
+                wintypes.HANDLE(-1), 0x00008000)  # ABOVE_NORMAL_PRIORITY_CLASS
 
         def wrun_command(command: List[str], timeout: Optional[float], env: Optional[Dict[str, str]]):
             BUFFER_SIZE = 65536  # 64KB buffer
@@ -164,6 +173,7 @@ class ProcessExecutor:
                 bufsize=BUFFER_SIZE
             )
             set_priority()
+
             def read_stream(stream):
                 buffer = []
                 while True:
@@ -197,7 +207,7 @@ class ProcessExecutor:
                 os.nice(-10)
             except PermissionError:
                 pass
-                
+
         def run_command(command: List[str], timeout: Optional[float], env: Optional[Dict[str, str]]):
             BUFFER_SIZE = 65536  # 64KB
             resource.setrlimit(resource.RLIMIT_NOFILE, (4096, 4096))
@@ -227,21 +237,23 @@ class ProcessExecutor:
             raise
 
     @staticmethod
-    def run_command(command: List[str], timeout: Optional[float] = None, 
+    def run_command(command: List[str], timeout: Optional[float] = None,
                     env: Optional[Dict[str, str]] = None) -> Tuple[str, str, int]:
         """Execute a command in a platform-independent way."""
         if IS_WINDOWS:
             return ProcessExecutor._windows_run_command(command, timeout, env)
         return ProcessExecutor._posix_run_command(command, timeout, env)
 
+
 class Benchmark:
     """Command benchmarking utility."""
+
     def __init__(self, command: List[str], iterations: int = 10):
         self.command = command
         self.iterations = iterations
         self.results: List[float] = []
         self.profiler = SystemProfiler()
-        
+
     def run(self) -> float:
         self.profiler.start()
         best = sys.maxsize
@@ -260,12 +272,13 @@ class Benchmark:
         print(profile_data)
         return best
 
+
 @dataclass
 class BenchmarkReport:
     command: str
     best_time: float
     iterations: int
-    
+
     def __repr__(self):
         command_color = generate_ansi_color('cyan')
         timing_color = generate_ansi_color('green')
@@ -275,6 +288,7 @@ class BenchmarkReport:
         report += f"{command_color}Command:{reset_color} {self.command}\n"
         report += f"{timing_color}Best time:{reset_color} {self.best_time:.3f}s over {self.iterations} iterations\n"
         return report
+
 
 @dataclass
 class ExecutionResult:
@@ -294,6 +308,7 @@ class ExecutionResult:
 
 # --- Project Management Code ---
 
+
 @dataclass
 class ProjectConfig:
     """Project configuration container ([[ProjectConfig]])."""
@@ -307,10 +322,13 @@ class ProjectConfig:
     src_path: Path = Path("src")
     tests_path: Path = Path("tests")
 
+
 class ProjectManager:
     """Manages project configuration, environment setup, and command execution ([[ProjectManager]])."""
+
     def __init__(self, root_dir: Union[str, Path]):
-        self.root_dir = Path(root_dir).resolve()  # {{root_dir}} as absolute path
+        # {{root_dir}} as absolute path
+        self.root_dir = Path(root_dir).resolve()
         self.logger = self._setup_logging()
         self.config = self._load_or_create_config()
         self.project_config = self._load_project_config()
@@ -321,15 +339,16 @@ class ProjectManager:
     def _setup_logging(self) -> logging.Logger:
         logger = logging.getLogger("ProjectManager")
         handler = logging.StreamHandler()
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         handler.setFormatter(formatter)
         logger.addHandler(handler)
         logger.setLevel(logging.INFO)
         return logger
 
     def _load_project_config(self) -> Dict[str, Any]:
-        """Load project-specific configuration from demiurge.json."""
-        config_path = self.root_dir / "demiurge.json"
+        """Load project-specific configuration from cognosis.json."""
+        config_path = self.root_dir / "cognosis.json"
         default_config = {
             "ffi_modules": [],
             "src_path": "src",
@@ -353,8 +372,10 @@ class ProjectManager:
 
     def _load_or_create_config(self) -> ProjectConfig:
         pyproject_path = self.root_dir / "pyproject.toml"
+        self.logger.debug(f"Checking for pyproject.toml at: {pyproject_path}")
         if not pyproject_path.exists():
-            self.logger.info("No pyproject.toml found. Creating default configuration.")
+            self.logger.info(
+                "No pyproject.toml found. Creating default configuration.")
             config = ProjectConfig(
                 name=self.root_dir.name,
                 version="0.1.0",
@@ -393,11 +414,11 @@ class ProjectManager:
     def _write_pyproject_toml(self, config: ProjectConfig):
         """Write pyproject.toml using manual string construction."""
         toml_content = f"""[project]
-name = "{config.name}"
-version = "{config.version}"
-requires-python = "{config.python_version}"
-dependencies = [
-"""
+    name = "{config.name}"
+    version = "{config.version}"
+    requires-python = "{config.python_version}"
+    dependencies = [
+    """
         for dep in config.dependencies:
             toml_content += f'    "{dep}",\n'
         toml_content += "]\n\n"
@@ -412,6 +433,8 @@ dependencies = [
         for key, value in config.ruff_config.items():
             if isinstance(value, list):
                 toml_content += f"{key} = {json.dumps(value)}\n"
+            elif key == "target-version":  # Explicitly add quotes for target-version
+                toml_content += f'{key} = "{value}"\n'
             else:
                 toml_content += f"{key} = {value}\n"
         with open(self.root_dir / "pyproject.toml", "w", encoding='utf-8') as f:
@@ -461,7 +484,8 @@ dependencies = [
                     await process.wait()
                 except ProcessLookupError:
                     pass
-                raise TimeoutError(f"Command timed out after {timeout} seconds")
+                raise TimeoutError(
+                    f"Command timed out after {timeout} seconds")
             if process.returncode != 0:
                 error_msg = stderr.decode('utf-8', errors='replace')
                 self.logger.error(f"UV command failed: {error_msg}")
@@ -473,12 +497,14 @@ dependencies = [
             )
         except FileNotFoundError:
             self.logger.error(f"Command not found: {cmd[0]}")
-            raise RuntimeError(f"Command not found: {cmd[0]}. Is UV installed and in PATH?")
+            raise RuntimeError(
+                f"Command not found: {cmd[0]}. Is UV installed and in PATH?")
 
     async def setup_environment(self):
         """Set up the environment based on mode."""
         self.logger.info("Setting up environment...")
-        venv_cmd = ["uv", "venv"] if not self.is_windows else ["uv.exe", "venv"]
+        venv_cmd = ["uv", "venv"] if not self.is_windows else [
+            "uv.exe", "venv"]
         await self.run_uv_command(venv_cmd)
         requirements_path = self.root_dir / "requirements.txt"
         dev_requirements_path = self.root_dir / "requirements-dev.txt"
@@ -490,25 +516,30 @@ dependencies = [
                 f.write('\n'.join(self.config.dev_dependencies) + '\n')
         if requirements_path.exists():
             self.logger.info("Compiling requirements...")
-            pip_cmd = ["uv", "pip"] if not self.is_windows else ["uv.exe", "pip"]
+            pip_cmd = ["uv", "pip"] if not self.is_windows else [
+                "uv.exe", "pip"]
             await self.run_uv_command([*pip_cmd, "compile", str(requirements_path),
-                                        "--output-file", str(self.root_dir / "requirements.lock")])
+                                       "--output-file", str(self.root_dir / "requirements.lock")])
         if dev_requirements_path.exists():
             self.logger.info("Compiling dev requirements...")
-            pip_cmd = ["uv", "pip"] if not self.is_windows else ["uv.exe", "pip"]
+            pip_cmd = ["uv", "pip"] if not self.is_windows else [
+                "uv.exe", "pip"]
             await self.run_uv_command([*pip_cmd, "compile", str(dev_requirements_path),
-                                        "--output-file", str(self.root_dir / "requirements-dev.lock")])
+                                       "--output-file", str(self.root_dir / "requirements-dev.lock")])
         if (self.root_dir / "requirements.lock").exists():
             self.logger.info("Installing dependencies from lock file...")
-            pip_cmd = ["uv", "pip"] if not self.is_windows else ["uv.exe", "pip"]
+            pip_cmd = ["uv", "pip"] if not self.is_windows else [
+                "uv.exe", "pip"]
             await self.run_uv_command([*pip_cmd, "install", "-r", str(self.root_dir / "requirements.lock")])
         if (self.root_dir / "requirements-dev.lock").exists():
             self.logger.info("Installing dev dependencies from lock file...")
-            pip_cmd = ["uv", "pip"] if not self.is_windows else ["uv.exe", "pip"]
+            pip_cmd = ["uv", "pip"] if not self.is_windows else [
+                "uv.exe", "pip"]
             await self.run_uv_command([*pip_cmd, "install", "-r", str(self.root_dir / "requirements-dev.lock")])
         if (self.root_dir / "setup.py").exists():
             self.logger.info("Installing project in editable mode...")
-            pip_cmd = ["uv", "pip"] if not self.is_windows else ["uv.exe", "pip"]
+            pip_cmd = ["uv", "pip"] if not self.is_windows else [
+                "uv.exe", "pip"]
             await self.run_uv_command([*pip_cmd, "install", "-e", "."])
 
     async def run_app(self, module_path: str, *args, timeout: Optional[float] = None):
@@ -541,7 +572,8 @@ dependencies = [
         await self.run_tests()
         await self.run_linter()
         await self.format_code()
-        self.logger.info("Development environment setup complete. You can now start coding or run your application.")
+        self.logger.info(
+            "Development environment setup complete. You can now start coding or run your application.")
 
     async def run_admin_mode(self):
         """Setup and run operations specific to Admin Mode."""
@@ -550,12 +582,14 @@ dependencies = [
         if self.is_windows:
             self.logger.info("Performing Windows-specific admin tasks...")
             if "platform_specific" in self.project_config and "windows" in self.project_config["platform_specific"]:
-                priority = self.project_config["platform_specific"]["windows"].get("priority", 32)
+                priority = self.project_config["platform_specific"]["windows"].get(
+                    "priority", 32)
                 self.logger.info(f"Setting process priority to {priority}")
         else:
             self.logger.info("Performing Linux-specific admin tasks...")
             if "platform_specific" in self.project_config and "linux" in self.project_config["platform_specific"]:
-                priority = self.project_config["platform_specific"]["linux"].get("priority", 0)
+                priority = self.project_config["platform_specific"]["linux"].get(
+                    "priority", 0)
                 self.logger.info(f"Setting process priority to {priority}")
 
     async def run_user_mode(self):
@@ -564,7 +598,8 @@ dependencies = [
         self.logger.info("Setting up minimal runtime environment...")
         venv_path = self.root_dir / ".venv"
         if not venv_path.exists():
-            venv_cmd = ["uv.exe", "venv"] if self.is_windows else ["uv", "venv"]
+            venv_cmd = ["uv.exe", "venv"] if self.is_windows else [
+                "uv", "venv"]
             await self.run_uv_command(venv_cmd)
         requirements_path = self.root_dir / "requirements.txt"
         if requirements_path.exists():
@@ -664,6 +699,7 @@ def test_{module_name}_main():
 
 # --- Unified Entry Points via Subcommands ---
 
+
 async def project_main(args) -> int:
     """[[project_main]] – Run project management modes (DEV, ADMIN, USER, etc.)."""
     manager = ProjectManager(args.root)
@@ -687,6 +723,7 @@ async def project_main(args) -> int:
         return 1
     return 0
 
+
 def benchmark_main(args) -> int:
     """[[benchmark_main]] – Run benchmark tests on a given command."""
     command = args.cmd
@@ -698,28 +735,39 @@ def benchmark_main(args) -> int:
     benchmark = Benchmark(command, args.num)
     best_time = benchmark.run()
     stdout, stderr, returncode = ProcessExecutor.run_command(command)
-    execution_result = ExecutionResult(stdout=stdout, stderr=stderr, returncode=returncode)
+    execution_result = ExecutionResult(
+        stdout=stdout, stderr=stderr, returncode=returncode)
     print(execution_result)
-    benchmark_report = BenchmarkReport(command=' '.join(command), best_time=best_time, iterations=args.num)
+    benchmark_report = BenchmarkReport(command=' '.join(
+        command), best_time=best_time, iterations=args.num)
     print(benchmark_report)
     return 0
 
+
 def unified_main() -> int:
     """[[unified_main]] – Unified CLI entry point using subparsers."""
-    parser = argparse.ArgumentParser(description='Monolithic Project Manager & Benchmark Utility')
+    parser = argparse.ArgumentParser(
+        description='Monolithic Project Manager & Benchmark Utility')
     subparsers = parser.add_subparsers(dest="command", required=True,
                                        help="Choose 'project' or 'benchmark' mode")
     # Subparser for project manager
-    project_parser = subparsers.add_parser("project", help="Run project management tasks")
-    project_parser.add_argument("--root", default=".", help="Project root directory")
+    project_parser = subparsers.add_parser(
+        "project", help="Run project management tasks")
+    project_parser.add_argument(
+        "--root", default=".", help="Project root directory")
     project_parser.add_argument("mode", choices=["DEV", "ADMIN", "USER", "TEARDOWN", "UPGRADE"],
                                 help="Mode to execute")
-    project_parser.add_argument("--timeout", type=float, default=None, help="Timeout in seconds for commands")
-    project_parser.add_argument("--create-module", type=str, help="Create a new module with the specified name")
+    project_parser.add_argument(
+        "--timeout", type=float, default=None, help="Timeout in seconds for commands")
+    project_parser.add_argument(
+        "--create-module", type=str, help="Create a new module with the specified name")
     # Subparser for benchmarking
-    bench_parser = subparsers.add_parser("benchmark", help="Benchmark command execution")
-    bench_parser.add_argument("-n", "--num", type=int, default=10, help="Number of iterations")
-    bench_parser.add_argument("cmd", nargs=argparse.REMAINDER, help="Command to execute for benchmarking")
+    bench_parser = subparsers.add_parser(
+        "benchmark", help="Benchmark command execution")
+    bench_parser.add_argument("-n", "--num", type=int,
+                              default=10, help="Number of iterations")
+    bench_parser.add_argument(
+        "cmd", nargs=argparse.REMAINDER, help="Command to execute for benchmarking")
     args = parser.parse_args()
 
     if args.command == "project":
@@ -729,6 +777,7 @@ def unified_main() -> int:
     else:
         parser.error("Invalid command.")
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(unified_main())

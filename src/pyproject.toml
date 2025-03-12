@@ -18,7 +18,7 @@ tests-path = "tests"
 
 [tool.ruff]
 line-length = 88
-target-version = py313
+target-version = "py313"
 select = ["E", "F", "I", "N", "W"]
 ignore = []
 fixable = ["A", "B", "C", "D", "E", "F", "I"]
