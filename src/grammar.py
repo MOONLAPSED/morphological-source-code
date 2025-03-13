@@ -52,6 +52,8 @@ from typing import (
 )
 IS_WINDOWS = os.name == 'nt'
 IS_POSIX = os.name == 'posix'
+
+
 class PlatformFactory:
     """Factory class to create platform-specific instances."""
     @staticmethod
@@ -356,6 +358,8 @@ class ContentManager:
                         sys.modules[module_name] = module
                 except Exception as e:
                     print(f"Error loading {path}: {e}")
+
+
 # ------------------------------------------------------------------------------
 # Type Definitions
 # ------------------------------------------------------------------------------
@@ -420,7 +424,9 @@ def least_significant_unit(state: StateHash, word_size: int):
     else:
         raise ValueError("Unsupported WORD_SIZE")
 
+
 SESSION_TIMEOUT = WORD_SIZE * 60  # 1 minute per byte-word default scale-factor
+
 
 class FrameModel(Generic[T, V, C], ABC):
     """
@@ -862,6 +868,7 @@ class Field(Protocol):
     """
 
     def interact(self, state: State) -> State:
+        pass
 
 
 class QuantumSegment:
