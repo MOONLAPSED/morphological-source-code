@@ -53,9 +53,6 @@ ignore_missing_imports = true
 [tool.isort]
 profile = "black"
 
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-
 [project.scripts]
 main = "main:main"
 lint = "flake8 ."
@@ -66,3 +63,6 @@ test = "pytest"
 [tool.uv.workspace]
 members = ["packages/*"]
 exclude = ["packages/seeds"]
+
+[tool.uv]
+cache-keys = [{ file = "**/*.toml" }]
