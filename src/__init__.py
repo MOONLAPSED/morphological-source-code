@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+from __future__ import annotations
+#!/usr/bin/env -S uv run
 # -*- coding: utf-8 -*-
 """
 A monolithic __init__.py that provides:
@@ -15,7 +16,6 @@ Usage examples:
 This file uses only standard libraries.
 """
 
-from __future__ import annotations
 import os
 import sys
 import platform

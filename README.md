@@ -1,6 +1,14 @@
 # cognosis candidate release 0.4.20
 
+```filesystem
+~/: 3.13 python std libs
+~/src/: UV
+~/src/app/: UV + NOX - libs expand from here, like:
+~/src/app/*lib/
+~/src/llambda/: ollama + model dependent source
 ```
+
+```filesystem
 pyproject.toml         # Project-wide tool + build config
 .env                   # Local secrets (ignored by Git)
 .env.example           # Template for local environment vars
