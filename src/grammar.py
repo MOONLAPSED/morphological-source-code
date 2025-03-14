@@ -36,9 +36,9 @@ import subprocess
 import contextvars
 import tracemalloc
 from pathlib import Path
-from enum import Enum, auto, StrEnum
+from enum import Enum, auto, StrEnum, IntFlag, IntEnum
 from queue import Queue, Empty
-from datetime import datetime
+from datetime import datetime, timezone
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from functools import wraps, lru_cache
@@ -48,7 +48,7 @@ from importlib.util import spec_from_file_location, module_from_spec
 from types import SimpleNamespace, ModuleType, MethodType, FunctionType, CodeType, TracebackType, FrameType
 from typing import (
     Any, Dict, List, Optional, Union, Callable, TypeVar, Tuple, Generic, Set,
-    Coroutine, Type, NamedTuple, ClassVar, Protocol, runtime_checkable
+    Coroutine, Type, NamedTuple, ClassVar, Protocol, runtime_checkable,
 )
 IS_WINDOWS = os.name == 'nt'
 IS_POSIX = os.name == 'posix'
@@ -1933,12 +1933,12 @@ class SpeculationKernel:
         """Saves the kernel's current state to a file."""
         serializable_tasks = {}
         for task_id, task in self.tasks.items():
-            serializable_task = asdict(task)
+            serializable_task = dict(task.__dict__)
             del serializable_task['func']  # Remove the function
             serializable_tasks[task_id] = serializable_task
 
         data = {
-            "arenas": [asdict(arena) for arena in self.arenas],
+            "arenas": [dict(arena.__dict__) for arena in self.arenas],
             "tasks": serializable_tasks,
             "task_counter": self.task_counter
         }
