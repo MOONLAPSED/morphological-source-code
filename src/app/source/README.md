@@ -164,7 +164,7 @@ The Project Manager creates and maintains the following directory structure:
 ```
 project-root/
 ├── pyproject.toml
-├── demiurge.json
+├── config.json
 ├── requirements.txt
 ├── requirements-dev.txt
 ├── requirements.lock
