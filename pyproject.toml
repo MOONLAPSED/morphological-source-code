@@ -53,13 +53,11 @@ ignore_missing_imports = true
 
 [tool.ruff]
 line-length = 88
-ignore = ["W503"]
 select = ["E", "F", "W", "B"]
 exclude = ["build/", "dist/", ".venv/"]
 
 [project.scripts]
 setup = "pip install -e .[dev]"
-format = "black ."
 lint = "ruff ."
 format = { composite = ["black .", "isort ."] }
 typecheck = "mypy ."
