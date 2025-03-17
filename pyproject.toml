@@ -1,61 +1,66 @@
-[build-system]
-requires = ["pdm-pep517>=0.8.5"]
-build-backend = "pdm.pep517.api"
-
 [project]
 name = "cognosis"
 description = "A namespace and filesystem interface for Obsidian knowledge bases."
 authors = [{ name = "MOONLAPSED", email = "MOONLAPSED@gmail.com" }]
 requires-python = ">=3.13"
 version = "0.4.20"
+readme = { file = "README.md", content-type = "text/markdown" }
+license = { text = "MIT" }
+keywords = ["namespace", "filesystem", "obsidian", "knowledge-base"]
+dependencies = []
 
-[project.readme]
-file = "README.md"
-content-type = "text/markdown"
+[scripts]
+main = "main:main"
 
-[tool.pdm.dev-dependencies]
-test = [
-    "pytest",
-    "pytest-cov",
-    "pytest-asyncio",
-    "pytest-benchmark",
-]
-lint = [
-    "flake8",
-    "black",
-    "isort",
-    "mypy",
-]
+[tool.env.toml]
+path = "{working_dir}/.devcontainer/.env"
+
+[project.optional-dependencies]
 dev = [
+    "black",
+    "mypy",
     "nox",
     "pre-commit",
-    "cffi",
-    "cmake",
-    "uv",
+    "jupyterlab",
 ]
-
-[tool.pdm.conda.pypi-mapping]
-download-dir = "/tmp"
-url = "https://url/to/mapping.yaml"
-
-[tool.black]
-line-length = 88
 
 [tool.flake8]
 max-line-length = 88
 extend-ignore = ["E203", "W503"]
 
+[tool.black]
+line-length = 88
+target-version = ["py313"]
+exclude = '''
+/(
+    \.git
+  | \.mypy_cache
+  | \.scratch
+  | \.nox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
 [tool.mypy]
 python_version = "3.13"
+strict = true
+show_error_codes = true
 disallow_untyped_defs = true
+exclude = ["build/", "dist/", ".venv/"]
 ignore_missing_imports = true
 
-[tool.isort]
-profile = "black"
+[tool.ruff]
+line-length = 88
+ignore = ["W503"]
+select = ["E", "F", "W", "B"]
+exclude = ["build/", "dist/", ".venv/"]
 
 [project.scripts]
-main = "main:main"
-lint = "flake8 ."
+setup = "pip install -e .[dev]"
+format = "black ."
+lint = "ruff ."
 format = { composite = ["black .", "isort ."] }
 typecheck = "mypy ."
 test = "pytest"
