@@ -3,11 +3,18 @@ import subprocess
 import json
 import asyncio
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from dataclasses import dataclass
 
 PORT = 8080
 KEYS_DIR = "keys"
 
 os.makedirs(KEYS_DIR, exist_ok=True)
+
+# 🔹 Utility: Generate PGP Challenge
+
+
+def generate_challenge() -> str:
+    return os.urandom(16).hex()
 
 # 🔹 Utility: Run GPG in a subprocess
 
@@ -25,13 +32,29 @@ def verify_pgp_signature(signed_message: str) -> bool:
     except Exception:
         return False
 
-# 🔹 Utility: Generate PGP Challenge
+# 🔹 DataClass for Rendering Responses
 
 
-def generate_challenge() -> str:
-    return os.urandom(16).hex()  # Secure random challenge
+@dataclass
+class PageRenderer:
+    title: str
+    content: str
+    content_type: str = "text/html"
 
-# 🔹 Async Aggregation (statistical state machine)
+    def render(self) -> bytes:
+        """Returns the formatted response as bytes."""
+        if self.content_type == "application/json":
+            return json.dumps({"title": self.title, "content": self.content}).encode()
+        return f"<h1>{self.title}</h1><p>{self.content}</p>".encode()
+
+
+# 🔹 Routing System (URL to Page Data)
+SimpleRouter = {
+    "/": PageRenderer("PGP Auth Server", "Try <code>/challenge</code> or <code>/verify</code>"),
+    "/about": PageRenderer("About", "This is a minimal PGP authentication server."),
+}
+
+# 🔹 Async Aggregation
 
 
 async def aggregator():
@@ -48,14 +71,13 @@ event_queue = asyncio.Queue()
 
 class PGPAuthHandler(BaseHTTPRequestHandler):
     def do_GET(self):
-        if self.path == "/":
+        if self.path in SimpleRouter:
+            page = SimpleRouter[self.path]
             self.send_response(200)
-            self.send_header("Content-Type", "text/html")
+            self.send_header("Content-Type", page.content_type)
             self.end_headers()
-            self.wfile.write(
-                b"<h1>PGP Auth Server Running</h1><p>Try <code>/challenge</code> or <code>/verify</code></p>")
+            self.wfile.write(page.render())
         elif self.path == "/challenge":
-            client_ip = self.client_address[0]
             challenge = generate_challenge()
             self.send_response(200)
             self.send_header("Content-Type", "text/plain")
@@ -79,23 +101,21 @@ class PGPAuthHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 return
 
-            # Save new PGP public key
             key_path = os.path.join(KEYS_DIR, f"{client_ip}.key")
             if not os.path.exists(key_path):
                 with open(key_path, "w") as f:
                     f.write(public_key)
 
-            # Verify the signed challenge
             if verify_pgp_signature(signed_message):
                 asyncio.create_task(event_queue.put(
                     {"ip": client_ip, "state": "Valid"}))
                 self.send_response(200)
                 self.end_headers()
-                self.wfile.write(b" Authentication Successful!")
+                self.wfile.write(b"Authentication Successful!")
             else:
                 self.send_response(403)
                 self.end_headers()
-                self.wfile.write(b" Authentication Failed!")
+                self.wfile.write(b"Authentication Failed!")
 
 # 🔹 Start Server
 
@@ -110,5 +130,6 @@ async def start_server():
 
 async def main():
     await asyncio.gather(start_server(), aggregator())
-
+    SimpleRouter["/api/status"] = PageRenderer("Server Status", "Running OK", "application/json")
+    SimpleRouter["/docs"] = PageRenderer("Documentation", str("# Welcome to the Docs!"))
 asyncio.run(main())
