@@ -4,6 +4,14 @@ description = "A namespace and filesystem interface for Obsidian knowledge bases
 authors = [{ name = "MOONLAPSED", email = "MOONLAPSED@gmail.com" }]
 requires-python = ">=3.13"
 version = "0.4.20"
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+
+[tool.black]
+line-length = 88
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { text = "MIT" }
 keywords = ["namespace", "filesystem", "obsidian", "knowledge-base"]

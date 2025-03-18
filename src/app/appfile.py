@@ -1,11 +1,10 @@
 #!/usr/bin/env -S uv run
 # /* script
-# requires-python = ">=3.12"
+# requires-python = ">=3.13"
 # dependencies = [
-#     "nox==3.*",
+#     "uv==*.*",
 # ]
 # */
-
 import os
 import sys
 import ctypes

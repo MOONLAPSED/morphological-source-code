@@ -1,11 +1,10 @@
 #!/usr/bin/env -S uv run
-# /// script
-# requires-python = ">=3.12"
+# /* script
+# requires-python = ">=3.13"
 # dependencies = [
-#     "flask==3.*",
+#     "uv==*.*",
 # ]
-# ///
-
+# */
 import ctypes
 import platform
 from decimal import Decimal, getcontext
