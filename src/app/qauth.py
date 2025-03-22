@@ -5,6 +5,14 @@ import asyncio
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from dataclasses import dataclass
 
+"""
+1) curl -X GET http://localhost:8080/challenge
+2) echo "your-challenge-here" | gpg --sign --armor --local-user your-key-id
+3) curl -X POST http://localhost:8080/verify \
+    -H "Content-Type: application/json" \
+    -d '{"publicKey": "your-public-key-here", "signedMessage": "your-signed-message-here"}'
+"""
+
 PORT = 8080
 KEYS_DIR = "keys"
 
@@ -130,6 +138,8 @@ async def start_server():
 
 async def main():
     await asyncio.gather(start_server(), aggregator())
-    SimpleRouter["/api/status"] = PageRenderer("Server Status", "Running OK", "application/json")
-    SimpleRouter["/docs"] = PageRenderer("Documentation", str("# Welcome to the Docs!"))
+    SimpleRouter["/api/status"] = PageRenderer(
+        "Server Status", "Running OK", "application/json")
+    SimpleRouter["/docs"] = PageRenderer("Documentation",
+                                         str("# Welcome to the Docs!"))
 asyncio.run(main())
