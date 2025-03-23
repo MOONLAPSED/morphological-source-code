@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-A re-envisioned implementation using the T, V, C FrameModel and __Atom__.
-This sample builds a simple knowledge base quine system that:
+This sample builds a simple knowledge base quine system that using
+the T, V, C FrameModel and __Atom__.
 - Reads a markdown file (a KB entry)
 - Wraps content with delimiters (defining a "frame")
 - Creates a __Atom__ that encapsulates the frame (knowledge as code & data)

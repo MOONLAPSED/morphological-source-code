@@ -11,6 +11,7 @@ import abc
 import dis
 import sys
 import ast
+import stat
 import time
 import json
 import math
@@ -218,22 +219,21 @@ dependencies = [
             except FileNotFoundError:
                 pass
 
+
+
     async def run_uv_command(self, cmd: List[str], timeout: Optional[float] = None) -> subprocess.CompletedProcess:
-        """Run a UV command asynchronously with timeout support"""
+        """Run a UV command asynchronously with timeout support."""
         self.logger.debug(f"Running UV command: {' '.join(cmd)}")
         
         # Modify command for Windows if needed
         if self.is_windows:
-            # If first command is not a full path and doesn't end with .exe on Windows, try to add it
             if not cmd[0].endswith('.exe') and '/' not in cmd[0] and '\\' not in cmd[0]:
-                if cmd[0] == "uv" or cmd[0] == "uvx":
+                if cmd[0] in ("uv", "uvx"):
                     cmd[0] = f"{cmd[0]}.exe"
         
         try:
-            # For Windows, we sometimes need shell=True for PATH resolution
-            shell = self.is_windows
+            shell = self.is_windows  # On Windows, use shell=True for PATH resolution
             if shell:
-                # Convert list to string for shell execution on Windows
                 cmd_str = subprocess.list2cmdline(cmd)
                 process = await asyncio.create_subprocess_shell(
                     cmd_str,
@@ -246,12 +246,9 @@ dependencies = [
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE
                 )
-                
+            
             try:
-                stdout, stderr = await asyncio.wait_for(
-                    process.communicate(),
-                    timeout=timeout
-                )
+                stdout, stderr = await asyncio.wait_for(process.communicate(), timeout=timeout)
             except asyncio.TimeoutError:
                 try:
                     process.terminate()
@@ -259,91 +256,146 @@ dependencies = [
                 except ProcessLookupError:
                     pass
                 raise TimeoutError(f"Command timed out after {timeout} seconds")
-                
+
             if process.returncode != 0:
                 error_msg = stderr.decode('utf-8', errors='replace')
                 self.logger.error(f"UV command failed: {error_msg}")
                 raise RuntimeError(f"UV command failed: {error_msg}")
-                
+
             return subprocess.CompletedProcess(
                 cmd, process.returncode, 
                 stdout.decode('utf-8', errors='replace'), 
                 stderr.decode('utf-8', errors='replace')
             )
-            
         except FileNotFoundError:
             self.logger.error(f"Command not found: {cmd[0]}")
             raise RuntimeError(f"Command not found: {cmd[0]}. Is UV installed and in PATH?")
+        except PermissionError:
+            self.logger.error("Permission error while modifying .venv directory.")
+            raise RuntimeError("Failed to delete or modify `.venv` due to permission issues.")
+        except asyncio.TimeoutError:
+            self.logger.error(f"Command timed out after {timeout} seconds: {' '.join(cmd)}")
+            raise TimeoutError(f"Command timed out after {timeout} seconds")
+
+    def on_rm_error(self, func, path, exc_info):
+        """
+        Handle errors encountered during removal of .venv.
+        This method attempts to change the file permission and retry removal.
+        """
+        path = Path(path)
+        self.logger.warning(f"Permission error encountered while removing {path}. Retrying...")
+        try:
+            os.chmod(path, stat.S_IWRITE)
+            func(path)
+        except Exception as e:
+            self.logger.error(f"Failed to remove {path}: {e}")
+
+    def clean_venv(self):
+        """Forcefully remove the existing virtual environment with error handling."""
+        venv_path = self.root_dir / ".venv"
+        if venv_path.exists():
+            self.logger.info("Forcefully removing existing virtual environment...")
+            try:
+                shutil.rmtree(venv_path, onerror=self.on_rm_error)
+            except Exception as e:
+                self.logger.error(f"Error while deleting .venv using shutil.rmtree: {e}")
+            
+            # Check if .venv still exists; if so, try a Windows-specific fallback.
+            if venv_path.exists():
+                self.logger.warning(".venv still exists after initial deletion. Attempting fallback deletion...")
+                if self.is_windows:
+                    try:
+                        # Use Windows command to force-remove the directory
+                        subprocess.run(f'rd /s /q "{venv_path}"', shell=True, check=True)
+                    except Exception as e:
+                        self.logger.error(f"Fallback deletion using 'rd /s /q' failed: {e}")
+                # Allow time for the OS to release file locks.
+                time.sleep(1)
+                if venv_path.exists():
+                    self.logger.error("Failed to remove .venv completely.")
+                else:
+                    self.logger.info(".venv removed successfully via fallback.")
+            else:
+                self.logger.info(".venv removed successfully.")
 
     async def setup_environment(self):
-        """Set up the environment based on mode"""
+        """Set up the environment based on the mode and dependencies."""
         self.logger.info("Setting up environment...")
-        
-        # Create virtual environment - using correct command based on platform
-        venv_cmd = ["uv", "venv"]
+
+        # Step 1: Clean any existing virtual environment
+        self.clean_venv()
+
+        # Step 2: Create the virtual environment with system site packages
+        venv_cmd = ["uv", "venv", "--system-site-packages"]
         if self.is_windows:
-            venv_cmd = ["uv.exe", "venv"]
-            
-        await self.run_uv_command(venv_cmd)
+            venv_cmd[0] = "uv.exe"
         
-        # Create requirements files
+        try:
+            await self.run_uv_command(venv_cmd)
+        except RuntimeError as e:
+            self.logger.error(f"Failed to create virtual environment: {e}")
+            return
+
+        # Step 3: Prepare requirements files
         requirements_path = self.root_dir / "requirements.txt"
         dev_requirements_path = self.root_dir / "requirements-dev.txt"
-        
-        # Write main requirements
+
         if self.config.dependencies:
-            with open(requirements_path, 'w', encoding='utf-8') as f:
-                f.write('\n'.join(self.config.dependencies) + '\n')
-                
-        # Write dev requirements
+            self.logger.info("Writing main requirements...")
+            with open(requirements_path, "w", encoding="utf-8") as f:
+                f.write("\n".join(self.config.dependencies) + "\n")
+
         if self.config.dev_dependencies:
-            with open(dev_requirements_path, 'w', encoding='utf-8') as f:
-                f.write('\n'.join(self.config.dev_dependencies) + '\n')
-                
-        # Generate lock file for main requirements
+            self.logger.info("Writing dev requirements...")
+            with open(dev_requirements_path, "w", encoding="utf-8") as f:
+                f.write("\n".join(self.config.dev_dependencies) + "\n")
+
+        # Step 4: Compile lock files for both main and dev requirements
+        pip_cmd = ["uv.exe", "pip"] if self.is_windows else ["uv", "pip"]
+
         if requirements_path.exists():
-            self.logger.info("Compiling requirements...")
-            pip_cmd = ["uv.exe", "pip"] if self.is_windows else ["uv", "pip"]
-            await self.run_uv_command([
-                *pip_cmd, "compile", 
-                str(requirements_path), 
-                "--output-file", 
-                str(self.root_dir / "requirements.lock")
-            ])
-            
-        # Generate lock file for dev requirements
+            self.logger.info("Compiling main requirements lock file...")
+            await self.run_uv_command(
+                [
+                    *pip_cmd,
+                    "compile",
+                    str(requirements_path),
+                    "--output-file",
+                    str(self.root_dir / "requirements.lock"),
+                ]
+            )
+
         if dev_requirements_path.exists():
-            self.logger.info("Compiling dev requirements...")
-            pip_cmd = ["uv.exe", "pip"] if self.is_windows else ["uv", "pip"]
-            await self.run_uv_command([
-                *pip_cmd, "compile", 
-                str(dev_requirements_path), 
-                "--output-file", 
-                str(self.root_dir / "requirements-dev.lock")
-            ])
-            
-        # Install from lock files
-        if (self.root_dir / "requirements.lock").exists():
-            self.logger.info("Installing dependencies from lock file...")
-            pip_cmd = ["uv.exe", "pip"] if self.is_windows else ["uv", "pip"]
-            await self.run_uv_command([
-                *pip_cmd, "install", 
-                "-r", str(self.root_dir / "requirements.lock")
-            ])
-            
-        if (self.root_dir / "requirements-dev.lock").exists():
-            self.logger.info("Installing dev dependencies from lock file...")
-            pip_cmd = ["uv.exe", "pip"] if self.is_windows else ["uv", "pip"]
-            await self.run_uv_command([
-                *pip_cmd, "install", 
-                "-r", str(self.root_dir / "requirements-dev.lock")
-            ])
-            
-        # Install the project in editable mode if setup.py exists
-        if (self.root_dir / "setup.py").exists():
+            self.logger.info("Compiling dev requirements lock file...")
+            await self.run_uv_command(
+                [
+                    *pip_cmd,
+                    "compile",
+                    str(dev_requirements_path),
+                    "--output-file",
+                    str(self.root_dir / "requirements-dev.lock"),
+                ]
+            )
+
+        # Step 5: Install dependencies from lock files
+        lock_path = self.root_dir / "requirements.lock"
+        dev_lock_path = self.root_dir / "requirements-dev.lock"
+
+        if lock_path.exists():
+            self.logger.info("Installing dependencies from requirements.lock...")
+            await self.run_uv_command([*pip_cmd, "install", "-r", str(lock_path)])
+
+        if dev_lock_path.exists():
+            self.logger.info("Installing dev dependencies from requirements-dev.lock...")
+            await self.run_uv_command([*pip_cmd, "install", "-r", str(dev_lock_path)])
+
+        # Step 6: Install the project in editable mode if setup.py exists
+        setup_path = self.root_dir / "setup.py"
+        if setup_path.exists():
             self.logger.info("Installing project in editable mode...")
-            pip_cmd = ["uv.exe", "pip"] if self.is_windows else ["uv", "pip"]
             await self.run_uv_command([*pip_cmd, "install", "-e", "."])
+
+        self.logger.info("Environment setup complete!")
 
     async def run_app(self, module_path: str, *args, timeout: Optional[float] = None):
         """Run the application using Python directly"""
