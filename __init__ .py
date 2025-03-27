@@ -372,6 +372,8 @@ class __Atom__(Generic[T, V, C], PyObjectLike):
         self.runtime_namespace: Optional[RuntimeNamespace] = None
         self.security_context: Optional[SecurityContext] = None
     def __getattribute__(self, name: str) -> Any:
+        # The __getattribute__ method is the heart of the dynamic behavior. It first checks for internal attributes, then local environment variables. If an
+        # attribute is not found in the object's local environment (_local_env), the code is executed, and the attribute is retrieved from the resulting local environment.
         if name in ('_code', '_value', '_local_env', '_refcount', '_ttl', '_created_at'):  # Direct access to internal attributes
             return super().__getattribute__(name)
         # Attribute lookup in the local environment
@@ -444,7 +446,7 @@ class __Atom__(Generic[T, V, C], PyObjectLike):
         else:
             return {"status": "error", "message": "Memory not found"}
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        # Execute the code with the given arguments and keyword arguments
+        # The __call__ method allows __Atom__ instances to be invoked like functions, executing their stored code with provided arguments.
         local_env = self._local_env.copy()  # Create a copy for the call
         try:
             # Use inspect.signature to handle default values and variable arguments
