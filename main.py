@@ -1,11 +1,9 @@
-<<<<<<< HEAD
 from typing import TypeVar, Generic, Callable, Optional, Dict, Any, Set, List, Tuple, Union, AsyncIterator
 from typing import Protocol, runtime_checkable, cast, overload, Awaitable, Coroutine
 from enum import Enum, auto, StrEnum
 from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
 import array
-=======
 import re
 import os
 import io
@@ -25,13 +23,11 @@ import pickle
 import ctypes
 import random
 import logging
->>>>>>> 616d6fa (v1rpnmethod+futuer-participle)
 import weakref
 import time
 import asyncio
 import inspect
 import hashlib
-<<<<<<< HEAD
 import ast
 from types import SimpleNamespace
 # T for TypeVar, V for ValueVar. Homoicons are T+V.
@@ -45,214 +41,6 @@ V_co = TypeVar('V_co', covariant=True)  # Value space (dynamic) with covariance
 C_co = TypeVar('C_co', bound=Callable, covariant=True)  # Computation space with covariance
 
 # ------------------------------------------------------------------------------
-=======
-import platform
-import importlib
-import functools
-import linecache
-import traceback
-import mimetypes
-import threading
-import subprocess
-import contextvars
-import tracemalloc
-from pathlib import Path
-from enum import Enum, auto, StrEnum
-from queue import Queue, Empty
-from datetime import datetime
-from abc import ABC, abstractmethod
-from contextlib import contextmanager
-from functools import wraps, lru_cache
-from dataclasses import dataclass, field
-from concurrent.futures import ThreadPoolExecutor
-from importlib.util import spec_from_file_location, module_from_spec
-from types import SimpleNamespace, ModuleType, MethodType, FunctionType, CodeType, TracebackType, FrameType
-from typing import (
-    Any, Dict, List, Optional, Union, Callable, TypeVar, Tuple, Generic, Set,
-    Coroutine, Type, NamedTuple, ClassVar, Protocol, runtime_checkable
-)
-#------------------------------------------------------------------------------
-# Setup, Logging & Configuration
-#------------------------------------------------------------------------------
-class CustomFormatter(logging.Formatter):
-    """Custom formatter for colored console output."""
-    COLORS = {
-        'grey': "\x1b[38;20m",
-        'yellow': "\x1b[33;20m",
-        'red': "\x1b[31;20m",
-        'bold_red': "\x1b[31;1m",
-        'green': "\x1b[32;20m",
-        'reset': "\x1b[0m"
-    }
-    FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s (%(filename)s:%(lineno)d)"
-    FORMATS = {
-        logging.DEBUG: COLORS['grey'] + FORMAT + COLORS['reset'],
-        logging.INFO: COLORS['green'] + FORMAT + COLORS['reset'],
-        logging.WARNING: COLORS['yellow'] + FORMAT + COLORS['reset'],
-        logging.ERROR: COLORS['red'] + FORMAT + COLORS['reset'],
-        logging.CRITICAL: COLORS['bold_red'] + FORMAT + COLORS['reset']
-    }
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.log_queue = Queue()
-        self.log_thread = threading.Thread(target=self._log_thread_func, daemon=True)
-        self.log_thread.start()
-    def format(self, record):
-        log_fmt = self.FORMATS.get(record.levelno, self.FORMAT)
-        formatter = logging.Formatter(log_fmt)
-        return formatter.format(record)
-    def _log_thread_func(self):
-        while True:
-            try:
-                record = self.log_queue.get()
-                if record is None:
-                    break
-                super().handle(record)
-            except Exception:
-                import traceback
-                print("Error in log thread:", file=sys.stderr)
-                traceback.print_exc()
-    def emit(self, record):
-        self.log_queue.put(record)
-    def close(self):
-        self.log_queue.put(None)
-        self.log_thread.join()
-class AdminLogger(logging.LoggerAdapter):
-    """Logger adapter for administrative logging."""
-    def __init__(self, logger, extra=None):
-        super().__init__(logger, extra or {})
-    def process(self, msg, kwargs):
-        return f"{self.extra.get('name', 'Admin')}: {msg}", kwargs
-logger = AdminLogger(logging.getLogger(__name__))
-# Security
-AccessLevel = Enum('AccessLevel', 'READ WRITE EXECUTE ADMIN USER')
-@dataclass
-class AccessPolicy:
-    """Defines access control policies for runtime operations."""
-    level: AccessLevel
-    namespace_patterns: list[str] = field(default_factory=list)
-    allowed_operations: list[str] = field(default_factory=list)
-    def can_access(self, namespace: str, operation: str) -> bool:
-        return any(pattern in namespace for pattern in self.namespace_patterns) and \
-               operation in self.allowed_operations
-class SecurityContext:
-    """Manages security context and audit logging for runtime operations."""
-    def __init__(self, user_id: str, access_policy: AccessPolicy):
-        self.user_id = user_id
-        self.access_policy = access_policy
-        self._audit_log = []
-    def log_access(self, namespace: str, operation: str, success: bool):
-        self._audit_log.append({
-            "user_id": self.user_id,
-            "namespace": namespace,
-            "operation": operation,
-            "success": success,
-            "timestamp": datetime.now().timestamp()
-        })
-class SecurityValidator(ast.NodeVisitor):
-    """Validates AST nodes against security policies."""
-    def __init__(self, security_context: SecurityContext):
-        self.security_context = security_context
-    def visit_Name(self, node):
-        if not self.security_context.access_policy.can_access(node.id, "read"):
-            raise PermissionError(f"Access denied to name: {node.id}")
-        self.generic_visit(node)
-    def visit_Call(self, node):
-        if isinstance(node.func, ast.Name):
-            if not self.security_context.access_policy.can_access(node.func.id, "execute"):
-                raise PermissionError(f"Access denied to function: {node.func.id}")
-        self.generic_visit(node)
-@dataclass
-class FileMetadata:
-    path: pathlib.Path
-    mime_type: str
-    size: int
-    created: datetime
-    modified: datetime
-    content_hash: str
-    symlinks: list[pathlib.Path] = None
-class ContentManager:
-    def __init__(self, root_dir: pathlib.Path):
-        self.root_dir = root_dir
-        self.metadata_cache: Dict[pathlib.Path, FileMetadata] = {}
-        self.module_cache: Dict[str, Any] = {}
-    def compute_hash(self, path: pathlib.Path) -> str:
-        hasher = hashlib.sha256()
-        with open(path, 'rb') as f:
-            while chunk := f.read(8192):
-                hasher.update(chunk)
-        return hasher.hexdigest()
-    def get_metadata(self, path: pathlib.Path) -> FileMetadata:
-        if path in self.metadata_cache:
-            return self.metadata_cache[path]
-        stat = path.stat()
-        mime_type, _ = mimetypes.guess_type(path)
-        symlinks = [p for p in path.parent.glob('*') if p.is_symlink() and p.resolve() == path]
-        metadata = FileMetadata(
-            path=path,
-            mime_type=mime_type or 'application/octet-stream',
-            size=stat.st_size,
-            created=datetime.fromtimestamp(stat.st_ctime),
-            modified=datetime.fromtimestamp(stat.st_mtime),
-            content_hash=self.compute_hash(path),
-            symlinks=symlinks
-        )
-        self.metadata_cache[path] = metadata
-        return metadata
-    def load_module(self, path: pathlib.Path) -> Optional[Any]:
-        module_name = f"content_{path.stem}"
-        if module_name in self.module_cache:
-            return self.module_cache[module_name]
-        metadata = self.get_metadata(path)
-        content = path.read_text() if path.suffix in {'.txt', '.py', '.md'} else None
-        spec = importlib.util.spec_from_file_location(module_name, str(path))
-        if spec and spec.loader:
-            module = importlib.util.module_from_spec(spec)
-            setattr(module, '__metadata__', metadata)
-            if content:
-                setattr(module, '__content__', content)
-            spec.loader.exec_module(module)
-            self.module_cache[module_name] = module
-            return module
-        return None
-    def scan_directory(self):
-        for path in self.root_dir.rglob('*'):
-            if path.is_file():
-                try:
-                    if module := self.load_module(path):
-                        module_name = f"content_{path.stem}"
-                        sys.modules[module_name] = module
-                except Exception as e:
-                    print(f"Error loading {path}: {e}")
-
-@dataclass
-class Condition:
-    attributes: Dict[str, Any]
-
-class Reaction(ABC):
-    """Abstract base class for all reactions."""
-
-    @abstractmethod
-    def execute(self, input_condition: Condition) -> Condition:
-        """Executes the reaction on the input condition and returns a new condition."""
-        pass
-
-class ContentTransformationReaction(Reaction):
-    """Concrete implementation of an elementary reaction for content transformation."""
-
-    def __init__(self, transformation: Callable[[str], str]):
-        self.transformation = transformation
-
-    def execute(self, input_condition: Condition) -> Condition:
-        """Transform the input condition's content using the defined transformation function."""
-        if not isinstance(input_condition.attributes.get("content"), str):
-            raise ValueError("Input condition must contain valid string content.")
-        transformed_content = self.transformation(input_condition.attributes["content"])
-        output_condition = Condition(attributes={"content": transformed_content})
-        print(f"Reaction: {input_condition} -> {output_condition}")
-        return output_condition
-#------------------------------------------------------------------------------
->>>>>>> 616d6fa (v1rpnmethod+futuer-participle)
 # Type Definitions
 # ------------------------------------------------------------------------------
 """Homoiconism dictates that, upon runtime validation, all objects are code and data.
@@ -356,17 +144,11 @@ interpreting the "measured reality"."""
 @dataclass
 class CustomDelimiterFrame(FrameModel):
     content: str
-<<<<<<< HEAD
 
     def __post_init__(self):
         # Set default delimiters
         self.init()
 
-=======
-    def __post_init__(self):
-        # Set default delimiters
-        self.init()
->>>>>>> 616d6fa (v1rpnmethod+futuer-participle)
     def to_bytes(self) -> bytes:
         """Return the frame data as bytes."""
         return self.content.encode()
@@ -406,11 +188,8 @@ homoiconism dictates the need for a way to represent all Python constructs as fi
 nominative 'true OOP'(SmallTalk) and my specification demands code as data and value as logic, structure.
 The __Atom__()(s), our polymorph of object and fcc-apparent at runtime, always represents the literal source
     cod which makes up their logic and possess the ability to be stateful source code data structure. """
-<<<<<<< HEAD
 
 
-=======
->>>>>>> 616d6fa (v1rpnmethod+futuer-participle)
 class PyObjectLike(ABC):
     """Abstract Base Class for PyObject-like objects (including __Atom__)."""
     @abstractmethod
@@ -462,16 +241,11 @@ class PyObjectLike(ABC):
         """Sets the object's time-to-live."""
         raise NotImplementedError
 # Runtime Namespace Management
-<<<<<<< HEAD
 
 
 class RuntimeNamespace:
     """Manages hierarchical runtime namespaces with security controls and custom delimiter support."""
 
-=======
-class RuntimeNamespace:
-    """Manages hierarchical runtime namespaces with security controls and custom delimiter support."""
->>>>>>> 616d6fa (v1rpnmethod+futuer-participle)
     def __init__(self, name: str = "root", parent: Optional['RuntimeNamespace'] = None):
         self._name = name
         self._parent = parent
@@ -479,58 +253,31 @@ class RuntimeNamespace:
         self._content = SimpleNamespace()
         self._security_context: Optional[SecurityContext] = None
         self.available_modules: Dict[str, Any] = {}
-<<<<<<< HEAD
-        # Reference to a FrameModel instance
-        self.frame_model: Optional[FrameModel] = None
-
-=======
         self.frame_model: Optional[FrameModel] = None  # Reference to a FrameModel instance
->>>>>>> 616d6fa (v1rpnmethod+futuer-participle)
     @property
     def full_path(self) -> str:
         if self._parent:
             return f"{self._parent.full_path}.{self._name}"
         return self._name
-<<<<<<< HEAD
-
-=======
->>>>>>> 616d6fa (v1rpnmethod+futuer-participle)
     def add_child(self, name: str) -> 'RuntimeNamespace':
         child = RuntimeNamespace(name, self)
         self._children[name] = child
         return child
-<<<<<<< HEAD
-
-=======
->>>>>>> 616d6fa (v1rpnmethod+futuer-participle)
     def get_child(self, path: str) -> Optional['RuntimeNamespace']:
         parts = path.split(".", 1)
         if len(parts) == 1:
             return self._children.get(parts[0])
         child = self._children.get(parts[0])
         return child.get_child(parts[1]) if child and len(parts) > 1 else None
-<<<<<<< HEAD
-
-    def set_frame_model(self, frame_model: FrameModel):
-        """Set the FrameModel for this namespace."""
-        self.frame_model = frame_model
-
-    def embed_content(self, raw_content: str) -> None:
-=======
     def set_frame_model(self, frame_model: FrameModel):
         """Set the FrameModel for this namespace."""
         self.frame_model = frame_model
     def embed_content(self, raw_content: str) -> None: 
->>>>>>> 616d6fa (v1rpnmethod+futuer-participle)
         """Embed raw content using the defined FrameModel."""
         if not self.frame_model:
             raise ValueError("No FrameModel set for this namespace.")
         parsed_content = self.frame_model.parse_content(raw_content)
         setattr(self._content, "embedded_data", parsed_content)
-<<<<<<< HEAD
-
-=======
->>>>>>> 616d6fa (v1rpnmethod+futuer-participle)
         def extract_content(self) -> str:
             """Extracts embedded content."""
             if not hasattr(self._content, "embedded_data"):
@@ -540,26 +287,13 @@ class RuntimeNamespace:
         if not self.frame_model:
             raise ValueError("No FrameModel configured for this namespace.")
         if not self.frame_model.validate_content(raw_content):
-<<<<<<< HEAD
-            raise ValueError(
-                "Content validation failed. Invalid delimiters or format.")
-        self._content.embedded_data = self.frame_model.parse_content(
-            raw_content)
-
-=======
             raise ValueError("Content validation failed. Invalid delimiters or format.")
         self._content.embedded_data = self.frame_model.parse_content(raw_content)
->>>>>>> 616d6fa (v1rpnmethod+futuer-participle)
     def retrieve_content(self) -> str:
         """Retrieve the embedded content from the namespace."""
         if hasattr(self._content, "embedded_data"):
             return self.frame_model.start_delimiter + self._content.embedded_data + self.frame_model.end_delimiter
         raise ValueError("No content embedded in this namespace.")
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 616d6fa (v1rpnmethod+futuer-participle)
 class __Atom__(Generic[T, V, C], PyObjectLike):
     """
     Represents a homoiconic unit of code and data.  Behaves like a PyObject.
@@ -577,6 +311,15 @@ class __Atom__(Generic[T, V, C], PyObjectLike):
             "session", {})  # Embedded session
         self.runtime_namespace: Optional[RuntimeNamespace] = None
         self.security_context: Optional[SecurityContext] = None
+        self._case_base = {
+            '⊤': lambda x, _: x,
+            '⊥': lambda _, y: y,
+            '¬': lambda a: not a,
+            '∧': lambda a, b: a and b,
+            '∨': lambda a, b: a or b,
+            '→': lambda a, b: (not a) or b,
+            '↔': lambda a, b: (a and b) or (not a and not b),
+        }
 
     def __getattribute__(self, name: str) -> Any:
         # Direct access to internal attributes
@@ -682,10 +425,41 @@ class __Atom__(Generic[T, V, C], PyObjectLike):
             return None  # No explicit return
         except Exception as e:
             raise RuntimeError(f"Error executing __Atom__ code: {e}")
+    def collapse(self) -> V:
+        """Force state resolution."""
+        if self._state != QuantumState.COLLAPSED:
+            self._state = QuantumState.COLLAPSED
+        return self._value
+
+    def entangle(self, other: '__Atom__') -> None:
+        """Create quantum-like entanglement between atoms."""
+        self._state = QuantumState.ENTANGLED
+        other._state = QuantumState.ENTANGLED
+
+    def serialize(self) -> bytes:
+        """Serialize the Atom to bytes."""
+        return msgpack.packb({
+            'code': self._code,
+            'value': self._value,
+            'ttl': self._ttl,
+            'created_at': self._created_at,
+        }, use_bin_type=True)
+
+    @classmethod
+    def deserialize(cls, data: bytes) -> '__Atom__':
+        """Deserialize an Atom from bytes."""
+        decoded = msgpack.unpackb(data, raw=False)
+        return cls(code=decoded['code'], value=decoded['value'], ttl=decoded['ttl'])
+
+    def apply_logical_operator(self, operator: str, *args: Any) -> Any:
+        """Apply a logical operator defined in the case base."""
+        if operator not in self._case_base:
+            raise ValueError(f"Unknown operator: {operator}")
+        return self._case_base[operator](*args)
 
     def __frmr__(self) -> FrameModel:
         """Convert this Atom to its frame representation"""
-        # Implementation of 'framer' conversion
+        # Implementation of 'framer' for strictly-sorted, UTF-8 encoded strings.
         pass
 
     def __repr__(self) -> str:
@@ -732,27 +506,6 @@ class Conservation(Enum):
     COHERENCE = "Coherence"
     BEHAVIORAL = "Behavioral"
 
-
-@dataclass
-class OrderParameter:
-    """Tracks symmetry breaking in a phase transition system."""
-    value: complex
-    preserved_symmetries: Set[str]
-    broken_symmetries: Set[str]
-
-    def break_symmetry(self, sym: str) -> None:
-        """Move symmetry from preserved to broken."""
-        if sym in self.preserved_symmetries:
-            self.preserved_symmetries.remove(sym)
-            self.broken_symmetries.add(sym)
-
-    def restore_symmetry(self, sym: str) -> None:
-        """Move symmetry from broken back to preserved."""
-        if sym in self.broken_symmetries:
-            self.broken_symmetries.remove(sym)
-            self.preserved_symmetries.add(sym)
-
-
 @dataclass
 class OrderParameter:
     """Tracks symmetry breaking in a phase transition system."""
@@ -788,11 +541,6 @@ class MemoryState(StrEnum):
     PAGED = auto()        # Memory is paged to secondary storage
     SHARED = auto()       # Memory is shared between multiple runtimes
     DEALLOCATED = auto()  # Memory has been freed
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 616d6fa (v1rpnmethod+futuer-participle)
 @dataclass
 class QuantumCell:
     address: int
@@ -812,11 +560,6 @@ class MemoryVector:
     entanglement: float   # Degree of entanglement with other memory regions
     state: MemoryState
     size: int            # Size of memory region in bytes
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 616d6fa (v1rpnmethod+futuer-participle)
 @runtime_checkable
 class Field(Protocol):
     """
@@ -826,6 +569,30 @@ class Field(Protocol):
     def interact(self, state: State) -> State:
         pass
 
+def quantum_xnor(t: int, v: int, c: int) -> int:
+    """
+    Quantum XNOR Morphogen that aligns T, V, and C into an 8-bit holographic state.
+    
+    Args:
+        t: 4-bit object space encoding
+        v: 3-bit modulation of morphisms
+        c: 1-bit control to enable/disable morphisms
+    
+    Returns:
+        8-bit quantum state aligned for coherence.
+    """
+    assert 0 <= t < 16, "T must be a 4-bit value (0-15)"
+    assert 0 <= v < 8, "V must be a 3-bit value (0-7)"
+    assert 0 <= c < 2, "C must be a 1-bit control (0 or 1)"
+    
+    # XNOR Morphogen Calculation
+    m1 = ~(t & 0b1111) ^ (v & 0b111)  # XNOR Gate 1
+    m2 = ~(t >> 2) ^ (v >> 1)  # XNOR Gate 2
+    m3 = ~(m1 & m2) ^ c  # Final XNOR Gate with Control Bit
+
+    # Assemble the final quantum state in 8-bit format
+    quantum_state = (m1 & 0b1111) << 4 | (m2 & 0b11) << 1 | m3
+    return quantum_state & 0xFF  # Ensure 8-bit output
 
 class QuantumSegment:
     data: Optional[array.array] = None
@@ -871,10 +638,6 @@ class QuantumPage:
         self.vector.entanglement = entanglement_strength
         other.vector.entanglement = entanglement_strength
         return entanglement_strength
-<<<<<<< HEAD
-
-# Constants
-WORD_SIZE = 1  # 1-byte word size by default
 
 
 class AsyncAtom(Generic[T_co, V_co, C_co], PyObjectLike):
@@ -912,7 +675,6 @@ class AsyncAtom(Generic[T_co, V_co, C_co], PyObjectLike):
     async def __aenter__(self):
         """Async context manager entry."""
         await self._lock.acquire()
-=======
 #------------------------------------------------------------------------------
 # Virtual Memory Ontology
 #------------------------------------------------------------------------------
@@ -1348,10 +1110,8 @@ class RuntimeMemory(Generic[T, V, C]):
         logger.info(f"Page {page_id} deallocated.")
     def __enter__(self):
         """Initialize runtime memory context"""
->>>>>>> 616d6fa (v1rpnmethod+futuer-participle)
         return self
     
-<<<<<<< HEAD
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         """Async context manager exit."""
         self._lock.release()
@@ -1702,111 +1462,6 @@ class RuntimeMemory(Generic[T, V, C]):
         if self._ttl is None:
             return False
         return time.time() - self._created_at > self._ttl
-=======
-    In-other words, self-adjoint operators are equal to their Hermitian conjugates."""
-#------------------------------------------------------------------------------
-# Example Usage
-#------------------------------------------------------------------------------
-def visualize_state_history(state_history):
-    """
-    Visualizes the evolution of the state transformations over time.
-
-    This function takes the state history from the MorphologicalKernel's execution
-    and generates a simple line plot representing the "value space" at each
-    transformation step. This is a simplistic visualization to help illustrate
-    how the value space evolves, a key concept in understanding transformations
-    in this framework.
-
-    Parameters:
-    - state_history: A list of State objects created during the kernel's run.
-        Each State object represents the system's configuration at a specific point
-        in time.
-
-    Returns:
-    - Matplotlib Figure showcasing the value space over time.
-
-    Raises:
-    - ValueError: If the state_history is not provided or is empty.
-    """
-    if not state_history:
-        raise ValueError("state_history cannot be empty!")
-
-    values = [state.value_space for state in state_history]
-    #plt.plot(values)
-    #plt.title('Evolution of Value Space')
-    #plt.xlabel('Step')
-    #plt.ylabel('Value Space')
-    #plt.grid(True)
-    #plt.show()
-def main():
-    """
-    Main Execution and Example of Morphological Kernel.
-
-    This function outlines the setup and execution process for the Morphological Kernel.
-    It showcases how initial states and Gauge configurations are used to propagate system
-    transformations through the invocation of the kernel's `run` method. Additionally,
-    it provides a demonstration of visualizing the resulting state evolution.
-
-    Steps included:
-    1. Definition of the initial state as a combination of type, value, and computation
-        spaces, decorated with symmetry and conservation laws.
-    2. Setup of Gauge states: local, global, and emergent, each providing specific
-        transformation rules for manipulating system configurations.
-    3. Initialization and execution of the Morphological Kernel, running a series of
-        transformations over the specified steps.
-    4. Display of the final state and visualization of the state history to illustrate
-        the cumulative impact of transformation steps.
-
-    Outputs:
-    - Terminal output of the final state configuration after running the kernel.
-    - A visual plot showing Value Space evolution for ease of conceptual understanding.
-    """
-    print(least_significant_unit("12345", 1))  # Should return '5'
-    print(least_significant_unit(0xABCD, 2))  # Should return 0xCD
-    print(least_significant_unit("hello", 3))  # Should return least significant byte of SHA256("hello")
-    print(least_significant_unit({10: "a", 2: "b", 7: "c"}, 3))  # Should return 2 (smallest key)
-
-    initial_state = State(
-        type_space=lambda x: x,
-        value_space=[0],
-        computation_space=lambda x: x,
-        symmetry=Symmetry.TRANSLATION,
-        conservation=Conservation.INFORMATION
-    )
-
-    local_gauge = State(
-        type_space=lambda x: x,
-        value_space=[1],
-        computation_space=lambda x: x + 1,
-        symmetry=Symmetry.ROTATION,
-        conservation=Conservation.COHERENCE
-    )
-
-    global_gauge = State(
-        type_space=lambda x: x,
-        value_space=[4],
-        computation_space=lambda x: 2 * x,
-        symmetry=Symmetry.PHASE,
-        conservation=Conservation.BEHAVIORAL
-    )
-
-    emergent_gauge = State(
-        type_space=lambda x: x,
-        value_space=[0],
-        computation_space=lambda x: x,
-        symmetry=Symmetry.TRANSLATION,
-        conservation=Conservation.INFORMATION
-    )
-
-    gauge = Gauge(local=local_gauge, global_=global_gauge, emergent=emergent_gauge)
-
-    kernel = MorphologicalKernel()
-    final_state = kernel.run(initial_state, gauge, steps=10)
-
-    print(f"Final state: {final_state}")
-
-    visualize_state_history(kernel.state_history)
->>>>>>> 616d6fa (v1rpnmethod+futuer-participle)
 
 
 class AsyncQuantumCell:
@@ -1849,7 +1504,6 @@ class AsyncQuantumCell:
         self.commit_hash = hash_obj.hexdigest()
         return self.commit_hash
 
-<<<<<<< HEAD
 
 class AsyncQuantumPage:
     """Asynchronous version of QuantumPage with memory optimization."""
@@ -2008,18 +1662,106 @@ __return__ = await process_data(arg0)
     stats = await pool.stats()
     print(f"Pool stats: {stats}")
 
+def visualize_state_history(state_history):
+    """
+    Visualizes the evolution of the state transformations over time.
+
+    This function takes the state history from the MorphologicalKernel's execution
+    and generates a simple line plot representing the "value space" at each
+    transformation step. This is a simplistic visualization to help illustrate
+    how the value space evolves, a key concept in understanding transformations
+    in this framework.
+
+    Parameters:
+    - state_history: A list of State objects created during the kernel's run.
+        Each State object represents the system's configuration at a specific point
+        in time.
+
+    Returns:
+    - Matplotlib Figure showcasing the value space over time.
+
+    Raises:
+    - ValueError: If the state_history is not provided or is empty.
+    """
+    if not state_history:
+        raise ValueError("state_history cannot be empty!")
+
+    values = [state.value_space for state in state_history]
+    #plt.plot(values)
+    #plt.title('Evolution of Value Space')
+    #plt.xlabel('Step')
+    #plt.ylabel('Value Space')
+    #plt.grid(True)
+    #plt.show()
+def main():
+    """
+    Main Execution and Example of Morphological Kernel.
+
+    This function outlines the setup and execution process for the Morphological Kernel.
+    It showcases how initial states and Gauge configurations are used to propagate system
+    transformations through the invocation of the kernel's `run` method. Additionally,
+    it provides a demonstration of visualizing the resulting state evolution.
+
+    Steps included:
+    1. Definition of the initial state as a combination of type, value, and computation
+        spaces, decorated with symmetry and conservation laws.
+    2. Setup of Gauge states: local, global, and emergent, each providing specific
+        transformation rules for manipulating system configurations.
+    3. Initialization and execution of the Morphological Kernel, running a series of
+        transformations over the specified steps.
+    4. Display of the final state and visualization of the state history to illustrate
+        the cumulative impact of transformation steps.
+
+    Outputs:
+    - Terminal output of the final state configuration after running the kernel.
+    - A visual plot showing Value Space evolution for ease of conceptual understanding.
+    """
+    print(least_significant_unit("12345", 1))  # Should return '5'
+    print(least_significant_unit(0xABCD, 2))  # Should return 0xCD
+    print(least_significant_unit("hello", 3))  # Should return least significant byte of SHA256("hello")
+    print(least_significant_unit({10: "a", 2: "b", 7: "c"}, 3))  # Should return 2 (smallest key)
+
+    initial_state = State(
+        type_space=lambda x: x,
+        value_space=[0],
+        computation_space=lambda x: x,
+        symmetry=Symmetry.TRANSLATION,
+        conservation=Conservation.INFORMATION
+    )
+
+    local_gauge = State(
+        type_space=lambda x: x,
+        value_space=[1],
+        computation_space=lambda x: x + 1,
+        symmetry=Symmetry.ROTATION,
+        conservation=Conservation.COHERENCE
+    )
+
+    global_gauge = State(
+        type_space=lambda x: x,
+        value_space=[4],
+        computation_space=lambda x: 2 * x,
+        symmetry=Symmetry.PHASE,
+        conservation=Conservation.BEHAVIORAL
+    )
+
+    emergent_gauge = State(
+        type_space=lambda x: x,
+        value_space=[0],
+        computation_space=lambda x: x,
+        symmetry=Symmetry.TRANSLATION,
+        conservation=Conservation.INFORMATION
+    )
+
+    # gauge = Gauge(local=local_gauge, global_=global_gauge, emergent=emergent_gauge)
+
+    # kernel = MorphologicalKernel()
+    # final_state = kernel.run(initial_state, gauge, steps=10)
+
+    # print(f"Final state: {final_state}")
+
+    # visualize_state_history(kernel.state_history)
 
 # Run the example
 if __name__ == "__main__":
     asyncio.run(example_usage())
-=======
-if __name__ == '__main__':
-    root = pathlib.Path(__file__).parent
-    manager = ContentManager(root)
-    manager.scan_directory()
-    sys.exit(main())
-    
-    # 2/28/25 main.py -> new main.py
-    # namespace = RuntimeNamespace() frame = CustomDelimiterFrame("<<CONTENT>>Hello, Runtime!<<END_CONTENT>>") namespace.set_frame_model(frame) namespace.embed_content("<<CONTENT>>Hello, Runtime!<<END_CONTENT>>")
-    # assert namespace.extract_content() == "Hello, Runtime!"
->>>>>>> 616d6fa (v1rpnmethod+futuer-participle)
