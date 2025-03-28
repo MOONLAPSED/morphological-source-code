@@ -98,6 +98,7 @@ C3 linearization creates a consistent total ordering that preserves local preced
 Raw inheritance relationships can be path-dependent (non-Markovian)
 After linearization, method resolution becomes deterministic and context-free (Markovian)
 The C3 linearization algorithm particularly stands out as a concrete example of transforming potentially non-commutative (non-Abelian) structures into deterministic, consistent paths - essentially "abelianizing" inheritance hierarchies.
+The 'MRO' concept is a direct consequence of this linearization process, which ensures that the order of method resolution is always consistent and predictable.
 """
 """
 A fundamental frame of reference that bridges between:

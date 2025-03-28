@@ -1,9 +1,24 @@
-from typing import TypeVar, Generic, Callable, Optional, Dict, Any, Set, List, Tuple, Union, AsyncIterator
-from typing import Protocol, runtime_checkable, cast, overload, Awaitable, Coroutine
-from enum import Enum, auto, StrEnum
-from dataclasses import dataclass, field
-from abc import ABC, abstractmethod
-import array
+from __future__ import annotations
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#------------------------------------------------------------------------------
+# Standard Library Imports - 3.13 std libs **ONLY**
+#------------------------------------------------------------------------------
+# A note on custom syntax-sugar and other idiosyncrasies (see: README.md, first):
+# 'triple-double-quoted' strings are docstrings OR 'future-participle'; syntax 
+# which is code which is 'written at runtime', or dynamically generated and also
+# which is the only code that adheres-fully to style-guides (I don't like <br>'s)
+# [[double-bracketed]] strings (within strings) are NLP/LLM/KB (Obsidian) syntax, it's
+# 'associative' symlinks (for documentation) that has no-effect in python whatsoever.
+# {curly-bracketed} strings are similar to [[double-bracketed]] strings but which are
+# runtime-variable(s), or 'dynamic strings', and, again, are out-of-scope for python;
+# see *.rkt for "True-OOP" Racket language dialect, the 'scripting engine' responsible
+# for orchestration of these and other 'syntactic sugar' constructs and LISP-like issues.
+#------------------------------------------------------------------------------
+# License: MIT, Copyright (c) 2025 and rights reserved, where applicaple. 
+# MOONLAPSED|@gh,@gmail.com|reddit.com/r/morphologic|"Morphological Source Code"
+# Special thanks to Dr. Chuck ['Python4Everyone'], Stephen Wolfram ['Wolfram Physics'] 
+# & Michael Sugrue ['Great Minds of the Western Intellectual Tradition'] (RIP), 
 import re
 import os
 import io
@@ -21,24 +36,46 @@ import struct
 import shutil
 import pickle
 import ctypes
-import random
 import logging
 import weakref
-import time
+import tomllib
+import pathlib
 import asyncio
 import inspect
 import hashlib
-import ast
-from types import SimpleNamespace
-# T for TypeVar, V for ValueVar. Homoicons are T+V.
-T = TypeVar('T', bound=Any)
-V = TypeVar('V', bound=Union[int, float, str, bool,
-            list, dict, tuple, set, object, Callable, type])
-# callable 'T'/'V' first class function interface
-C = TypeVar('C', bound=Callable[..., Any])
-T_co = TypeVar('T_co', covariant=True)  # Type structure (static) with covariance
-V_co = TypeVar('V_co', covariant=True)  # Value space (dynamic) with covariance
-C_co = TypeVar('C_co', bound=Callable, covariant=True)  # Computation space with covariance
+import platform
+import importlib
+import functools
+import linecache
+import traceback
+import mimetypes
+import threading
+import subprocess
+import contextvars
+import tracemalloc
+from pathlib import Path
+from enum import Enum, auto, StrEnum
+from queue import Queue, Empty
+from datetime import datetime
+from abc import ABC, abstractmethod
+from contextlib import contextmanager
+from functools import wraps, lru_cache
+from dataclasses import dataclass, field
+from concurrent.futures import ThreadPoolExecutor
+from importlib.util import spec_from_file_location, module_from_spec
+from types import SimpleNamespace, MethodType, MethodWrapperType, LambdaType, coroutine, CodeType
+from typing import (
+    Any, Dict, List, Optional, Union, Callable, TypeVar, Tuple, Generic, Set,
+    Coroutine, Type, NamedTuple, ClassVar, Protocol, runtime_checkable, AsyncContextManager,
+    AsyncGenerator, AsyncIterator, cast, overload, Generator, Awaitable
+)
+# Static Markovian-Noetherian Holographic-types (Binary and guaranteed unitary - the basis )
+T = TypeVar('T', bound=Any) # T for TypeVar, V for ValueVar. Homoicons are T+V.
+V = TypeVar('V', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type])
+C = TypeVar('C', bound=Callable[..., Any])  # callable 'T'/'V' first class function interface
+T_co = TypeVar('T_co', covariant=True)  # Type structure (static) with covariance (Markovian)
+V_co = TypeVar('V_co', covariant=True)  # Value space (dynamic) with covariance (Markovian)
+C_co = TypeVar('C_co', bound=Callable, covariant=True)  # Computation space with covariance (Non-Markovian)
 
 # ------------------------------------------------------------------------------
 # Type Definitions
@@ -240,11 +277,97 @@ class PyObjectLike(ABC):
     def ob_ttl(self, value: Optional[int]) -> None:
         """Sets the object's time-to-live."""
         raise NotImplementedError
-# Runtime Namespace Management
 
-
+@dataclass
+class FilesystemState:
+    allowed_root: str = field(init=False)
+    def __post_init__(self):
+        try:
+            self.allowed_root = os.path.dirname(os.path.realpath(__file__))
+            if not any(os.listdir(self.allowed_root)):
+                raise FileNotFoundError(f"Allowed root directory empty: {self.allowed_root}")
+            logging.info(f"Allowed root directory found: {self.allowed_root}")
+        except Exception as e:
+            logging.error(f"Error initializing FilesystemState: {e}")
+            raise
+    def safe_remove(self, path: str):
+        """Safely remove a file or directory, handling platform-specific issues."""
+        try:
+            path = os.path.abspath(path)
+            if not os.path.commonpath([self.allowed_root, path]) == self.allowed_root:
+                logging.error(f"Attempt to delete outside allowed directory: {path}")
+                return
+            if os.path.isdir(path):
+                os.rmdir(path)
+                logging.info(f"Removed directory: {path}")
+            else:
+                os.remove(path)
+                logging.info(f"Removed file: {path}")
+        except (FileNotFoundError, PermissionError, OSError) as e:
+            logging.error(f"Error removing path {path}: {e}")
+    def _on_error(self, func, path, exc_info):
+        """Error handler for handling removal of read-only files on Windows."""
+        logging.error(f"Error deleting {path}, attempting to fix permissions.")
+        # Attempt to change the file's permissions and retry removal
+        os.chmod(path, 0o777)
+        func(path)
+    async def execute_runtime_tasks(self):
+        for task in self.tasks:
+            try:
+                await task()
+            except Exception as e:
+                logging.error(f"Error executing task: {e}")
+    async def run_command_async(self, command: str, shell: bool = False, timeout: int = 120):
+        logging.info(f"Running command: {command}")
+        split_command = shlex.split(command, posix=(os.name == 'posix'))
+        try:
+            process = await asyncio.create_subprocess_exec(
+                *split_command,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+                shell=shell
+            )
+            stdout, stderr = await asyncio.wait_for(process.communicate(), timeout=timeout)
+            return {
+                "return_code": process.returncode,
+                "output": stdout.decode() if stdout else "",
+                "error": stderr.decode() if stderr else "",
+            }
+        except asyncio.TimeoutError:
+            logging.error(f"Command '{command}' timed out.")
+            return {"return_code": -1, "output": "", "error": "Command timed out"}
+        except Exception as e:
+            logging.error(f"Error running command '{command}': {str(e)}")
+            return {"return_code": -1, "output": "", "error": str(e)}
+class AccessLevel(Enum):
+    READ = "read"
+    WRITE = "write"
+    EXECUTE = "execute"
+    ADMIN = "admin"
+@dataclass
+class AccessPolicy:
+    level: AccessLevel
+    namespace_patterns: list[str] = field(default_factory=list)
+    allowed_operations: list[str] = field(default_factory=list)
+    def can_access(self, namespace: str, operation: str) -> bool:
+        if any(pattern in namespace for pattern in self.namespace_patterns):
+            return operation in self.allowed_operations
+        return False
+class SecurityContext:
+    def __init__(self, user_id: str, access_policy: AccessPolicy):
+        self.user_id = user_id
+        self.access_policy = access_policy
+        self._audit_log = []
+    def log_access(self, namespace: str, operation: str, success: bool):
+        self._audit_log.append({
+            "user_id": self.user_id,
+            "namespace": namespace,
+            "operation": operation,
+            "success": success,
+            "timestamp": datetime.now().timestamp()
+        })
 class RuntimeNamespace:
-    """Manages hierarchical runtime namespaces with security controls and custom delimiter support."""
+    """Manages hierarchical runtime namespaces with security controls, module loading, and content embedding. Similar to a ContextManager."""
 
     def __init__(self, name: str = "root", parent: Optional['RuntimeNamespace'] = None):
         self._name = name
@@ -252,48 +375,249 @@ class RuntimeNamespace:
         self._children: Dict[str, 'RuntimeNamespace'] = {}
         self._content = SimpleNamespace()
         self._security_context: Optional[SecurityContext] = None
-        self.available_modules: Dict[str, Any] = {}
-        self.frame_model: Optional[FrameModel] = None  # Reference to a FrameModel instance
+        self.available_modules: Dict[str, ModuleType] = {}
+        self.frame_model: Optional[FrameModel] = None  # Reference a FrameModel to 'atomize'
+
     @property
     def full_path(self) -> str:
         if self._parent:
             return f"{self._parent.full_path}.{self._name}"
         return self._name
+
     def add_child(self, name: str) -> 'RuntimeNamespace':
         child = RuntimeNamespace(name, self)
         self._children[name] = child
         return child
+
     def get_child(self, path: str) -> Optional['RuntimeNamespace']:
         parts = path.split(".", 1)
         if len(parts) == 1:
             return self._children.get(parts[0])
         child = self._children.get(parts[0])
         return child.get_child(parts[1]) if child and len(parts) > 1 else None
+
+    def load_modules(self):
+        """Load available modules into the namespace."""
+        try:
+            for path in pathlib.Path(__file__).parent.glob("*.py"):
+                if path.name.startswith("_"):
+                    continue
+                module_name = path.stem
+                spec = spec_from_file_location(module_name, path)
+                if spec is None or spec.loader is None:
+                    raise ImportError(f"Cannot load module {module_name}")
+                module = module_from_spec(spec)
+                sys.modules[module_name] = module
+                spec.loader.exec_module(module)
+                self.available_modules[module_name] = module  # Store in the namespace
+            logging.info("Modules loaded successfully.")
+        except Exception as e:
+            logging.error(f"Error importing internal modules: {e}")
+            sys.exit(1)
+
+    def set_security_context(self, security_context: SecurityContext):
+        """Set the security context for this namespace."""
+        self._security_context = security_context
+
     def set_frame_model(self, frame_model: FrameModel):
         """Set the FrameModel for this namespace."""
         self.frame_model = frame_model
-    def embed_content(self, raw_content: str) -> None: 
+
+    def embed_content(self, raw_content: str) -> None:
         """Embed raw content using the defined FrameModel."""
         if not self.frame_model:
             raise ValueError("No FrameModel set for this namespace.")
-        parsed_content = self.frame_model.parse_content(raw_content)
-        setattr(self._content, "embedded_data", parsed_content)
-        def extract_content(self) -> str:
-            """Extracts embedded content."""
-            if not hasattr(self._content, "embedded_data"):
-                raise ValueError("No embedded content found.")
-            return getattr(self._content, "embedded_data")
-        """Embed content into the namespace using the configured FrameModel."""
-        if not self.frame_model:
-            raise ValueError("No FrameModel configured for this namespace.")
         if not self.frame_model.validate_content(raw_content):
             raise ValueError("Content validation failed. Invalid delimiters or format.")
-        self._content.embedded_data = self.frame_model.parse_content(raw_content)
+        parsed_content = self.frame_model.parse_content(raw_content)
+        setattr(self._content, "embedded_data", parsed_content)
+
     def retrieve_content(self) -> str:
         """Retrieve the embedded content from the namespace."""
         if hasattr(self._content, "embedded_data"):
             return self.frame_model.start_delimiter + self._content.embedded_data + self.frame_model.end_delimiter
         raise ValueError("No content embedded in this namespace.")
+
+    # Example usage:
+    # namespace = RuntimeNamespace()
+    # namespace.load_modules()
+    # namespace.set_frame_model(some_frame_model)
+    # namespace.embed_content("raw content")
+class RuntimeManager:
+    def __init__(self):
+        self.root = RuntimeNamespace("root")
+        self._security_contexts: Dict[str, SecurityContext] = {}
+    def register_user(self, user_id: str, access_policy: AccessPolicy):
+        self._security_contexts[user_id] = SecurityContext(user_id, access_policy)
+    async def execute_query(self, user_id: str, query: str) -> Any:
+        security_context = self._security_contexts.get(user_id)
+        if not security_context:
+            raise PermissionError("User not registered")
+        try:
+            # Parse query and validate
+            parsed = ast.parse(query, mode='eval')
+            validator = QueryValidator(security_context)
+            validator.visit(parsed)
+            # Execute in isolated namespace
+            namespace = self._create_restricted_namespace(security_context)
+            result = eval(compile(parsed, '<string>', 'eval'), namespace)
+            security_context.log_access(
+                namespace="query_execution",
+                operation="execute",
+                success=True
+            )
+            return result
+        except Exception as e:
+            security_context.log_access(
+                namespace="query_execution",
+                operation="execute",
+                success=False
+            )
+            logging.error(f"Error executing query: {e}")
+            raise
+    def _create_restricted_namespace(self, security_context: SecurityContext) -> dict:
+        # Create a restricted namespace based on security context
+        return {
+            "__builtins__": None,  # Disable built-in functions
+            "print": print if security_context.access_policy.level >= AccessLevel.READ else None,
+            # Add other safe functions as needed
+        }
+    def isModule(rawClsOrFn: Union[Type, Callable]) -> Optional[str]:
+        pyModule = inspect.getmodule(rawClsOrFn)
+        if hasattr(pyModule, "__file__"):
+            return str(Path(pyModule.__file__).resolve())
+        return None
+    def getModuleImportInfo(rawClsOrFn: Union[Type, Callable]) -> Tuple[Optional[str], str, str]:
+        """
+        Given a class or function in Python, get all the information needed to import it in another Python process.
+        This version balances portability and optimization using camel case.
+        """
+        pyModule = inspect.getmodule(rawClsOrFn)
+        if pyModule is None or pyModule.__name__ == '__main__':
+            return None, 'interactive', rawClsOrFn.__name__
+        modulePath = isModule(rawClsOrFn)
+        if not modulePath:
+            # Built-in or frozen module
+            return None, pyModule.__name__, rawClsOrFn.__name__
+        rootPath = str(Path(modulePath).parent)
+        moduleName = pyModule.__name__
+        clsOrFnName = getattr(rawClsOrFn, "__qualname__", rawClsOrFn.__name__)
+        if getattr(pyModule, "__package__", None):
+            try:
+                package = __import__(pyModule.__package__)
+                packagePath = str(Path(package.__file__).parent)
+                if Path(packagePath) in Path(modulePath).parents:
+                    rootPath = str(Path(packagePath).parent)
+                else:
+                    print(f"Warning: Module is not in the expected package structure. Using file parent as root path.")
+            except Exception as e:
+                print(f"Warning: Error processing package structure: {e}. Using file parent as root path.")
+        return rootPath, moduleName, clsOrFnName
+class QueryValidator(ast.NodeVisitor):
+    def __init__(self, security_context: SecurityContext):
+        self.security_context = security_context
+    def visit_Name(self, node):
+        # Validate access to variables
+        if not self.security_context.access_policy.can_access(
+            node.id, "read"
+        ):
+            raise PermissionError(f"Access denied to name: {node.id}")
+        self.generic_visit(node)
+    def visit_Call(self, node):
+        # Validate function calls
+        if isinstance(node.func, ast.Name):
+            if not self.security_context.access_policy.can_access(
+                node.func.id, "execute"
+            ):
+                raise PermissionError(f"Access denied to function: {node.func.id}")
+        self.generic_visit(node)
+def load_modules():
+    """Function to load modules into the global runtime manager."""
+    manager = RuntimeManager()
+    manager.root.load_modules()
+    return manager.root.available_modules  # Return available modules for access
+mixins = load_modules() # Import the internal modules and literal stdlibs
+if mixins:
+    __all__ = [mixin.__name__ for mixin in mixins]
+else:
+    __all__ = []
+""" hacked namespace uses `__all__` as a whitelist of symbols which are executable source code.
+Non-whitelisted modules or runtime SimpleNameSpace()(s) are treated as 'data' which we call associative 
+'articles' within the knowledge base, loaded at runtime. They are, however, logic and state."""
+def reload_module(module):
+    try:
+        importlib.reload(module)
+        return True
+    except Exception as e:
+        logger.error(f"Error reloading module {module.__name__}: {e}")
+        return False
+class KnowledgeBase:
+    def __init__(self, base_dir):
+        self.base_dir = Path(base_dir)
+        self.globals = SimpleNamespace()
+        self.globals.__all__ = []
+        self.initialize()
+    def initialize(self):
+        self._import_py_modules(self.base_dir)
+        self._load_articles(self.base_dir)
+    def _import_py_modules(self, directory):
+        for path in directory.rglob("*.py"): # Recursively find all .py files
+            if path.name.startswith("_"):
+                continue  # Skip private modules
+            try:
+                module_name = path.stem
+                spec = spec_from_file_location(module_name, str(path))
+                if spec and spec.loader:
+                    module = module_from_spec(spec)
+                    spec.loader.exec_module(module)
+                    setattr(self.globals, module_name, module)
+                    self.globals.__all__.append(module_name)
+            except Exception as e:
+                logger.exception(f"Error importing module {module_name}: {e}")
+    def _load_articles(self, directory):
+        for suffix in ['*.md', '*.txt']:
+            for path in directory.rglob(suffix): # Recursively find all .md and .txt files
+                try:
+                    article_name = path.stem
+                    content = path.read_text()
+                    article = SimpleNamespace(
+                        content=content,
+                        path=str(path)
+                    )
+                    setattr(self.globals, article_name, article)
+                except Exception as e:
+                    logger.exception(f"Error loading article from {path}: {e}")
+    def execute_query(self, query):
+        try:
+            parsed = ast.parse(query, mode='eval')
+            # execute compiled code in the context of self.globals
+            result = eval(compile(parsed, '<string>', 'eval'), vars(self.globals))
+            return str(result)
+        except Exception as e:
+            # Return a more user-friendly error message
+            logger.exception("Query execution error:")
+            return f"Error executing query: {str(e)}"
+    def execute_query_async(self, query):
+        try:
+            parsed = ast.parse(query, mode='eval')
+            # execute compiled code in the context of self.globals
+            result = eval(compile(parsed, '<string>', 'eval'), vars(self.globals))
+            return str(result)
+        except Exception as e:
+            logger.exception("Query execution error:")
+            return f"Error executing query: {str(e)}"
+class Article:
+    def __init__(self, content):
+        self.content = content
+    def __call__(self):
+        # Execute the content as code if it's valid Python
+        try:
+            exec(self.content)
+        except Exception as e:
+            logger.error(f"Error executing article content: {e}")
+def List_Available_Functions(self):
+    return [name for name in dir(self.globals) if callable(getattr(self.globals, name))]
+
 class __Atom__(Generic[T, V, C], PyObjectLike):
     """
     Represents a homoiconic unit of code and data.  Behaves like a PyObject.
@@ -320,6 +644,107 @@ class __Atom__(Generic[T, V, C], PyObjectLike):
             '→': lambda a, b: (not a) or b,
             '↔': lambda a, b: (a and b) or (not a and not b),
         }
+    reflexivity: Callable[[T], bool] = lambda x: x == x
+    symmetry: Callable[[T, T], bool] = lambda x, y: x == y
+    transitivity: Callable[[T, T, T], bool] = lambda x, y, z: (x == y and y == z)
+    transparency: Callable[[Callable[..., T], T, T], T] = lambda f, x, y: f(True, x, y) if x == y else None
+
+    def encode(self) -> bytes:
+        return json.dumps({
+            'id': self.id,
+            'attributes': self.attributes
+        }).encode()
+
+    @classmethod
+    def decode(cls, data: bytes) -> 'Atom':
+        decoded_data = json.loads(data.decode())
+        return cls(id=decoded_data['id'], **decoded_data['attributes'])
+
+    def introspect(self) -> str:
+        """
+        Reflect on its own code structure via AST.
+        """
+        source = inspect.getsource(self.__class__)
+        return ast.dump(ast.parse(source))
+
+    def __repr__(self):
+        return f"{self.value} : {self.type}"
+
+    def __str__(self):
+        return str(self.value)
+
+    def __eq__(self, other: Any) -> bool:
+        return isinstance(other, Atom) and self.hash == other.hash
+
+    def __hash__(self) -> int:
+        return int(self.hash, 16)
+
+    def __getitem__(self, key):
+        return self.value[key]
+
+    def __setitem__(self, key, value):
+        self.value[key] = value
+
+    def __delitem__(self, key):
+        del self.value[key]
+
+    def __len__(self):
+        return len(self.value)
+
+    def __iter__(self):
+        return iter(self.value)
+
+    def __contains__(self, item):
+        return item in self.value
+
+    def __call__(self, *args, **kwargs):
+        return self.value(*args, **kwargs)
+
+    def __bytes__(self) -> bytes:
+        return bytes(self.value)
+
+    @property
+    def memory_view(self) -> memoryview:
+        if isinstance(self.value, (bytes, bytearray)):
+            return memoryview(self.value)
+        raise TypeError("Unsupported type for memoryview")
+
+    def __buffer__(self, flags: int) -> memoryview: # Buffer protocol
+        return memoryview(self.value)
+    
+    async def send_message(self, message: Any, ttl: int = 3) -> None:
+        if ttl <= 0:
+            logging.info(f"Message {message} dropped due to TTL")
+            return
+        logging.info(f"Atom {self.id} received message: {message}")
+        for sub in self.subscribers:
+            await sub.receive_message(message, ttl - 1)
+
+    async def receive_message(self, message: Any, ttl: int) -> None:
+        logging.info(f"Atom {self.id} processing received message: {message} with TTL {ttl}")
+        await self.send_message(message, ttl)
+
+    def subscribe(self, atom: 'Atom') -> None:
+        self.subscribers.add(atom)
+        logging.info(f"Atom {self.id} subscribed to {atom.id}")
+
+    def unsubscribe(self, atom: 'Atom') -> None:
+        self.subscribers.discard(atom)
+        logging.info(f"Atom {self.id} unsubscribed from {atom.id}")
+
+    __getitem__ = lambda self, key: self.value[key]
+    __setitem__ = lambda self, key, value: setattr(self.value, key, value)
+    __delitem__ = lambda self, key: delattr(self.value, key)
+    __len__ = lambda self: len(self.value)
+    __iter__ = lambda self: iter(self.value)
+    __contains__ = lambda self, item: item in self.value
+    __call__ = lambda self, *args, **kwargs: self.value(*args, **kwargs)
+    __add__ = lambda self, other: self.value + other
+    __sub__ = lambda self, other: self.value - other
+    __mul__ = lambda self, other: self.value * other
+    __truediv__ = lambda self, other: self.value / other
+    __floordiv__ = lambda self, other: self.value // other
+    __mod__ = lambda self, other: self.value % other
 
     def __getattribute__(self, name: str) -> Any:
         # Direct access to internal attributes
@@ -1616,6 +2041,139 @@ class AsyncMemoryPool:
                 "memory_usage_bytes": self.total_pages * self.page_size
             }
 
+def atom(cls: Type[{T, V, C}]) -> Type[{T, V, C}]: # homoicon decorator
+    """Decorator to create a homoiconic atom."""
+    original_init = cls.__init__
+    def new_init(self, *args, **kwargs):
+        original_init(self, *args, **kwargs)
+        if not hasattr(self, 'id'):
+            self.id = hashlib.sha256(self.__class__.__name__.encode('utf-8')).hexdigest()
+
+    cls.__init__ = new_init
+    return cls
+def encode(atom: 'Atom') -> bytes:
+    data = {
+        'tag': atom.tag,
+        'value': atom.value,
+        'children': [encode(child) for child in atom.children],
+        'metadata': atom.metadata
+    }
+    return pickle.dumps(data)
+
+def decode(data: bytes) -> 'Atom':
+    data = pickle.loads(data)
+    atom = Atom(data['tag'], data['value'], [decode(child) for child in data['children']], data['metadata'])
+    return atom
+
+def validate(cls: Type[T]) -> Type[T]:
+    original_init = cls.__init__
+    sig = inspect.signature(original_init)
+    def new_init(self: T, *args: Any, **kwargs: Any) -> None:
+        bound_args = sig.bind(self, *args, **kwargs)
+        for key, value in bound_args.arguments.items():
+            if key in cls.__annotations__:
+                expected_type = cls.__annotations__.get(key)
+                if not isinstance(value, expected_type):
+                    raise TypeError(f"Expected {expected_type} for {key}, got {type(value)}")
+        original_init(self, *args, **kwargs)
+    cls.__init__ = new_init
+    return cls
+
+def memoize(func: Callable) -> Callable:
+    """
+    Caching decorator using LRU cache with unlimited size.
+    """
+    return lru_cache(maxsize=None)(func)
+@contextmanager
+def memoryProfiling(active: bool = True):
+    """
+    Context manager for memory profiling using tracemalloc.
+    Captures allocations made within the context block.
+    """
+    if active:
+        tracemalloc.start()
+        try:
+            yield
+        finally:
+            snapshot = tracemalloc.take_snapshot()
+            tracemalloc.stop()
+            displayTop(snapshot)
+    else:
+        yield None
+def timeFunc(func: Callable) -> Callable:
+    """
+    Time execution of a function.
+    """
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        logger.info(f"Function {func.__name__} took {elapsed_time:.4f} seconds to execute.")
+        return result
+    return wrapper
+def log(level=logging.INFO):
+    def decorator(func: Callable):
+        @wraps(func)
+        async def async_wrapper(*args, **kwargs):
+            logger.log(level, f"Executing {func.__name__} with args: {args}, kwargs: {kwargs}")
+            try:
+                result = await func(*args, **kwargs)
+                logger.log(level, f"Completed {func.__name__} with result: {result}")
+                return result
+            except Exception as e:
+                logger.exception(f"Error in {func.__name__}: {str(e)}")
+                raise
+        @wraps(func)
+        def sync_wrapper(*args, **kwargs):
+            logger.log(level, f"Executing {func.__name__} with args: {args}, kwargs: {kwargs}")
+            try:
+                result = func(*args, **kwargs)
+                logger.log(level, f"Completed {func.__name__} with result: {result}")
+                return result
+            except Exception as e:
+                logger.exception(f"Error in {func.__name__}: {str(e)}")
+                raise
+        return async_wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper
+    return decorator
+@log()
+def snapShot(func: Callable) -> Callable:
+    """
+    Capture memory snapshots before and after function execution. OBJECT not a wrapper
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        tracemalloc.start()
+        result = func(*args, **kwargs)
+        snapshot = tracemalloc.take_snapshot()
+        tracemalloc.stop()
+        displayTop(snapshot)
+        return result
+    return wrapper
+def displayTop(snapshot, key_type: str = 'lineno', limit: int = 3):
+    """
+    Display top memory-consuming lines.
+    """
+    tracefilter = ("<frozen importlib._bootstrap>", "<frozen importlib._bootstrap_external>")
+    filters = [tracemalloc.Filter(False, item) for item in tracefilter]
+    filtered_snapshot = snapshot.filter_traces(filters)
+    topStats = filtered_snapshot.statistics(key_type)
+    result = [f"Top {limit} lines:"]
+    for index, stat in enumerate(topStats[:limit], 1):
+        frame = stat.traceback[0]
+        result.append(f"#{index}: {frame.filename}:{frame.lineno}: {stat.size / 1024:.1f} KiB")
+        line = linecache.getline(frame.filename, frame.lineno).strip()
+        if line:
+            result.append(f"    {line}")
+    # Show the total size and count of other items
+    other = topStats[limit:]
+    if other:
+        size = sum(stat.size for stat in other)
+        result.append(f"{len(other)} other: {size / 1024:.1f} KiB")
+    total = sum(stat.size for stat in topStats)
+    result.append(f"Total allocated size: {total / 1024:.1f} KiB")
+    logger.info("\n".join(result))
 
 # Example usage
 async def example_usage():
