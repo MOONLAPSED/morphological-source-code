@@ -2,23 +2,25 @@ from __future__ import annotations
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #------------------------------------------------------------------------------
-# Standard Library Imports - 3.13 std libs **ONLY**
+# License: MIT, Copyright (c) 2025 and rights reserved, where/when applicaple;
+# MOONLAPSED@gmail.com | reddit.com/r/morphologic | "Morphological Source Code"
 #------------------------------------------------------------------------------
 # A note on custom syntax-sugar and other idiosyncrasies (see: README.md, first):
 # 'triple-double-quoted' strings are docstrings OR 'future-participle'; syntax 
-# which is code which is 'written at runtime', or dynamically generated and also
-# which is the only code that adheres-fully to style-guides (I don't like <br>'s)
+# which is python code which is 'written at runtime', or dynamically generated and
+# also which is the only code that adheres-fully to style-guides (I don't like <br>'s);
 # [[double-bracketed]] strings (within strings) are NLP/LLM/KB (Obsidian) syntax, it's
-# 'associative' symlinks (for documentation) that has no-effect in python whatsoever.
-# {curly-bracketed} strings are similar to [[double-bracketed]] strings but which are
+# 'associative' symlinks (for documentation) that has no-effect in python whatsoever;
+# {curly-bracketed} strings are similar to the previous two string-types, but which are
 # runtime-variable(s), or 'dynamic strings', and, again, are out-of-scope for python;
 # see *.rkt for "True-OOP" Racket language dialect, the 'scripting engine' responsible
 # for orchestration of these and other 'syntactic sugar' constructs and LISP-like issues.
 #------------------------------------------------------------------------------
-# License: MIT, Copyright (c) 2025 and rights reserved, where applicaple. 
-# MOONLAPSED|@gh,@gmail.com|reddit.com/r/morphologic|"Morphological Source Code"
 # Special thanks to Dr. Chuck ['Python4Everyone'], Stephen Wolfram ['Wolfram Physics'] 
-# & Michael Sugrue ['Great Minds of the Western Intellectual Tradition'] (RIP), 
+# & Michael Sugrue ['Great Minds of the Western Intellectual Tradition'] (RIP) 
+#------------------------------------------------------------------------------
+# 3.13 std libs **ONLY** | Platform(s): Win11 (production), Ubuntu-22.04 (dev, staging)
+#------------------------------------------------------------------------------
 import re
 import os
 import io
@@ -69,13 +71,187 @@ from typing import (
     Coroutine, Type, NamedTuple, ClassVar, Protocol, runtime_checkable, AsyncContextManager,
     AsyncGenerator, AsyncIterator, cast, overload, Generator, Awaitable
 )
-# Static Markovian-Noetherian Holographic-types (Binary and guaranteed unitary - the basis )
-T = TypeVar('T', bound=Any) # T for TypeVar, V for ValueVar. Homoicons are T+V.
-V = TypeVar('V', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type])
-C = TypeVar('C', bound=Callable[..., Any])  # callable 'T'/'V' first class function interface
-T_co = TypeVar('T_co', covariant=True)  # Type structure (static) with covariance (Markovian)
-V_co = TypeVar('V_co', covariant=True)  # Value space (dynamic) with covariance (Markovian)
-C_co = TypeVar('C_co', bound=Callable, covariant=True)  # Computation space with covariance (Non-Markovian)
+# Static Markovian-Noetherian Holographic-types (Binary and guaranteed unitary - the basis in Hilbert space where
+# suprise (or [[Free Energy Principle]] maxima/minima) is minimized/optimized and symetries-conserved.) These Noetherian-
+# ivariant static types are the basis for the [[Holographic duality]]. They are (largley) irrational or complex, wholly
+# non-integer, and associated with [[C*-Algebra]] and [[Algebraic Topology]], and related-pedagogy like Categories, Lagrangians, etc.
+T = TypeVar('T', bound=Any, covariant=False, contravariant=False) # T for TypeVar, V for ValueVar. Homoicons are T+V.
+V = TypeVar('V', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type], covariant=False, contravariant=False)
+C = TypeVar('C', bound=Callable[..., Any], covariant=False, contravariant=False)  # callable 'T'/'V' first class function interface -
+# implies Markovian-hard-quinic behavior, as-compared to its covariant counterpart, below;
+# 'covariant' flag is set to True, when the function is a method of a class, generally, contravarient is
+# set to True, when the function is a static method of a class or used as a method argument type/class;
+T_co = TypeVar('T_co', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type], covariant=True)  # Type structure (static) with covariance (Markovian)
+V_co = TypeVar('V_co', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type], covariant=True)  # Value space (dynamic) with covariance (Markovian)
+C_co = TypeVar('C_co', bound=Callable[..., Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type]], covariant=True)  # Computation space with covariance (Non-Markovian)
+"""# AbelianGroupoid
+ - T′=T⊙V
+A⊕B=1if A and B differ
+XNOR: A⊙B=¬(A⊕B)=1if A and B are the same
+## Static/Dynamic-Typing:
+ - T (4 bits) → Object/State
+ - V (3 bits) → Morphism selector
+ - C (1 bit) → Apply/Do nothing
+ The new state T′T′ is determined by:
+ - T′=T⊙V=¬(T⊕V)
+
+    If V=TV=T, the system remains unchanged (like an Abelian group).
+
+    If V≠TV=T, XNOR creates a mapping that preserves symmetries.
+
+This forces the system into a bijective parity-preserving evolution.
+## XNOR Circuit for Abelianized 8-bit Holoicon
+Each 4-bit segment of T and V is fed into an XNOR gate:
+```verilog
+    T3 ───────────────●────────── T'3
+                      | 
+    V3 ───────────────● 
+
+    T2 ───────────────●────────── T'2
+                      | 
+    V2 ───────────────● 
+
+    T1 ───────────────●────────── T'1
+                      | 
+    V1 ───────────────● 
+
+    T0 ───────────────●────────── T'0
+                      | 
+    V0 ───────────────●
+```
+
+BYTE_WORD = 0b1010_0101
+- High nibble (0b1010): Static type/state (T).
+- Low nibble (0b0101):
+  - V (0b010): Morphism selector/Address (target location).
+  - C (0b1): Control bit (active/inert).
+
+This allows the low nibble to encode both the address  and the behavioral control  within the same 4 bits. 
+Full 4-bit Addressing  
+
+Alternatively, the entire low nibble (V + C)  can be used as a 4-bit address :
+    V+C: 4 bits → Full address space (24=16 possible addresses).
+
+BYTE_WORD = 0b1010_1100
+- High nibble (0b1010): Static type/state (T).
+- Low nibble (0b1100): Full 4-bit address (target location).
+In this case, the control bit (C) becomes part of the address itself, expanding the addressable space
+"""
+class Morphology(enum.Enum):
+    """
+    Represents the floor morphic state of a BYTE_WORD.
+    
+    C = 0: Floor morphic state (stable, low-energy)
+    C = 1: Dynamic or high-energy state
+
+    The control bit (C) indicates whether other holoicons can point to this holoicon:
+    - DYNAMIC (1): Other holoicons CAN point to this holoicon
+    - QUINIC (0): Other holoicons CANNOT point to this holoicon
+    This ontology roughly maps to thermodynamic character; intensive & extensive - a
+    'quine' (self-instantiated runtime, for example) is a low-energy, intensive system,
+    while a a dynamic holoicon is a high-energy, extensive system which is inhernetly-
+    tied to it's environment. The comparison to QFT, Fermi-Dirac, and Bose-Einstein (spin
+    statistics), is also leaned-on. A 'stable quine' "exists" in the ontological sense, even
+    in it's in an 'offline' source code form; this entire process is out of scope of python-
+    alone, as an interpreted language, and is instead stylistic and grammatical
+    positioning, or, it could also be seen as a call to action for [[JIT]] just-in-time
+    compilation-based pure python system. The PyObject (CPython) concept, below, is the
+    work-around implementation of this concept where one can foist the 'dynamic' state
+    onto CPython's 'compilation', as it were. In-instances of inevitable run-ins with 
+    classical CS-problems, look to C/CPython/LLVM for the hard compilation and Racket
+    (LISP) for homoiconic representation and meta-compilation (morphisms, etc.), failing-
+    that, Erlang, SmallTalk or, worst-case scenario, JVM.
+    """
+    MORPHIC = 0         # Stable, low-energy state
+    DYNAMIC = 1         # High-energy, potentially transformative state
+class ByteWord:
+    """
+    Represents an 8-bit BYTE_WORD with a comprehensive interpretation of its structure.
+    
+    Bit Decomposition:
+    - T (4 bits): State or data field
+    - V (3 bits): Morphism selector or transformation rule
+    - C (1 bit): Floor morphic state (pointability)
+    """
+    def __init__(self, raw: int):
+        """
+        Initialize a ByteWord from its raw 8-bit representation.
+        
+        Args:
+            raw (int): 8-bit integer representing the BYTE_WORD
+        """
+        if raw < 0 or raw > 255:
+            raise ValueError("ByteWord must be an 8-bit integer (0-255)")
+        
+        self.raw = raw
+        self.value = raw & 0xFF  # Ensure 8-bit resolution
+        
+        # Decompose the raw value
+        self.state_data = (raw >> 4) & 0x0F    # High nibble (4 bits)
+        # Low nibble (3+1 bits);
+        self.morphism = (raw >> 1) & 0x07            # Middle 3 bits
+        self.floor_morphic = Morphology(raw & 0x01)  # Least significant bit
+
+    @property
+    def _pointable(self) -> bool:
+        """
+        Determine if other holoicons can point to this holoicon.
+        
+        Returns:
+            bool: True if the holoicon is in a dynamic (pointable) state
+        """
+        return self.floor_morphic == Morphology.DYNAMIC
+
+    def __repr__(self):
+        return f"BYTE_WORD({bin(self.value)})"
+    """
+    def xnor(self, other: 'BYTE_WORD') -> 'BYTE_WORD':
+        result = ~(self.value ^ other.value) & 0xFF
+        return BYTE_WORD(result)
+    """
+    def xnor(a: int, b: int) -> int:
+        """XNOR operation at the bit level"""
+        return ~(a ^ b) & 0xF  # Mask to 4-bit output
+
+    def abelian_transform(t: int, v: int, c: int) -> int:
+        """Perform the XNOR-based Abelian transformation."""
+        if c == 1:
+            return xnor(t, v)  # Apply XNOR transformation
+        return t  # Identity morphism when c = 0
+    """
+    # Example computation
+    T, V, C = 0b1010, 0b0110, 1
+    new_T = abelian_transform(T, V, C)
+    print(f"New T: {bin(new_T)}")  # Output the transformed state
+    """
+    """Flexible byte-word encoding strategy."""
+    @staticmethod
+    def extract_lsb(state: Union[str, int, bytes], word_size: int) -> Any:
+        """Extract least significant bit/byte based on word size."""
+        if word_size == 1:
+            return state[-1] if isinstance(state, str) else str(state)[-1]
+        elif word_size == 2:
+            return (
+                state & 0xFF if isinstance(state, int) else
+                state[-1] if isinstance(state, bytes) else
+                state.encode()[-1]
+            )
+        elif word_size >= 3:
+            return hashlib.sha256(
+                state.encode() if isinstance(state, str) else state
+            ).digest()[-1]
+    """Rules that map structural transformations in code morphologies."""
+    symmetry: str
+    conservation: str
+    lhs: str
+    rhs: List[Union[str, 'Morphologic', 'BYTE_WORD']]
+
+    def apply(self, input_seq: List[str]) -> List[str]:
+        """Applies the morphological transformation to an input sequence."""
+        if self.lhs in input_seq:
+            idx = input_seq.index(self.lhs)
+            return input_seq[:idx] + [elem for elem in self.rhs] + input_seq[idx + 1:]
+        return input_seq
 
 # ------------------------------------------------------------------------------
 # Type Definitions
@@ -97,6 +273,10 @@ What's conserved across these transformations:
     Information content
     Causal structure
     Computational potential"""
+
+# =========================================================================================
+# Original StateHash -type WORD_SIZE
+# =========================================================================================
 WORD_SIZE = 1  # 1-byte ('high' is most significant bit, 'low' is least significant bit)
 # WORD_SIZE = 2  # 16-bit word ('high' is significant byte..)
 # WORD_SIZE = 3  # 32-bit word ('low' is least significant byte..)
@@ -109,16 +289,12 @@ elif WORD_SIZE >= 3:
     StateHash = bytes  # Large-scale data (embeddings, hashing)
 StateHash = str  # possibility of hashing with Int16.. etc, we use CPython str by default
 # (state: Union[str, int, bytes, dict]): # type: ignore - generic StateHash for bootstrapping
-
-
 def least_significant_unit(state: StateHash, word_size: int):
     """
     Extracts the least significant unit of a given state based on WORD_SIZE.
-
     Args:
         state: The state to analyze.
         word_size: The size of the word (1, 2, 3+).
-
     Returns:
         The least significant unit of the state.
     """
@@ -140,11 +316,13 @@ def least_significant_unit(state: StateHash, word_size: int):
             return min(state.keys())  # Smallest key as LSU
     else:
         raise ValueError("Unsupported WORD_SIZE")
-
-
 SESSION_TIMEOUT = WORD_SIZE * 60  # 1 minute per byte-word default scale-factor
 
 
+
+# =========================================================================================
+# FrameModel - Delimited, measured 'reality' (motility, perception, cognition)
+# =========================================================================================
 class FrameModel(Generic[T, V, C], ABC):
     """
     A frame model is a data structure that contains the data of a frame,
