@@ -34,6 +34,8 @@ composite_state = {
 # Compute fractal hash at various depths
 hash_depth_1 = fractal_hash(composite_state, depth=1)
 hash_depth_3 = fractal_hash(composite_state, depth=3)
+hash_depth_5 = fractal_hash(composite_state, depth=5)
 
 print("Fractal Hash (Depth 1):", hash_depth_1)
 print("Fractal Hash (Depth 3):", hash_depth_3)
+print("Fractal Hash (Depth 5):", hash_depth_5)

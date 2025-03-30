@@ -38,6 +38,7 @@ import struct
 import shutil
 import pickle
 import ctypes
+import random
 import logging
 import weakref
 import tomllib
@@ -56,9 +57,9 @@ import subprocess
 import contextvars
 import tracemalloc
 from pathlib import Path
-from enum import Enum, auto, StrEnum
+from enum import Enum, auto, StrEnum, IntFlag, IntEnum
 from queue import Queue, Empty
-from datetime import datetime
+from datetime import datetime, timezone
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from functools import wraps, lru_cache
@@ -391,13 +392,13 @@ class CustomDelimiterFrame(FrameModel):
 typedef struct _object {
     Py_ssize_t ob_refcnt;
     PyTypeObject *ob_type;
-} PyObject; """
-# Everything in Python is an object, and every object has a type. The type of an object is a class. Even the
-# type class itself is an instance of type. Functions defined within a class become method objects when
-# accessed through an instance of the class
-"""(3.13 std lib)Functions are instances of the function class
-Methods are instances of the method class (which wraps functions)
-Both function and method are subclasses of object
+} PyObject;
+Everything in Python is an object, and every object has a type. The type of an object is a class. Even the
+type class itself is an instance of type. Functions defined within a class become method objects when accessed
+through an instance of the class; 3.13 std lib)Functions are instances of the function class. Methods are instances
+of the method class (which wraps functions). Both function and method are subclasses of object
+"""
+"""
 homoiconism dictates the need for a way to represent all Python constructs as first class citizen(fcc):
     (functions, classes, control structures, operations, primitive values)
 nominative 'true OOP'(SmallTalk) and my specification demands code as data and value as logic, structure.
@@ -1278,6 +1279,11 @@ class AsyncAtom(Generic[T_co, V_co, C_co], PyObjectLike):
     async def __aenter__(self):
         """Async context manager entry."""
         await self._lock.acquire()
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Async context manager exit."""
+        self._lock.release()
 #------------------------------------------------------------------------------
 # Virtual Memory Ontology
 #------------------------------------------------------------------------------
