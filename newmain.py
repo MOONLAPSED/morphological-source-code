@@ -122,13 +122,6 @@ class WindowsPlatform(PlatformInterface):
         except OSError as e:
             print("Error loading C library on Windows:", e)
             return None
-        try:
-            cProfile = ctypes.CDLL("cProfile.dll")
-            cProfile.Profile(b"Hello from C library on Windows\n")
-            return cProfile
-        except OSError as e:
-            print("Error loading C library on Windows:", e)
-            return None
 class LinuxPlatform(PlatformInterface):
     """Linux-specific platform implementation."""
     def load_c_library(self) -> Optional[ctypes.CDLL]:
@@ -140,12 +133,6 @@ class LinuxPlatform(PlatformInterface):
         except OSError as e:
             print("Error loading C library on Linux:", e)
             return None
-        try:
-            cProfile = ctypes.CDLL("cProfile.so.6")
-            cProfile.Profile(b"Hello from C library on POSIX\n")
-            return cProfile
-        except:
-            print("Error loading C library on Linux:", e)
 def is_port_available(port: int) -> bool:
     """Check if a given port is available."""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -168,12 +155,20 @@ def FireFirst() -> None:
     try:
         available_port = find_available_port(PORT)
         logger.info(f"Using port: {available_port}")
+        plat = PlatformFactory.create_platform_instance()
+        if plat is not None:
+            logger.info(f"Platform: {plat.__class__.__name__}")
+            libc = plat.load_c_library()
+            if libc is not None:
+                logger.info("C library loaded successfully.")
+                libc.printf(b"Hello from C library on %s\n" % plat.__class__.__name__)
+            else:
+                logger.info("Failed to load C library.")
         print("FireFirst executed!")
     except Exception as e:
         logger.error(f"An error occurred in FireFirst: {e}")
     finally:
         return True
-# Runtime logic
 def memoize(func: Callable) -> Callable:
     """
     Caching decorator using LRU cache with unlimited size.
@@ -351,7 +346,8 @@ class Morphology(enum.Enum):
     DYNAMIC = 1         # High-energy, potentially transformative state
     """Fundamental computational orientation and symmetry"""
     MARKOVIAN = -1    # Forward-evolving, irreversible
-    NON_MARKOVIAN = math.e()  # Reversible, with memory
+    NON_MARKOVIAN = math.e  # Reversible, with memory
+
     """Derivations/alternatives (irrational-attractor, state::logic bisector, the bifurcation basis?):
     # NON_MARKOVIAN = math.log(2).as_integer_ratio()  # Information-theoretic entropy baseline
     # MARKOVIAN = 1 / (math.exp(-1))  # Fermi-Dirac 'occupation probability'
@@ -396,7 +392,8 @@ class WordSize(enum.IntEnum):
     SHORT = 2    # 16-bit
     INT = 4      # 32-bit
     LONG = 8     # 64-bit
-class PyObjABC(ABC):
+class PyObjABC(ABC):  # Abstract Base Class for PyObject-like objects
+
     """Abstract Base Class for PyObject-like objects (including __Atom__)."""
     @abstractmethod
     def __getattribute__(self, name: str) -> Any:
@@ -418,25 +415,25 @@ class PyObjABC(ABC):
     def __class__(self) -> type:
         raise NotImplementedError
     @property
-    @abstractmethod
     def ob_refcnt(self) -> int:
         """Returns the object's reference count."""
-        raise NotImplementedError
+        return self._refcount
+
     @ob_refcnt.setter
-    @abstractmethod
     def ob_refcnt(self, value: int) -> None:
         """Sets the object's reference count."""
-        raise NotImplementedError
+        self._refcount = value
+
     @property
-    @abstractmethod
     def ob_ttl(self) -> Optional[int]:
         """Returns the object's time-to-live (in seconds or None)."""
-        raise NotImplementedError
+        return self._ttl
+
     @ob_ttl.setter
-    @abstractmethod
     def ob_ttl(self, value: Optional[int]) -> None:
         """Sets the object's time-to-live."""
-        raise NotImplementedError
+        self._ttl = value
+
 """py objects are implemented as C structures.
 typedef struct _object {
     Py_ssize_t ob_refcnt;
@@ -452,7 +449,8 @@ The __Atom__()(s), our polymorph of object and fcc-apparent at runtime, always r
     cod which makes up their logic and possess the ability to be stateful source code data structure
 """
 @dataclass
-class CPythonFrame(ABC, PyObjABC): # type: ignore
+class CPythonFrame(PyObjABC): # type: ignore
+
     """
     Quantum-informed object representation 
     Maps directly to CPython's PyObject structure"""
@@ -615,7 +613,8 @@ class ByteWord:
             idx = input_seq.index(self.lhs)
             return input_seq[:idx] + [elem for elem in self.rhs] + input_seq[idx + 1:]
         return input_seq
-class MorphologicPyOb(PyObjABC, CPythonFrame):
+class MorphologicPyOb(CPythonFrame, PyObjABC):  # Ensure correct MRO
+
     """
     The unification of Morphologic transformations and PyObType behavior.
     This is the grandparent class for all runtime polymorphs.
@@ -683,15 +682,6 @@ class MorphologicPyOb(PyObjABC, CPythonFrame):
     print(polymorph2.state)  # QuantumState.ENTANGLED
     """
 
-
-
-
-
-
-
-
-
-
 class QuantumFrame(Generic[T, V, C]): # type: ignore
     """
     Bridge between CPython's memory model and quantum state space.
@@ -744,49 +734,6 @@ class QuantumFrame(Generic[T, V, C]): # type: ignore
             return QuantumFrame(self._type, self._value, new_compute)
 
         return QuantumFrame(self._type, new_value, self._compute)
-
-
-
-
-
-
-class QuantumFrame(Generic[T, V, C]):
-    def __init__(self, type_structure: T, value_space: V, computation_space: C):
-        self._type = type_structure
-        self._value = value_space
-        self._compute = computation_space
-        self._state = QuantumState.SUPERPOSITION
-        self._cpython_frame: Optional[CPythonFrame] = None
-        self._observers: set[weakref.ref[QuantumFrame]] = set()
-    @property
-    def cpython_frame(self) -> CPythonFrame:
-        if self._cpython_frame is None:
-            self._cpython_frame = CPythonFrame.from_object(self._value)
-        return self._cpython_frame
-    def entangle(self, other: QuantumFrame) -> None:
-        if self._state == QuantumState.SUPERPOSITION and other._state == QuantumState.SUPERPOSITION:
-            self._state = QuantumState.ENTANGLED
-            other._state = QuantumState.ENTANGLED
-            self._observers.add(weakref.ref(other))
-            other._observers.add(weakref.ref(self))
-    def collapse(self) -> V:
-        if self._state in {QuantumState.COLLAPSED, QuantumState.DECOHERENT}:
-            return self._value
-        self._state = QuantumState.COLLAPSED
-        for obs_ref in self._observers:
-            obs = obs_ref()
-            if obs is not None:
-                obs._state = QuantumState.COLLAPSED
-        return self._value
-    def transform(self, transformation: Callable[[V], V]) -> QuantumFrame[T, V, C]:
-        if self._state == QuantumState.COLLAPSED:
-            new_value = transformation(self._value)
-        else:
-            def new_compute(x: V) -> V:
-                return transformation(self._compute(x))
-            return QuantumFrame(self._type, self._value, new_compute)
-        return QuantumFrame(self._type, new_value, self._compute)
-
 class QuantumOperator:
     def __init__(self, hilbert_space, matrix=None):
         self.hilbert_space = hilbert_space
@@ -797,7 +744,6 @@ class QuantumOperator:
             self.matrix = matrix
         else:
             self.matrix = [[complex(0, 0)] * dim for _ in range(dim)]
-    
     def apply_to(self, state):
         if state.hilbert_space.dimension != self.hilbert_space.dimension:
             raise ValueError("Hilbert space dimensions don't match")
@@ -833,24 +779,26 @@ class QuantumState:
 class TemporalBridge:
     """Manages quantum state observations and temporal sorting of computations."""
     def __init__(self):
-        self.states: Dict[str, QuantumState] = {}
-        self.history: List[Tuple[datetime, str, float]] = []
+        self.states = {}
+        self.history = []
         self.kT = 1.380649e-23 * 298  # Boltzmann * Room temp
-        self.execution_queue: List[Tuple[float, Callable]] = []
-    def observe(self, func: Callable):
+        self.execution_queue = []
+
+    def observe(self, func):
         """Decorator to observe function execution, enforcing causal ordering."""
         @wraps(func)
         def wrapper(*args, **kwargs):
             state_key = f"{func.__name__}_{hash(str(args) + str(kwargs))}"
             if state_key not in self.states:
-                self.states[state_key] = QuantumState()
+                self.states[state_key] = QuantumState.SUPERPOSITION  # Updated to use enum
+
             start = time.time()
             result = func(*args, **kwargs)
             duration = time.time() - start
             energy = self.kT * math.log(2) * duration
             self.history.append((datetime.now(), func.__name__, energy))
-            self.states[state_key].value = result
-            return self.states[state_key].collapse()
+            self.states[state_key] = result  # Store result in state
+            return result
         return wrapper
     def schedule(self, func: Callable, delay: float = 0.0):
         """Schedules a function call with a given delay, ensuring temporal sorting."""
@@ -873,33 +821,28 @@ class HilbertSpace(Generic[T, V, C]):
         self.dimensions: int = 0
         self.basis_vectors: List[Frame[T, V, C]] = []
         self.inner_product_fn: Optional[Callable[[V, V], float]] = None
-        
+
     def add_dimension(self, basis_vector: Frame[T, V, C]) -> None:
         """Adds a new basis vector to the space, increasing its dimensionality."""
         self.basis_vectors.append(basis_vector)
         self.dimensions += 1
-        
     def set_inner_product(self, fn: Callable[[V, V], float]) -> None:
         """Sets the inner product function for this Hilbert space."""
         self.inner_product_fn = fn
-        
     def inner_product(self, v1: V, v2: V) -> float:
         """Computes the inner product between two vectors in this space."""
         if self.inner_product_fn is None:
             raise ValueError("Inner product function not defined")
         return self.inner_product_fn(v1, v2)
-    
     def project(self, vector: V) -> Dict[int, float]:
         """Projects a vector onto the basis vectors of this space."""
         if self.inner_product_fn is None:
             raise ValueError("Inner product function not defined")
-            
         projections = {}
         for i, basis in enumerate(self.basis_vectors):
             basis_value = basis.collapse()
             projection = self.inner_product_fn(vector, basis_value)
             projections[i] = projection
-            
         return projections
 
 class KernelFunction(Generic[T, V]):
@@ -1121,6 +1064,21 @@ class AsyncAtom(Generic[T_co, V_co, C_co], PyObjABC):
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         """Async context manager exit."""
         self._lock.release()
+
+def main():
+    # Example usage of TemporalBridge
+    bridge = TemporalBridge()
+
+    @bridge.observe
+    def quantum_computation(x):
+        time.sleep(0.1)  # Simulate work
+        return x * math.pi
+
+    result = quantum_computation(1.0)
+    print(f"Observed Result: {result}")
+
+if __name__ == "__main__":
+    main()
 
 # Example Usage
 bridge = TemporalBridge()
