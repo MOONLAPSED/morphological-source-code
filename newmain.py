@@ -2,23 +2,6 @@ from __future__ import annotations
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #------------------------------------------------------------------------------
-# License: MIT, Copyright (c) 2025 and rights reserved, where/when applicaple;
-# PHOVOS@outlook.com | reddit.com/r/morphologic | "Morphological Source Code"
-#------------------------------------------------------------------------------
-# A note on custom syntax-sugar and other idiosyncrasies (see: README.md, first):
-# 'triple-double-quoted' strings are docstrings OR 'future-participle'; syntax 
-# which is python code which is 'written at runtime', or dynamically generated and
-# also which is the only code that adheres-fully to style-guides (I don't like <br>'s);
-# [[double-bracketed]] strings (within strings) are NLP/LLM/KB (Obsidian) syntax, it's
-# 'associative' symlinks (for documentation) that has no-effect in python whatsoever;
-# {curly-bracketed} strings are similar to the previous two string-types, but which are
-# runtime-variable(s), or 'dynamic strings', and, again, are out-of-scope for python;
-# see *.rkt for "True-OOP" Racket language dialect, the 'scripting engine' responsible
-# for orchestration of these and other 'syntactic sugar' constructs and LISP-like issues.
-#------------------------------------------------------------------------------
-# Special thanks to Dr. Chuck ['Python4Everyone'], Stephen Wolfram ['Wolfram Physics'] 
-# & Michael Sugrue ['Great Minds of the Western Intellectual Tradition'] (RIP) 
-#------------------------------------------------------------------------------
 # 3.13 std libs **ONLY** | Platform(s): Win11 (production), Ubuntu-22.04 (dev, staging);
 # master branch is for immutable releases, only;
 #------------------------------------------------------------------------------
@@ -283,9 +266,8 @@ What's conserved across these transformations:
     Nominative relationships
     Information content
     Causal structure
-    Computational potential"""
-
-"""# AbelianGroupoid
+    Computational potential
+## AbelianGroupoid
  - T′=T⊙V
 A⊕B=1if A and B differ
 XNOR: A⊙B=¬(A⊕B)=1if A and B are the same
@@ -295,24 +277,18 @@ XNOR: A⊙B=¬(A⊕B)=1if A and B are the same
  - C (1 bit) → Apply/Do nothing
  The new state T′T′ is determined by:
  - T′=T⊙V=¬(T⊕V)
-
     If V=TV=T, the system remains unchanged (like an Abelian group).
-
     If V≠TV=T, XNOR creates a mapping that preserves symmetries.
-
 This forces the system into a bijective parity-preserving evolution.
 BYTE_WORD = 0b1010_0101
 - High nibble (0b1010): Static type/state (T).
 - Low nibble (0b0101):
   - V (0b010): Morphism selector/Address (target location).
   - C (0b1): Control bit (active/inert).
-
 This allows the low nibble to encode both the address  and the behavioral control  within the same 4 bits. 
 Full 4-bit Addressing  
-
 Alternatively, the entire low nibble (V + C)  can be used as a 4-bit address :
     V+C: 4 bits → Full address space (24=16 possible addresses).
-
 BYTE_WORD = 0b1010_1100
 - High nibble (0b1010): Static type/state (T).
 - Low nibble (0b1100): Full 4-bit address (target location).
@@ -321,10 +297,8 @@ In this case, the control bit (C) becomes part of the address itself, expanding 
 class Morphology(enum.Enum):
     """
     Represents the floor morphic state of a BYTE_WORD.
-    
     C = 0: Floor morphic state (stable, low-energy)
     C = 1: Dynamic or high-energy state
-
     The control bit (C) indicates whether other holoicons can point to this holoicon:
     - DYNAMIC (1): Other holoicons CAN point to this holoicon
     - QUINIC (0): Other holoicons CANNOT point to this holoicon
@@ -352,14 +326,11 @@ class MorphicComplex:
     def __init__(self, real: float, imag: float):
         self.real = real
         self.imag = imag
-
     def conjugate(self) -> 'MorphicComplex':
         """Return the complex conjugate."""
         return MorphicComplex(self.real, -self.imag)
-
     def __add__(self, other: 'MorphicComplex') -> 'MorphicComplex':
         return MorphicComplex(self.real + other.real, self.imag + other.imag)
-
     def __mul__(self, other: 'MorphicComplex') -> 'MorphicComplex':
         return MorphicComplex(
             self.real * other.real - self.imag * other.imag,
@@ -452,7 +423,6 @@ class WordSize(enum.IntEnum):
     INT = 4      # 32-bit
     LONG = 8     # 64-bit
 class PyObjABC(ABC):  # Abstract Base Class for PyObject-like objects
-
     """Abstract Base Class for PyObject-like objects (including __Atom__)."""
     @abstractmethod
     def __getattribute__(self, name: str) -> Any:
@@ -477,22 +447,18 @@ class PyObjABC(ABC):  # Abstract Base Class for PyObject-like objects
     def ob_refcnt(self) -> int:
         """Returns the object's reference count."""
         return self._refcount
-
     @ob_refcnt.setter
     def ob_refcnt(self, value: int) -> None:
         """Sets the object's reference count."""
         self._refcount = value
-
     @property
     def ob_ttl(self) -> Optional[int]:
         """Returns the object's time-to-live (in seconds or None)."""
         return self._ttl
-
     @ob_ttl.setter
     def ob_ttl(self, value: Optional[int]) -> None:
         """Sets the object's time-to-live."""
         self._ttl = value
-
 """py objects are implemented as C structures.
 typedef struct _object {
     Py_ssize_t ob_refcnt;
@@ -509,7 +475,6 @@ The __Atom__()(s), our polymorph of object and fcc-apparent at runtime, always r
 """
 @dataclass
 class CPythonFrame(PyObjABC): # type: ignore
-
     """
     Quantum-informed object representation 
     Maps directly to CPython's PyObject structure"""
@@ -588,8 +553,6 @@ class CPythonFrame(PyObjABC): # type: ignore
         elif self.state == QuantumState.ENTANGLED:
             self.state = QuantumState.COLLAPSED
         return self.value
-
-
 class ByteWord:
     """
     Represents an 8-bit BYTE_WORD with a comprehensive interpretation of its structure.
@@ -690,7 +653,6 @@ class MorphologicPyOb(CPythonFrame, PyObjABC):  # Ensure correct MRO
     ):
         PyObjABC.__init__(self, value, type(value), ttl)
         Morphology.__init__(self, symmetry, conservation, lhs, rhs)
-
     def apply_transformation(self, input_seq: List[str]) -> List[str]:
         """
         Applies morphological transformation while preserving object state.
@@ -710,7 +672,6 @@ class MorphologicPyOb(CPythonFrame, PyObjABC):  # Ensure correct MRO
         if self.lhs == other.lhs and self.conservation == other.conservation:
             self._state = QuantumState.ENTANGLED
             other._state = QuantumState.ENTANGLED
-
     """# usage example:
     # Instantiate a MorphologicPyOb polymorph
     polymorph = MorphologicPyOb(
@@ -720,11 +681,9 @@ class MorphologicPyOb(CPythonFrame, PyObjABC):  # Ensure correct MRO
         rhs=["B", "C"],
         value=["A", "X", "Y"],
     )
-
     # Apply transformation
     transformed_seq = polymorph.collapse_and_transform()
     print(transformed_seq)  # Expected: ['B', 'C', 'X', 'Y']
-
     # Create another polymorph for entanglement
     polymorph2 = MorphologicPyOb(
         symmetry="Rotation",
@@ -733,14 +692,11 @@ class MorphologicPyOb(CPythonFrame, PyObjABC):  # Ensure correct MRO
         rhs=["D", "E"],
         value=["A", "M", "N"],
     )
-
     # Entangle them
     polymorph.entangle_with(polymorph2)
-
     print(polymorph.state)  # QuantumState.ENTANGLED
     print(polymorph2.state)  # QuantumState.ENTANGLED
     """
-
 class QuantumFrame(Generic[T, V, C]): # type: ignore
     """
     Bridge between CPython's memory model and quantum state space.
@@ -753,7 +709,6 @@ class QuantumFrame(Generic[T, V, C]): # type: ignore
         self._state = QuantumState.SUPERPOSITION
         self._cpython_frame: Optional[CPythonFrame] = None
         self._observers: set[weakref.ref] = set()
-
     @property
     def cpython_frame(self) -> CPythonFrame:
         """Get or create the CPython frame representation"""
@@ -761,7 +716,6 @@ class QuantumFrame(Generic[T, V, C]): # type: ignore
             # Create frame on first access
             self._cpython_frame = CPythonFrame.from_object(self._value)
         return self._cpython_frame
-
     def entangle(self, other: 'QuantumFrame') -> None:
         """Create quantum entanglement between frames"""
         if self._state == QuantumState.SUPERPOSITION:
@@ -770,7 +724,6 @@ class QuantumFrame(Generic[T, V, C]): # type: ignore
             # Store weak reference to avoid circular references
             self._observers.add(weakref.ref(other))
             other._observers.add(weakref.ref(self))
-
     def collapse(self) -> V:
         """Collapse quantum state into concrete value"""
         if self._state == QuantumState.SUPERPOSITION:
@@ -781,7 +734,6 @@ class QuantumFrame(Generic[T, V, C]): # type: ignore
                 if obs is not None:
                     obs._state = QuantumState.COLLAPSED
         return self._value
-
     def transform(self, transformation: Callable[[V], V]) -> 'QuantumFrame[T, V, C]':
         """Apply transformation while preserving quantum state"""
         if self._state == QuantumState.COLLAPSED:
@@ -791,7 +743,6 @@ class QuantumFrame(Generic[T, V, C]): # type: ignore
             old_compute = self._compute
             new_compute = lambda x: transformation(old_compute(x))
             return QuantumFrame(self._type, self._value, new_compute)
-
         return QuantumFrame(self._type, new_value, self._compute)
 class QuantumOperator:
     def __init__(self, hilbert_space, matrix=None):
@@ -811,7 +762,6 @@ class QuantumOperator:
                  for i in range(self.hilbert_space.dimension)]
         state.amplitudes = result
         state.normalize()
-
 class TemporalBridge:
     """Manages quantum state observations and temporal sorting of computations."""
     def __init__(self):
@@ -819,7 +769,6 @@ class TemporalBridge:
         self.history = []
         self.kT = 1.380649e-23 * 298  # Boltzmann * Room temp
         self.execution_queue = []
-
     def observe(self, func):
         """Decorator to observe function execution, enforcing causal ordering."""
         @wraps(func)
@@ -827,7 +776,6 @@ class TemporalBridge:
             state_key = f"{func.__name__}_{hash(str(args) + str(kwargs))}"
             if state_key not in self.states:
                 self.states[state_key] = QuantumState.SUPERPOSITION  # Updated to use enum
-
             start = time.time()
             result = func(*args, **kwargs)
             duration = time.time() - start
@@ -878,7 +826,6 @@ class HilbertSpace(Generic[T, V, C]):
             projections[i] = projection
         return projections
 """
-
 class HilbertSpace:
     """
     Represents a Hilbert space that uses MorphicComplex numbers for coordinates.
@@ -886,13 +833,11 @@ class HilbertSpace:
     def __init__(self, dimension: int = 3):
         self.dimension = dimension
         self.basis_vectors = [self._create_basis_vector(i) for i in range(dimension)]
-    
     def _create_basis_vector(self, index: int) -> list[MorphicComplex]:
         """Create a basis vector with a 1 at the specified index."""
         vector = [MorphicComplex(0, 0) for _ in range(self.dimension)]
         vector[index] = MorphicComplex(1, 0)
         return vector
-    
     def inner_product(self, vec1: list[MorphicComplex], vec2: list[MorphicComplex]) -> MorphicComplex:
         """
         Compute the inner product of two vectors in the Hilbert space.
@@ -900,41 +845,32 @@ class HilbertSpace:
         """
         if len(vec1) != len(vec2) or len(vec1) != self.dimension:
             raise ValueError("Vectors must have the same dimension as the space")
-        
         result = MorphicComplex(0, 0)
         for i in range(self.dimension):
             # For each component, compute u*ᵢ × vᵢ
             conj_u = vec1[i].conjugate()
             result = result + (conj_u * vec2[i])
-        
         return result
-    
     def norm(self, vector: list[MorphicComplex]) -> float:
         """Compute the norm (magnitude) of a vector."""
         inner = self.inner_product(vector, vector)
         return (inner.real ** 2 + inner.imag ** 2) ** 0.5  # Inner product with self should be real
-    
     def is_orthogonal(self, vec1: list[MorphicComplex], vec2: list[MorphicComplex]) -> bool:
         """Check if two vectors are orthogonal."""
         inner = self.inner_product(vec1, vec2)
         return abs(inner.real) < 1e-10 and abs(inner.imag) < 1e-10
-    
     def project(self, vector: list[MorphicComplex], subspace_basis: list[list[MorphicComplex]]) -> list[MorphicComplex]:
         """Project a vector onto a subspace defined by a basis."""
         projection = [MorphicComplex(0, 0) for _ in range(self.dimension)]
-        
         for basis_vec in subspace_basis:
             # Compute <v, basis> / <basis, basis>
             inner_v_basis = self.inner_product(vector, basis_vec)
             inner_basis_basis = self.inner_product(basis_vec, basis_vec).real
-            
             # Compute the coefficient
             coeff = inner_v_basis.real / inner_basis_basis
-            
             # Add the contribution of this basis vector to the projection
             for i in range(self.dimension):
                 projection[i] = projection[i] + (basis_vec[i] * coeff)
-        
         return projection
 class KernelFunction(Generic[T, V]):
     """
@@ -944,17 +880,13 @@ class KernelFunction(Generic[T, V]):
     def __init__(self, fn: Callable[[V, V], float]):
         self.fn = fn
         self.cache: Dict[Tuple[int, int], float] = {}
-        
     def __call__(self, x: V, y: V) -> float:
         """Compute the kernel value between two vectors."""
         x_id, y_id = id(x), id(y)
         cache_key = (min(x_id, y_id), max(x_id, y_id))
-        
         if cache_key not in self.cache:
             self.cache[cache_key] = self.fn(x, y)
-        
         return self.cache[cache_key]
-    
     @staticmethod
     def gaussian(sigma: float = 1.0) -> 'KernelFunction':
         """Creates a Gaussian (RBF) kernel with given bandwidth."""
@@ -964,9 +896,7 @@ class KernelFunction(Generic[T, V]):
             else:
                 squared_dist = (x - y) ** 2
             return math.exp(-squared_dist / (2 * sigma ** 2))
-        
         return KernelFunction(rbf)
-    
     @staticmethod
     def linear() -> 'KernelFunction':
         """Creates a linear kernel."""
@@ -974,7 +904,6 @@ class KernelFunction(Generic[T, V]):
             if isinstance(x, (list, tuple)) and isinstance(y, (list, tuple)):
                 return sum(a * b for a, b in zip(x, y))
             return x * y
-        
         return KernelFunction(linear_kernel)
 # =========================================================================================
 # FrameModel - Delimited, measured 'reality' (motility, perception, cognition)
@@ -1005,26 +934,21 @@ class Frame(Generic[T, V, C], ABC):
         self._py_object = ctypes.py_object()
         self._ref_count = ctypes.c_ssize_t()
         self._type_ptr = ctypes.c_void_p()
-        
         # Quantum state management
         self._state = QuantumState.SUPERPOSITION
         self._observers: set[weakref.ref] = set()
-        
         # Type-Value-Computation spaces
         self._type_space: Optional[T] = None
         self._value_space: Optional[V] = None
         self._compute_space: Optional[C] = None
-
     @property
     def state(self) -> QuantumState:
         return self._state
-        
     def collapse(self) -> V:
         """Forces materialization of the value space."""
         if self._state == QuantumState.SUPERPOSITION:
             self._materialize()
         return self._value_space
-
     def _materialize(self) -> None:
         """Maps the quantum state to actual CPython objects."""
         if self._value_space is not None:
@@ -1039,18 +963,15 @@ class Frame(Generic[T, V, C], ABC):
     def to_bytes(self) -> bytes:
         """Return the frame data as bytes, representing the extracted "measured reality"."""
         pass
-
     @abstractmethod
     def parse_content(self, raw_content: str) -> str:
         """Parse the raw content using custom delimiters, observing the "measured reality"."""
         pass
-
     def validate_content(self, content: str) -> bool:
         """Validate the content based on delimiters, ensuring the "measurement" is valid."""
         if not content.startswith(self.start_delimiter) or not content.endswith(self.end_delimiter):
             return False
         return True
-
 class Field(Frame[T, V, C], ABC):
     """
     A Field represents a region of spacetime in our quantum memory model.
@@ -1059,19 +980,16 @@ class Field(Frame[T, V, C], ABC):
     def __init__(self):
         super().__init__()
         self.entangled_fields: set[weakref.ref[Field]] = set()
-        
     def entangle(self, other: Field) -> None:
         """Creates quantum entanglement between fields."""
         self.entangled_fields.add(weakref.ref(other))
         other.entangled_fields.add(weakref.ref(self))
         self._state = QuantumState.ENTANGLED
         other._state = QuantumState.ENTANGLED
-        
     @abstractmethod
     def transform(self, operator: Callable[[V], V]) -> None:
         """Applies a transformation operator to the value space."""
         pass
-
 class Space(Field[T, V, C]):
     """
     Space is the container for Fields and manages their interactions.
@@ -1080,13 +998,11 @@ class Space(Field[T, V, C]):
     def __init__(self):
         super().__init__()
         self.fields: dict[str, Field] = {}
-        
     def create_field(self, handle: str) -> Field:
         """Creates a new field in this space."""
         field = Field()
         self.fields[handle] = field
         return field
-        
     def compose(self, other: Space) -> Space:
         """Composes two spaces, maintaining quantum properties."""
         new_space = Space()
@@ -1097,7 +1013,6 @@ class Space(Field[T, V, C]):
                 new_field.entangle(field)
                 new_field.entangle(other.fields[handle])
         return new_space
-
 @dataclass
 class Atom(Generic[T, V, C], PyObjABC):
     """
@@ -1107,25 +1022,20 @@ class Atom(Generic[T, V, C], PyObjABC):
     """
     frame: Frame[T, V, C]
     handle: str
-    
     def __post_init__(self):
         self.__weakref = weakref.ref(self)
-        
     def materialize(self) -> V:
         """Collapses the quantum state and returns the value."""
         return self.frame.collapse()
-
 class AsyncAtom(Generic[T_co, V_co, C_co], PyObjABC):
     """
     An asynchronous version of the Atom class that supports coroutines and async operations.
-    
     This class maintains the homoiconic properties of Atom while adding asynchronous capabilities,
     allowing efficient handling of IO-bound and concurrent operations.
     """
     __slots__ = ('_code', '_value', '_local_env', '_refcount', '_ttl', '_created_at', 
                  'request_data', 'session', 'runtime_namespace', 'security_context', 
                  '_lock', '_async_cache', '_future_results')
-    
     def __init__(self, 
                  code: str, 
                  value: Optional[Any] = None, 
@@ -1141,36 +1051,28 @@ class AsyncAtom(Generic[T_co, V_co, C_co], PyObjABC):
         self.session: Dict[str, Any] = self.request_data.get("session", {})
         # self.runtime_namespace: Optional[RuntimeNamespace] = None
         # self.security_context: Optional[SecurityContext] = None
-        
         # Async-specific attributes
         self._lock = asyncio.Lock()  # For thread-safe operations
         self._async_cache: Dict[str, Any] = {}  # Cache for async operations
         self._future_results: Dict[str, asyncio.Future] = {}  # Store futures
-    
     async def __aenter__(self):
         """Async context manager entry."""
         await self._lock.acquire()
         return self
-
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         """Async context manager exit."""
         self._lock.release()
-
 def main():
     # Example usage of TemporalBridge
     bridge = TemporalBridge()
-
     @bridge.observe
     def quantum_computation(x):
         time.sleep(0.1)  # Simulate work
         return x * math.pi
-
     result = quantum_computation(1.0)
     print(f"Observed Result: {result}")
-
 if __name__ == "__main__":
     main()
-
 # Example Usage
 bridge = TemporalBridge()
 @bridge.observe
@@ -1187,52 +1089,41 @@ def main():
     # Print history
     for timestamp, name, energy in bridge.history:
         print(f"{timestamp}: {name} consumed {energy:.2e} Joules")
-
 if __name__ == "__main__":
     main()
-
-
 #------------------------------------------------------------------------------
 # Virtual/Quantum Memory Ontology
 #------------------------------------------------------------------------------
 def quantum_xnor(t: int, v: int, c: int) -> int:
     """
     Quantum XNOR Morphogen that aligns T, V, and C into an 8-bit holographic state.
-    
     Args:
         t: 4-bit object space encoding
         v: 3-bit modulation of morphisms
         c: 1-bit control to enable/disable morphisms
-    
     Returns:
         8-bit quantum state aligned for coherence.
     """
     assert 0 <= t < 16, "T must be a 4-bit value (0-15)"
     assert 0 <= v < 8, "V must be a 3-bit value (0-7)"
     assert 0 <= c < 2, "C must be a 1-bit control (0 or 1)"
-    
     # XNOR Morphogen Calculation
     m1 = ~(t & 0b1111) ^ (v & 0b111)  # XNOR Gate 1
     m2 = ~(t >> 2) ^ (v >> 1)  # XNOR Gate 2
     m3 = ~(m1 & m2) ^ c  # Final XNOR Gate with Control Bit
-
     # Assemble the final quantum state in 8-bit format
     quantum_state = (m1 & 0b1111) << 4 | (m2 & 0b11) << 1 | m3
     return quantum_state & 0xFF  # Ensure 8-bit output
-
 class QuantumSegment:
     data: Optional[array.array] = None
     state_hash: Optional[str] = None
     data_reference: Optional[str] = None
     metadata: Optional[Dict] = None
     embeddings_reference: Optional[str] = None
-
     def superpose(self):
         return QuantumSegment(self.data.copy(), None)
-
     def commit(self, hash_val: str):
         self.state_hash = hash_val
-
     def manipulate_data(self, operation: str):
         if operation == "invert":
             self.data = array.array('B', [~byte & 0xFF for byte in self.data])
