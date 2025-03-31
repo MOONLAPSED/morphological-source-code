@@ -346,53 +346,56 @@ class Morphology(enum.Enum):
     onto CPython's 'compilation', as it were. In-instances of inevitable run-ins with 
     classical CS-problems, look to C/CPython/LLVM for the hard compilation and Racket
     (LISP) for homoiconic representation and meta-compilation (morphisms, etc.), failing-
-    that, Erlang, SmallTalk or, worst-case scenario, JVM.
-    """
+    that, Erlang, SmallTalk or, worst-case scenario, JVM."""
     MORPHIC = 0         # Stable, low-energy state
     DYNAMIC = 1         # High-energy, potentially transformative state
-# Static Markovian-Noetherian Holographic-types (Binary and guaranteed unitary - the basis in Hilbert space where
-# suprise (or [[Free Energy Principle]] maxima/minima) is minimized/optimized and symetries-conserved.) These Noetherian-
-# ivariant static types are the basis for the [[Holographic duality]]. They are (largley) irrational or complex, wholly
-# non-integer, and associated with [[C*-Algebra]] and [[Algebraic Topology]], and related-pedagogy like Categories, Lagrangians, etc.
-T = TypeVar('T', bound=Any, covariant=False, contravariant=False) # T for TypeVar, V for ValueVar. Homoicons are T+V.
+    """Fundamental computational orientation and symmetry"""
+    MARKOVIAN = -1    # Forward-evolving, irreversible
+    NON_MARKOVIAN = math.e()  # Reversible, with memory
+    """Derivations/alternatives (irrational-attractor, state::logic bisector, the bifurcation basis?):
+    # NON_MARKOVIAN = math.log(2).as_integer_ratio()  # Information-theoretic entropy baseline
+    # MARKOVIAN = 1 / (math.exp(-1))  # Fermi-Dirac 'occupation probability'
+    # NON_MARKOVIAN = 1 / (1 - math.exp(-1))  # Bose-Einstein 'bosonic correlation'
+    # MARKOVIAN = (1 - 5 ** 0.5) / 2  # Inverse golden ratio (entropy-dominant)
+    # NON_MARKOVIAN = (1 + 5 ** 0.5) / 2  # Phi as self-organizing structure
+    # MARKOVIAN = 1 / (1 + math.exp(-1))  # Logistic
+    # MARKOVIAN triggers a lossless (bijective) mapping.
+    # NON_MARKOVIAN triggers a lossy (entropic) mapping with a "feedback term."
+    def evolve(state: int, morphic: Morphology) -> int:
+        if morphic == Morphology.MARKOVIAN:
+            return state ^ 0b1111  # XNOR-like forward evolution
+        elif morphic == Morphology.NON_MARKOVIAN:
+            return int(state * math.e % 256)  # Feedback-dominated evolution
+        return state"""
+# Static Markovian-Noetherian Holographic-types (Binary and guaranteed unitary - the basis in Hilbert space where suprise (or [[Free Energy Principle]] maxima/minima) is minimized/optimized and symetries-conserved.) These Noetherian-ivariant static types are the basis for the [[Holographic duality]]. They are (largley) irrational or complex, wholly non-integer, and associated with [[C*-Algebra]] and [[Algebraic Topology]], and related-pedagogy like Categories, Lagrangians, etc.
+T = TypeVar('T', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type], covariant=False, contravariant=False) # T for TypeVar, V for ValueVar. Homoicons are T+V.
 V = TypeVar('V', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type], covariant=False, contravariant=False)
-C = TypeVar('C', bound=Callable[..., Any], covariant=False, contravariant=False)  # callable 'T'/'V' first class function interface -
-# implies Markovian-hard-quinic behavior, as-compared to its covariant counterpart, below;
-# 'covariant' flag is set to True, when the function is a method of a class, generally, contravarient is
-# set to True, when the function is a static method of a class or used as a method argument type/class;
+C = TypeVar('C', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type], covariant=False, contravariant=False) # Homoiconic control bit(s)/byte(s)
+# C = TypeVar(f"{'C'}+{V}+{T}+{'C_anti'}", bound=Callable[..., Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type]], covariant=False, contravariant=False) # 'superposition' of callable 'T'/'V' first class function interface -
+# it acts like a holographic observer—capturing unknown states and folding them into the system; motility, agency, or quine-like behavior including FFI
+# T/V’s holographic recursion (internal states) and C’s unbounded projection (external interactions) form the 'incomplete' set of observables that correspond to the next, indeed complete, set of parameters and scalars/matrixes etc.
+# T/V's retain causality and coherence while C encodes/reflects/is-the-morphism-of[the category of the object, and the object-prime, as it were]
 T_co = TypeVar('T_co', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type], covariant=True)  # Type structure (static) with covariance (Markovian)
 V_co = TypeVar('V_co', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type], covariant=True)  # Value space (dynamic) with covariance (Markovian)
-C_co = TypeVar('C_co', bound=Callable[..., Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type]], covariant=True)  # Computation space with covariance (Non-Markovian)
-class Chirality(enum.Enum):  # Causality, Symmetry-Breaking, Character, Ergodicity, etc..
-    """Fundamental computational orientation and symmetry"""
-    MARKOVIAN = enum.auto()    # Forward-evolving, irreversible
-    NON_MARKOVIAN = enum.auto()  # Reversible, with memory
-class QuantumState(enum.Enum):
+C_co = TypeVar('C_co', bound=Callable[..., Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type]], covariant=True)  # Control space (dynamic) with covariance (Markovian)
+# C_co = TypeVar(f"{'|C_anti|'}+{'|C|'}", bound=Callable[..., Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type]], covariant=True) # Computation space with covariance (Non-Markovian)
+T_anti = TypeVar('T_anti', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type], contravariant=True)
+V_anti = TypeVar('V_anti', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type], contravariant=True)
+C_anti = TypeVar('C_anti', bound=Callable[..., Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type]], contravariant=True) # Computation space with contravariance
+# C_anti = TypeVar(f"{T}or{V}or{C}", bound=Callable[..., Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type]], contravariant=True)
+# By defining C_anti as a "superposition" of T, V, and C (in the f"{T}or{V}or{C}" format), this type represents all possible states (or branches of computation) that could arise from the interaction between those three spaces, but with the constraint that C_anti has contravariance. This is a way to represent the "anti-holographic" or 'Morphic' aspect of the system, where the computation space is not just a passive observer, but an active participant
+class QuantumState(enum.IntEnum):
     """Represents a computational state that tracks its quantum-like properties."""
-    SUPERPOSITION = enum.auto()   # Known by handle only
-    ENTANGLED = enum.auto()       # Referenced but not loaded
-    COLLAPSED = enum.auto()       # Fully materialized
-    DECOHERENT = enum.auto()      # Garbage collected
-    value: Optional[float] = None
-    coherence_time: float = field(default_factory=time.time)
-    observation_count: int = field(default=0)
-    entropy: float = field(default=0.0)
-    def collapse(self) -> float:
-        """Simulate measurement/observation of the state."""
-        self.observation_count += 1
-        self.coherence_time = time.time()
-        return self.value
+    SUPERPOSITION = 1   # Known by handle only
+    ENTANGLED = 2       # Referenced but not loaded
+    COLLAPSED = 4       # Fully materialized
+    DECOHERENT = 8    # Garbage collected
 class WordSize(enum.IntEnum):
     """Standardized computational word sizes"""
     BYTE = 1     # 8-bit
     SHORT = 2    # 16-bit
     INT = 4      # 32-bit
     LONG = 8     # 64-bit
-class LexicalState(Enum):
-    SUPERPOSED = auto()  
-    ENTANGLED = auto()   
-    COLLAPSED = auto()   
-    RECURSIVE = auto()
 class PyObjABC(ABC):
     """Abstract Base Class for PyObject-like objects (including __Atom__)."""
     @abstractmethod
@@ -454,48 +457,85 @@ class CPythonFrame(ABC, PyObjABC): # type: ignore
     Quantum-informed object representation 
     Maps directly to CPython's PyObject structure"""
     type_ptr: int  # Memory address of type object
+    value: V
+    type: Type[T]
+    refcount: int = field(default=1)
+    ttl: Optional[int] = None
+    state: QuantumState = field(default=QuantumState.SUPERPOSITION)
     @classmethod
     def from_object(cls, obj: object) -> 'CPythonFrame':
         """Extract CPython frame data from any Python object"""
         return cls(
-            ref_count=sys.getrefcount(obj) - 1,  # Subtract 1 for the temporary ref
-            type_ptr=id(type(obj))
+            type_ptr=id(type(obj)),
+            value=obj,
+            type=type(obj),
+            refcount=sys.getrefcount(obj) - 1
         )
-    _value: V
-    _type: Type[T]
-    _refcount: int = field(default=1)
-    _ttl: Optional[int] = None
-    _state: QuantumState = field(default=QuantumState.SUPERPOSITION)
-    
+        # CPythonFrame.__abstractmethods__ = set()
+        # return cls(obj.__class__.__mro__[0].__dict__.get('type_ptr'))
     def __post_init__(self):
         """Initialize with timestamp and quantum properties"""
-        self._birth_timestamp = sys.float_info.max  # Placeholder timestamp
-    
+        self._birth_timestamp = time.time()
+        if self.ttl is not None:
+            self._ttl_expiration = self._birth_timestamp + self.ttl
+            self._ttl_expiration_timestamp = time.time()
+        else: self._ttl_expiration = None
+        if self.state == QuantumState.SUPERPOSITION:
+            self._superposition = [self.value]
+            self._superposition_timestamp = time.time()
+        else: self._superposition = None
+        if self.state == QuantumState.ENTANGLEMENT:
+            self._entanglement = [self.value]
+            self._entanglement_timestamp = time.time()
+        else: self._entanglement = None
+        if self.type.__module__=='builtins':
+            """All 'knowledge' aka data is treated as python modules and these are the flags for controlling what is canon."""
+            self._is_primitive = True
+            self._primitive_type = self.type.__name__
+            self._primitive_value = self.value
+        else: self._is_primitive = False
     @property
     def refcount(self) -> int:
         """Reference count tracking"""
         return self._refcount
-    
     @property
     def state(self) -> QuantumState:
         """Current quantum-like state"""
         return self._state
-    
     def collapse(self) -> V:
         """Force state resolution"""
         if self._state != QuantumState.COLLAPSED:
             self._state = QuantumState.COLLAPSED
         return self._value
-    
-    def entangle(self, other: 'CPythonFrame') -> None:
-        """Create quantum-like entanglement between objects"""
-        self._state = QuantumState.ENTANGLED
-        other._state = QuantumState.ENTANGLED
+    def entangle_with(self, other: 'CPythonFrame') -> None:
+        """Create quantum entanglement with another object."""
+        if self._entanglement is None:
+            self._entanglement = [self.value]
+        if other._entanglement is None:
+            other._entanglement = [other.value]
+        self._entanglement.extend(other._entanglement)
+        other._entanglement = self._entanglement
+        self.state = other.state = QuantumState.ENTANGLED
+    def check_ttl(self) -> bool:
+        """Check if TTL expired and collapse state if necessary."""
+        if self.ttl is not None and time.time() >= self._ttl_expiration:
+            self.collapse()
+            return True
+        return False
+    def observe(self) -> V:
+        """Collapse state upon observation if necessary."""
+        self.check_ttl()
+        if self.state == QuantumState.SUPERPOSITION:
+            self.state = QuantumState.COLLAPSED
+            self._value = random.choice(self._superposition)
+        elif self.state == QuantumState.ENTANGLED:
+            self.state = QuantumState.COLLAPSED
+        return self.value
+
 
 class ByteWord:
     """
     Represents an 8-bit BYTE_WORD with a comprehensive interpretation of its structure.
-    
     Bit Decomposition:
     - T (4 bits): State or data field
     - V (3 bits): Morphism selector or transformation rule
@@ -504,32 +544,28 @@ class ByteWord:
     def __init__(self, raw: int):
         """
         Initialize a ByteWord from its raw 8-bit representation.
-        
         Args:
             raw (int): 8-bit integer representing the BYTE_WORD
         """
         if raw < 0 or raw > 255:
             raise ValueError("ByteWord must be an 8-bit integer (0-255)")
-        
         self.raw = raw
         self.value = raw & 0xFF  # Ensure 8-bit resolution
-        
         # Decompose the raw value
         self.state_data = (raw >> 4) & 0x0F    # High nibble (4 bits)
         # Low nibble (3+1 bits);
         self.morphism = (raw >> 1) & 0x07            # Middle 3 bits
         self.floor_morphic = Morphology(raw & 0x01)  # Least significant bit
-
+        self._refcount = 1
+        self._state = QuantumState.SUPERPOSITION
     @property
     def _pointable(self) -> bool:
         """
         Determine if other holoicons can point to this holoicon.
-        
         Returns:
             bool: True if the holoicon is in a dynamic (pointable) state
         """
         return self.floor_morphic == Morphology.DYNAMIC
-
     def __repr__(self):
         return f"BYTE_WORD({bin(self.value)})"
     """
@@ -537,10 +573,10 @@ class ByteWord:
         result = ~(self.value ^ other.value) & 0xFF
         return BYTE_WORD(result)
     """
-    def xnor(a: int, b: int) -> int:
-        """XNOR operation at the bit level"""
-        return ~(a ^ b) & 0xF  # Mask to 4-bit output
-
+    @staticmethod
+    def xnor(a: int, b: int, width: int = 4) -> int:
+        return ~(a ^ b) & ((1 << width) - 1) # Mask to 4-bit output
+    @staticmethod
     def abelian_transform(t: int, v: int, c: int) -> int:
         """Perform the XNOR-based Abelian transformation."""
         if c == 1:
@@ -573,14 +609,13 @@ class ByteWord:
     conservation: str
     lhs: str
     rhs: List[Union[str, 'Morphology', 'ByteWord']]
-
     def apply(self, input_seq: List[str]) -> List[str]:
         """Applies the morphological transformation to an input sequence."""
         if self.lhs in input_seq:
             idx = input_seq.index(self.lhs)
             return input_seq[:idx] + [elem for elem in self.rhs] + input_seq[idx + 1:]
         return input_seq
-class MorphologicPyOb(PyObjABC, Morphology):
+class MorphologicPyOb(PyObjABC, CPythonFrame):
     """
     The unification of Morphologic transformations and PyObType behavior.
     This is the grandparent class for all runtime polymorphs.
@@ -591,12 +626,12 @@ class MorphologicPyOb(PyObjABC, Morphology):
         symmetry: str,
         conservation: str,
         lhs: str,
-        rhs: List[Union[str, 'Morphologic']],
+        rhs: List[Union[str, 'Morphology']],
         value: V,
         ttl: Optional[int] = None,
     ):
-        PyObType.__init__(self, value, type(value), ttl)
-        Morphologic.__init__(self, symmetry, conservation, lhs, rhs)
+        PyObjABC.__init__(self, value, type(value), ttl)
+        Morphology.__init__(self, symmetry, conservation, lhs, rhs)
 
     def apply_transformation(self, input_seq: List[str]) -> List[str]:
         """
@@ -605,25 +640,19 @@ class MorphologicPyOb(PyObjABC, Morphology):
         transformed_seq = self.apply(input_seq)
         self._state = QuantumState.ENTANGLED
         return transformed_seq
-
     def collapse_and_transform(self) -> V:
-        """
-        Collapse to resolved state and apply morphological transformation to value.
-        """
+        """Collapse to resolved state and apply morphological transformation to value."""
         collapsed_value = self.collapse()
         if isinstance(collapsed_value, list):
             return self.apply_transformation(collapsed_value)
         return collapsed_value
-
     def entangle_with(self, other: 'MorphologicPyOb') -> None:
-        """
-        Entangle with another MorphologicPyOb to preserve state symmetry.
-        """
+        """Entangle with another MorphologicPyOb to preserve state & entanglement symmetry in Morphologic terms."""
         self.entangle(other)
-        # Ensuring entanglement symmetry in Morphologic terms
         if self.lhs == other.lhs and self.conservation == other.conservation:
             self._state = QuantumState.ENTANGLED
             other._state = QuantumState.ENTANGLED
+
     """# usage example:
     # Instantiate a MorphologicPyOb polymorph
     polymorph = MorphologicPyOb(
