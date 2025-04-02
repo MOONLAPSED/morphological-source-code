@@ -792,10 +792,3 @@ async def __async_exec_func__():
         """Log response information asynchronously."""
         # Example implementation
         print(f"Response at {time.time()}: {response}")
-    
-    async def _process_events(self) -> None:
-        """Background task to process events."""
-        try:
-            while True:
-                event = await self._event_queue.get()
-                try:
