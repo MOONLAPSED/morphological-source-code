@@ -1,28 +1,26 @@
 """
-Holographic BYTE_WORD Ontology Library
+Holographic ByteWord Ontology Library
 
 This library implements the compound morphological data structures
-using 8-bit BYTE_WORD units that can reference each other in a 
+using 8-bit ByteWord units that can reference each other in a 
 holographic memory structure.
 
-Structure of an 8-bit BYTE_WORD:
+Structure of an 8-bit ByteWord:
 - T: 4 bits (state or data) - Usually the high nibble (bits 7-4)
 - V: 3 bits (morphism selector or transformation rule) - Part of low nibble (bits 3-1)
 - C: 1 bit (control parameter) - LSB (bit 0)
 """
 
-from typing import Dict, List, Optional, Union, Tuple, Callable, Set
+from typing import Dict, List, Optional, Union, Tuple, Callable, Set, TypeVar
 from enum import Enum
 import random
 
-
+BYTE = TypeVar("BYTE", bound="ByteWord")
 class AddressingMode(Enum):
     """Different addressing modes for BYTE_WORDs."""
     DIRECT = 0       # High nibble directly points to address
     INDIRECT = 1     # High nibble points to an address table
     RECURSIVE = 2    # Uses control bit to determine if it's a pointer
-
-
 class ByteWord:
     """
     Represents an 8-bit BYTE_WORD with addressing capabilities.
@@ -32,7 +30,6 @@ class ByteWord:
     - V: 3 bits - Morphism selector (bits 3-1)
     - C: 1 bit - Control parameter (bit 0)
     """
-    
     def __init__(self, value: int = 0):
         """Initialize a BYTE_WORD with the given 8-bit value."""
         if not 0 <= value <= 0xFF:

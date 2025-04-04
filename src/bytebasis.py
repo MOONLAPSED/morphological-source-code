@@ -1,6 +1,14 @@
-from typing import Callable, List
+from typing import Callable, List, TypeVar
 import math
 import random
+
+
+BYTE = TypeVar("BYTE", bound="BYTE_WORD")
+
+class BYTE_WORD:
+    def __init__(self, value: int = 0):
+        self.value = value
+
 
 class QuinicQuantum:
     """
