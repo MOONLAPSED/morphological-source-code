@@ -775,7 +775,7 @@ class TemporalBridge:
         def wrapper(*args, **kwargs):
             state_key = f"{func.__name__}_{hash(str(args) + str(kwargs))}"
             if state_key not in self.states:
-                self.states[state_key] = QuantumState.SUPERPOSITION  # Updated to use enum
+                self.states[state_key] = QuantumState.SUPERPOSITION
             start = time.time()
             result = func(*args, **kwargs)
             duration = time.time() - start
