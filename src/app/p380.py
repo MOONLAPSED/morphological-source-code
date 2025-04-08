@@ -148,10 +148,9 @@ next(gen)  # Yield waits for input
 
 # Trying to throw a ValueError (handling it within the generator):
 try:
-    gen.throw(ValueError, "The number is negative!")
+    gen.throw(ValueError("The number is negative!"))
 except ValueError as e:
     print("Caught the error:", e) # Output: Caught the error: The number is negative.
-
 
 def basic_example():
     # Simple yield from demonstration
@@ -223,13 +222,10 @@ def protected_shared_subgen():
     def subgen():
         yield 1
         yield 2
-    
     shared = subgen()
     protected = protect_gen(shared)
-    
     def delegator1():
         yield from protected
-    
     def delegator2():
         yield from protected
     
@@ -297,40 +293,48 @@ print(g.send("hello"))  # Prints "Got value: hello" and returns "next"
 print(g.throw(ValueError))  # Prints "Handling ValueError" and returns "recovered"
 g.close()               # Prints "Cleanup in finally"
 
-# Example 1: Generators as thread-like functions
 def calculate_subtotal(items):
+    """
+    Calculates the subtotal of items.
+    Yields periodically to simulate cooperative multitasking.
+    """
     total = 0
     for item in items:
         total += item
         yield  # Cooperative yield point
     return total
 
+
 def calculate_tax(subtotal):
+    """
+    Calculates the tax based on the subtotal.
+    Yields to simulate cooperative multitasking.
+    """
     tax = subtotal * 0.2
     yield  # Cooperative yield point
     return tax
 
 def process_order(items):
-    # Like regular functions, but with yields
+    """
+    Processes an order by calculating subtotal and tax.
+    Uses yield from for delegation.
+    """
     subtotal = yield from calculate_subtotal(items)
     tax = yield from calculate_tax(subtotal)
     return subtotal + tax
 
 # Using it as a lightweight thread
 def run_thread(generator):
-    result = None
+    """
+    Runs a generator to completion and returns its final result.
+    Handles StopIteration gracefully and extracts the return value.
+    """
     try:
         while True:
-            next(generator)
+            next(generator)  # Advance the generator
     except StopIteration as e:
-        result = e.value
-    return result
-
-# Usage
-items = [10, 20, 30]
-thread = process_order(items)
-final_amount = run_thread(thread)
-print(f"Final amount: {final_amount}")  # 72.0
+        # Extract the return value from StopIteration
+        return e.value
 
 # Example 2: Producer/Consumer pattern with yield from
 def produce_items():
@@ -403,3 +407,15 @@ def traverse(node):
     yield node.value
     yield from traverse(node.left)   # Efficient delegation
     yield from traverse(node.right)  # without O(n²) overhead
+
+if __name__ == "__main__":
+    items = [10, 20, 30]
+    thread = process_order(items)
+
+    try:
+        thread.throw(ValueError("The number is negative!"))
+    except ValueError as e:
+        print(f"Caught the error: {e}")
+
+    final_amount = run_thread(thread)
+    print(f"Final amount: {final_amount}")  # Output: Final amount: 72.0

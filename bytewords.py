@@ -1179,6 +1179,143 @@ class MorphologicPyOb:
         if self.lhs == other.lhs and self.conservation == other.conservation:
             self._state = QuantumState.ENTANGLED
             other._state = QuantumState.ENTANGLED
+class __Atom__(Generic[T, V, C], MorphologicPyOb):
+    """
+    Represents a homoiconic unit of code and data.  Behaves like a PyObject.
+    """
+    def __init__(self, code: str, value: Optional[Any] = None, ttl: Optional[int] = None, request_data: Optional[Dict[str, Any]] = None):
+        self._code = code
+        self._value = value
+        self._local_env: Dict[str, Any] = {}
+        self._refcount = 1
+        self._ttl = ttl
+        self._created_at = time.time()
+        self.request_data = request_data or {}
+        self.session: Dict[str, Any] = self.request_data.get("session", {})  # Embedded session
+        #self.runtime_namespace: Optional[RuntimeNamespace] = None
+        #self.security_context: Optional[SecurityContext] = None
+    def __getattribute__(self, name: str) -> Any:
+        # The __getattribute__ method is the heart of the dynamic behavior. It first checks for internal attributes, then local environment variables. If an
+        # attribute is not found in the object's local environment (_local_env), the code is executed, and the attribute is retrieved from the resulting local environment.
+        if name in ('_code', '_value', '_local_env', '_refcount', '_ttl', '_created_at'):  # Direct access to internal attributes
+            return super().__getattribute__(name)
+        # Attribute lookup in the local environment
+        if name in self._local_env:
+            return self._local_env[name]
+        # Evaluate code if the attribute is not found
+        try:
+            # Execute code in the local environment
+            exec(self._code, globals(), self._local_env)
+            return self._local_env[name]
+        except Exception as e:
+            raise AttributeError(f"Attribute '{name}' not found: {e}")
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name in ('_code', '_value', '_local_env', '_refcount', '_ttl', '_created_at'):
+            super().__setattr__(name, value)
+        else:
+            self._local_env[name] = value
+    def handle_request(self, *args: Any, **kwargs: Any) -> Any:
+        """Handles a request (or a polymorphic operation)."""
+        # 1. Pre-processing:
+        if not self.is_authenticated():
+            return {"status": "error", "message": "Authentication failed"}
+        self.log_request()
+        # 2. Context Creation:
+        request_context = {
+            "session": self.session,
+            "request_data": self.request_data,
+            "runtime_namespace": self.runtime_namespace,
+            "security_context": self.security_context
+        }
+        # 3. Core Logic:
+        try:
+            if "operation" in self.request_data:
+                operation = self.request_data["operation"]
+                if operation == "execute_atom":
+                    result = self.execute_atom(request_context)
+                elif operation == "query_memory":
+                    result = self.query_memory(request_context)
+                else:
+                    result = {"status": "error", "message": "Unknown operation"}
+            else:
+                result = self.process_request(request_context)  # Standard request processing
+        except Exception as e:
+            result = {"status": "error", "message": str(e)}
+        # 4. Session Saving:
+        self.save_session()
+        # 5. Post-processing:
+        self.log_response(result)
+        return result
+    def execute_atom(self, request_context: Dict[str, Any]) -> Dict[str, Any]:
+        atom = request_context["runtime_namespace"].get_child(self.request_data["atom_name"])  # Example
+        if atom:
+            # Security check before execution
+            if self.security_context:
+                validator = SecurityValidator(self.security_context)
+                try:
+                    ast_node = ast.parse(atom._code)
+                    validator.visit(ast_node)
+                except PermissionError as e:
+                    return {"status": "error", "message": str(e)}
+            result = atom()  # Execute
+            return {"status": "success", "result": result}
+        else:
+            return {"status": "error", "message": "Atom not found"}
+    def query_memory(self, request_context: Dict[str, Any]) -> Dict[str, Any]:
+        memory = request_context["runtime_namespace"].get_child("memory")  # Example
+        if memory:
+            result = memory.measure_memory_state(request_context["request_data"].get("page")) # pass the page to measure
+            return {"status": "success", "result": result}
+        else:
+            return {"status": "error", "message": "Memory not found"}
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        # The __call__ method allows __Atom__ instances to be invoked like functions, executing their stored code with provided arguments.
+        local_env = self._local_env.copy()  # Create a copy for the call
+        try:
+            # Use inspect.signature to handle default values and variable arguments
+            sig = inspect.signature(eval(self._code))
+            bound_args = sig.bind(*args, **kwargs)
+            bound_args.apply_defaults()
+            local_env.update(bound_args.arguments)
+        except Exception as e:
+            raise RuntimeError(f"Error binding arguments: {e}")
+        try:
+            exec(self._code, globals(), local_env)
+            # Find the return value (if any)
+            for k, v in local_env.items():
+                if k.startswith('__return__'):  # Convention for return values
+                    return v
+            return None  # No explicit return
+        except Exception as e:
+            raise RuntimeError(f"Error executing __Atom__ code: {e}")
+    def __frmr__(self) -> FrameModel:
+        """Convert this Atom to its frame representation"""
+        # Implementation of 'framer' conversion
+        pass
+    def __repr__(self) -> str:
+        return f"__Atom__(code='{self._code}', value={self._value})"
+    def __str__(self) -> str:
+        return self.__repr__()
+    @property
+    def __class__(self) -> type:
+        return __Atom__
+    @property
+    def ob_refcnt(self) -> int:
+        return self._refcount
+    @ob_refcnt.setter
+    def ob_refcnt(self, value: int) -> None:
+        self._refcount = value
+    @property
+    def ob_ttl(self) -> Optional[int]:
+        return self._ttl
+    @ob_ttl.setter
+    def ob_ttl(self, value: Optional[int]) -> None:
+        self._ttl = value
+    def is_expired(self) -> bool:
+        if self._ttl is None:
+            return False
+        now = time.time()
+        return now - self._created_at > self._ttl
 
 
 def main():

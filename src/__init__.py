@@ -30,8 +30,7 @@ import socket
 import threading
 import argparse
 import asyncio
-import resource
-import tomllib  # Standard in Python 3.11+
+import tomllib
 import pstats
 from io import StringIO
 from dataclasses import dataclass, field
@@ -67,6 +66,7 @@ elif IS_POSIX:
                 "Warning: Unable to set process priority. Running with default priority.")
     if __name__ == '__main__':
         set_process_priority(1)
+        import resource
 
 # --- Utility Functions for Networking and ANSI Colors ---
 
