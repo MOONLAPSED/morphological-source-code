@@ -1,0 +1,6 @@
+[project]
+name = "project-deps"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
