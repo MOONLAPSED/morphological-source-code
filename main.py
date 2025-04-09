@@ -2507,3 +2507,107 @@ def main():
 # Run the example
 if __name__ == "__main__":
     asyncio.run(example_usage())
+
+
+
+
+
+
+# repeat-refactor into the above:
+# The Markovian or non-Markovian behavior at runtime, quinetime, or in IR-form is itself a probabilistic process
+# This is reflected in the use of probabilistic data structures and algorithms throughout
+class RuntimeMemory(Generic[T, V, C]):
+    """Integrates quantum memory management with runtime behavior"""
+    def __init__(self, memory_size: int):
+        self.memory_manager = __Atom__(memory_size)
+        self.page_size = 4096  # Standard page size
+        self.runtime_id = id(self)
+        self.allocated_pages: Dict[int, QuantumPage] = {}
+    def allocate_memory(self, size: int) -> Optional[QuantumPage]:
+        """Allocate memory for this runtime"""
+        page = self.memory_manager.allocate(size)
+        if page:
+            self.allocated_pages[id(page)] = page
+        return page
+    def share_with_runtime(self, 
+                          other_runtime: 'RuntimeMemory[T, V, C]',
+                          page: QuantumPage) -> bool:
+        """Share memory with another runtime"""
+        return self.memory_manager.share_memory(
+            self.runtime_id,
+            other_runtime.runtime_id,
+            page
+        )
+    def __post_init__(self,
+                     total_memory: int,
+                     source_runtime_id: int,
+                     target_runtime_id: int,
+                     memory_size: int,
+                     page_size: int,
+                     page: QuantumPage) -> bool:
+        self.total_memory = total_memory
+        self.allocated_memory = 0
+        self.pages: Dict[int, QuantumPage] = {}
+    def allocate(self, size: int) -> Optional[QuantumPage]:
+        """Allocate a quantum page of specified size"""
+        if self.allocated_memory + size > self.total_memory:
+            logger.error(f"Memory allocation failed: Not enough space for {size} bytes.")
+            return None
+        # Round up to nearest page size
+        pages_needed = (size + self.page_size - 1) // self.page_size
+        total_size = pages_needed * self.page_size
+        page = QuantumPage(total_size)
+        page_id = id(page)
+        self.pages[page_id] = page
+        self.allocated_memory += total_size
+        return page
+    def share_memory(self, 
+                     source_runtime_id: int,
+                     target_runtime_id: int,
+                     page: QuantumPage) -> bool:
+        """Share memory between runtimes, establishing quantum entanglement"""
+        if page.vector.state == MemoryState.DEALLOCATED:
+            logger.warning("Attempting to share deallocated memory.")
+            return False
+        # Create weak references to track runtime usage
+        page.references[source_runtime_id] = weakref.ref(source_runtime_id)
+        page.references[target_runtime_id] = weakref.ref(target_runtime_id)
+        # Update memory state to reflect sharing
+        page.vector.state = MemoryState.SHARED
+        # Reduce coherence due to sharing
+        page.vector.coherence *= 0.9
+        return True
+    def measure_memory_state(self, page: QuantumPage) -> MemoryVector:
+        """Measure the quantum state of a memory page"""
+        page.vector.coherence *= 0.8
+        # If coherence drops too low, force a page to disk
+        if page.vector.coherence < 0.3 and page.vector.state != MemoryState.PAGED:
+            page.vector.state = MemoryState.PAGED
+            logger.info(f"Page {id(page)} paged due to low coherence.")
+        return page.vector
+    def deallocate(self, page: QuantumPage):
+        """Deallocate a quantum page, handling entanglement"""
+        page_id = id(page)
+        if page.vector.state == MemoryState.DEALLOCATED:
+            logger.warning(f"Page {page_id} already deallocated.")
+            return
+        # Handle entangled pages
+        if page.vector.entanglement > 0:
+            for ref in page.references.values():
+                runtime_id = ref()
+                if runtime_id is not None:
+                    runtime_page = self.pages.get(runtime_id)
+                    if runtime_page:
+                        runtime_page.vector.coherence *= (1 - page.vector.entanglement)
+        page.vector.state = MemoryState.DEALLOCATED
+        self.allocated_memory -= page.vector.size
+        del self.pages[page_id]
+        logger.info(f"Page {page_id} deallocated.")
+    def __enter__(self):
+        """Initialize runtime memory context"""
+        return self
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Cleanup runtime memory, handling entangled states"""
+        for page in list(self.allocated_pages.values()):
+            self.memory_manager.deallocate(page)
+        self.allocated_pages.clear()
