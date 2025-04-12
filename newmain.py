@@ -490,6 +490,18 @@ BYTE_WORD = 0b1010_1100
 In this case, the control bit (C) becomes part of the address itself, expanding the addressable space
 """
 
+"""
+Hilbert Space in Quantum Mechanics:
+
+In quantum mechanics, a Hilbert space is a complete inner product space, typically used to describe quantum states. The states are vectors, and the inner product between them represents the probability of transitioning from one state to another. When you perform an observation in quantum mechanics (e.g., measuring a physical observable), you’re essentially taking an inner product between the state and the observable (operator).
+
+    Quantum States: ∣Ψ⟩∣Ψ⟩
+
+    Observable Operators: A^A^
+
+    Inner Product: ⟨Ψ∣A^∣Ψ⟩⟨Ψ∣A^∣Ψ⟩, which gives the expectation value of A^A^ in the state ∣Ψ⟩∣Ψ⟩.
+"""
+
 class Morphology(enum.Enum):
     """
     Represents the floor morphic state of a BYTE_WORD.

@@ -177,7 +177,8 @@ def main():
 
     # Define some sample ByteWords
     byte_word_a = ByteWord.from_int(0b1010_0101)  # Active, address 10
-    byte_word_b = ByteWord.from_int(0b1010_0100)  # Halted, address 10
+    # byte_word_b = ByteWord.from_int(0b1010_0100)  # Halted, address 10
+    byte_word_b = ByteWord.from_int(0b1010_0101)
 
     # Register a sample transformation
     def example_transform(bw: ByteWord) -> str:
