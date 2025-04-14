@@ -1,40 +1,83 @@
-
+from __future__ import annotations
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#------------------------------------------------------------------------------
+# 3.13 std libs **ONLY** | Platform(s): Win11 (production), Ubuntu-22.04 (dev, staging);
+# master branch is for immutable releases, only;
+#------------------------------------------------------------------------------
+# PLATFORM, INIT, MONOLITHIC NUTS & BOLTS + IMPORTS;
+#------------------------------------------------------------------------------
+import re
 import os
+import io
+import abc
+import dis
 import sys
-from dataclasses import dataclass, field
+import ast
 import time
-import ctypes
+import json
+import math
+import uuid
+import enum
+import heapq
+import array
+import shlex
+import types
+import struct
+import signal
+import shutil
+import pickle
 import socket
 import select
+import ctypes
+import random
 import logging
+import weakref
+import tomllib
+import pathlib
 import asyncio
-import tracemalloc
-import collections
-import linecache
+import inspect
+import hashlib
+import argparse
+import platform
+import importlib
 import functools
-import types
+import linecache
+import traceback
+import mimetypes
 import threading
-import signal
-import atexit
-from functools import wraps, lru_cache
-from typing import Optional, Callable, Generator, Tuple, Any, Dict, List, Union, Set
+import subprocess
+import contextvars
+import collections
+import tracemalloc
+from pathlib import Path
+from enum import Enum, auto, StrEnum, IntFlag, IntEnum
+from queue import Queue, Empty
+from datetime import datetime, timezone
+from abc import ABC, abstractmethod
 from contextlib import contextmanager
-
-# Configure logging with proper formatting
+from functools import wraps, lru_cache
+from dataclasses import dataclass, field, asdict
+from concurrent.futures import ThreadPoolExecutor
+from importlib.util import spec_from_file_location, module_from_spec
+from types import SimpleNamespace, MethodType, MethodWrapperType, LambdaType, coroutine, CodeType
+from typing import (
+    Any, Dict, List, Optional, Union, Callable, TypeVar, Tuple, Generic, Set,
+    Coroutine, Type, NamedTuple, ClassVar, Protocol, runtime_checkable, AsyncContextManager,
+    AsyncGenerator, AsyncIterator, cast, overload, Generator, Awaitable
+)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 logger = logging.getLogger(__name__)
-
-# Platform detection constants - simplified approach
 IS_WINDOWS = os.name == 'nt'
 IS_POSIX = os.name == 'posix'
 IS_MACOS = sys.platform == 'darwin'
 @dataclass
 class ServerConfig:
-    """Server configuration with reasonable defaults for production environments."""
+    """Server configuration defaults. AKA 'Oracle'."""
     host: str = 'localhost'
     port: int = 8888
     backlog: int = 100  # Maximum connection backlog
@@ -51,13 +94,11 @@ class ServerConfig:
     tls_cert_file: Optional[str] = None  # Path to certificate file
     tls_key_file: Optional[str] = None  # Path to key file
     log_level: str = "INFO"  # Default log level
-    
     def update_from_dict(self, config_dict: Dict[str, Any]) -> None:
         """Update configuration from a dictionary."""
         for key, value in config_dict.items():
             if hasattr(self, key):
                 setattr(self, key, value)
-    
     def update_from_file(self, filepath: str) -> None:
         """Load configuration from a JSON file."""
         try:
@@ -66,7 +107,6 @@ class ServerConfig:
                 self.update_from_dict(config_dict)
         except (FileNotFoundError, json.JSONDecodeError, IOError) as e:
             logger.error(f"Failed to load configuration from {filepath}: {e}")
-    
     def save_to_file(self, filepath: str) -> None:
         """Save current configuration to a JSON file."""
         try:
@@ -74,8 +114,6 @@ class ServerConfig:
                 json.dump(asdict(self), f, indent=2)
         except IOError as e:
             logger.error(f"Failed to save configuration to {filepath}: {e}")
-
-
 @dataclass
 class ServerMetrics:
     """Collects and tracks server performance metrics."""
@@ -966,3 +1004,427 @@ def is_port_available(port: int, host: str = '127.0.0.1') -> bool:
         logger.warning(f"Error checking port availability: {e}")
         return False
 
+
+class ServerManager:
+    """
+    Manages the lifecycle of the server, providing a clean interface
+    for starting, stopping, and monitoring the server.
+    """
+    
+    def __init__(self, config: Optional[ServerConfig] = None, handler: Callable = None):
+        """
+        Initialize the ServerManager.
+        
+        Args:
+            config (Optional[ServerConfig]): Server configuration
+            handler (Callable): The handler function to call for each connection
+        """
+        self.config = config or ServerConfig()
+        self.handler = handler
+        self.server_socket = None
+        self.trampoline = Trampoline()
+        self.server_coroutine = None
+        self._running = False
+        self._shutdown_event = threading.Event()
+        self._active_connections: Set[SocketWrapper] = set()
+        self._connection_lock = threading.Lock()
+        self.metrics = ServerMetrics()
+        
+        # Set up logging according to configuration
+        self._configure_logging()
+        
+        # Initialize signal handlers
+        self._setup_signal_handlers()
+    
+    def _configure_logging(self) -> None:
+        """Configure logging based on server configuration."""
+        log_level = getattr(logging, self.config.log_level, logging.INFO)
+        logging.getLogger().setLevel(log_level)
+        
+        # Reconfigure handler if it exists
+        for handler in logging.getLogger().handlers:
+            handler.setLevel(log_level)
+            if isinstance(handler, logging.StreamHandler):
+                handler.setFormatter(logging.Formatter(
+                    '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S'
+                ))
+    
+    def _setup_signal_handlers(self) -> None:
+        """Set up signal handlers for graceful shutdown."""
+        if os.name == 'posix':  # Only on Unix-like systems
+            # Handle keyboard interrupt (Ctrl+C)
+            signal.signal(signal.SIGINT, self._handle_shutdown_signal)
+            # Handle termination signal
+            signal.signal(signal.SIGTERM, self._handle_shutdown_signal)
+    
+    def _handle_shutdown_signal(self, signum, frame) -> None:
+        """Handle shutdown signals (SIGINT, SIGTERM)."""
+        signal_name = signal.Signals(signum).name
+        logger.info(f"Received {signal_name} signal. Initiating graceful shutdown...")
+        self.stop()
+    
+    def register_connection(self, sock: SocketWrapper) -> None:
+        """Register a new active connection."""
+        with self._connection_lock:
+            self._active_connections.add(sock)
+            self.metrics.increment_connections()
+    
+    def unregister_connection(self, sock: SocketWrapper) -> None:
+        """Unregister a connection that has been closed."""
+        with self._connection_lock:
+            if sock in self._active_connections:
+                self._active_connections.remove(sock)
+                self.metrics.decrement_active_connections()
+    
+    def _close_idle_connections(self) -> None:
+        """Close connections that have been idle for too long."""
+        idle_timeout = self.config.connection_timeout
+        with self._connection_lock:
+            idle_connections = [
+                sock for sock in self._active_connections
+                if sock.is_idle(idle_timeout)
+            ]
+            
+            for sock in idle_connections:
+                logger.debug(f"Closing idle connection from {sock.peer_address}")
+                sock.close()
+                self._active_connections.remove(sock)
+                self.metrics.decrement_active_connections()
+    
+    def _connection_monitor(self) -> None:
+        """Background thread to monitor connections and close idle ones."""
+        while not self._shutdown_event.is_set():
+            try:
+                self._close_idle_connections()
+                
+                # Log metrics periodically
+                if self.config.enable_metrics:
+                    logger.info(f"Server metrics: {self.metrics.report()}")
+                    
+            except Exception as e:
+                logger.error(f"Error in connection monitor: {e}")
+                
+            # Sleep for a while before checking again
+            time.sleep(30)  # Check every 30 seconds
+    
+    def start(self, blocking: bool = True) -> None:
+        """
+        Start the server.
+        
+        Args:
+            blocking (bool): Whether to block the calling thread
+        """
+        if self._running:
+            logger.warning("Server is already running")
+            return
+        
+        # Reset the shutdown event
+        self._shutdown_event.clear()
+        
+        # Create and configure the server socket
+        try:
+            logger.info(f"Starting server on {self.config.host}:{self.config.port}")
+            self.server_socket = create_server_socket(
+                self.config.host, 
+                self.config.port,
+                backlog=self.config.backlog,
+                config=self.config
+            )
+            
+            # Create and schedule the server coroutine
+            handler = self.handler or echo_handler
+            self.server_coroutine = listen_on(self.trampoline, self.server_socket, 
+                                              lambda sock: self._wrap_handler(sock, handler))
+            self.trampoline.add(self.server_coroutine)
+            
+            # Start the connection monitor thread
+            self._monitor_thread = threading.Thread(
+                target=self._connection_monitor,
+                daemon=True,
+                name="ConnectionMonitor"
+            )
+            self._monitor_thread.start()
+            
+            # Mark the server as running
+            self._running = True
+            
+            if blocking:
+                # Run the event loop in the current thread
+                self.trampoline.run()
+            else:
+                # Run the event loop in a separate thread
+                self._server_thread = threading.Thread(
+                    target=self.trampoline.run,
+                    daemon=True,
+                    name="ServerLoop"
+                )
+                self._server_thread.start()
+                
+        except Exception as e:
+            logger.error(f"Failed to start server: {e}")
+            self._cleanup()
+            raise
+    
+    def _wrap_handler(self, sock: SocketWrapper, handler: Callable) -> Generator:
+        """
+        Wrap the connection handler to track metrics and manage connections.
+        
+        Args:
+            sock (SocketWrapper): The client socket
+            handler (Callable): The handler function
+            
+        Returns:
+            Generator: The handler coroutine
+        """
+        # Register the new connection
+        self.register_connection(sock)
+        
+        start_time = time.time()
+        try:
+            # Call the actual handler
+            yield from handler(sock)
+        except Exception as e:
+            logger.error(f"Error in connection handler: {e}")
+            self.metrics.add_error()
+        finally:
+            # Record metrics
+            response_time = time.time() - start_time
+            self.metrics.add_request(response_time)
+            
+            # Update traffic metrics
+            self.metrics.add_bytes_received(sock.metrics["bytes_received"])
+            self.metrics.add_bytes_sent(sock.metrics["bytes_sent"])
+            
+            # Clean up the connection
+            sock.close()
+            self.unregister_connection(sock)
+    
+    def stop(self) -> None:
+        """Request a graceful shutdown of the server."""
+        if not self._running:
+            logger.warning("Server is not running")
+            return
+        
+        logger.info("Initiating graceful shutdown...")
+        self._shutdown_event.set()
+        
+        # Stop accepting new connections
+        self.trampoline.stop()
+        
+        # Wait for connections to finish or timeout
+        shutdown_timeout = self.config.graceful_shutdown_timeout
+        shutdown_start = time.time()
+        
+        # Close the server socket
+        if self.server_socket:
+            logger.info("Closing server socket")
+            self.server_socket.close()
+            self.server_socket = None
+        
+        # Wait for active connections to complete
+        logger.info(f"Waiting up to {shutdown_timeout} seconds for {len(self._active_connections)} "
+                   f"active connections to complete")
+        
+        while self._active_connections and (time.time() - shutdown_start < shutdown_timeout):
+            # Give connections time to finish
+            time.sleep(0.1)
+        
+        # Force close any remaining connections
+        remaining = len(self._active_connections)
+        if remaining > 0:
+            logger.warning(f"Forcibly closing {remaining} connections that didn't complete "
+                          f"within the timeout")
+            with self._connection_lock:
+                for sock in list(self._active_connections):
+                    sock.close()
+                self._active_connections.clear()
+        
+        self._running = False
+        logger.info("Server shutdown complete")
+    
+    def _cleanup(self) -> None:
+        """Clean up resources when stopping the server."""
+        # Close the server socket if it exists
+        if self.server_socket:
+            self.server_socket.close()
+            self.server_socket = None
+        
+        # Close all active connections
+        with self._connection_lock:
+            for sock in list(self._active_connections):
+                sock.close()
+            self._active_connections.clear()
+        
+        self._running = False
+    
+    def restart(self) -> None:
+        """Restart the server."""
+        logger.info("Restarting server...")
+        self.stop()
+        self.start()
+    
+    def get_metrics(self) -> Dict[str, Any]:
+        """Get current server metrics."""
+        return self.metrics.report()
+    
+    def is_running(self) -> bool:
+        """Check if the server is running."""
+        return self._running
+    
+    def __enter__(self) -> 'ServerManager':
+        """Allow usage as a context manager."""
+        self.start(blocking=False)
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        """Clean up when exiting the context."""
+        self.stop()
+
+
+# -------------------- Enhanced Socket Server Functions --------------------
+
+def create_server_socket(host: str, port: int, backlog: int = 5, 
+                         config: Optional[ServerConfig] = None) -> SocketWrapper:
+    """
+    Create an enhanced server socket that listens for connections.
+    
+    Args:
+        host (str): The host address to bind to
+        port (int): The port to bind to
+        backlog (int): Maximum connection queue size
+        config (Optional[ServerConfig]): Socket configuration
+        
+    Returns:
+        SocketWrapper: A SocketWrapper for the server socket
+    """
+    config = config or ServerConfig()
+    
+    try:
+        # First try to create a dual-stack socket (IPv4 and IPv6)
+        sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+        
+        # Set socket options
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        
+        # Enable SO_REUSEPORT if available and requested
+        if config.reuse_port and hasattr(socket, 'SO_REUSEPORT'):
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+        
+        try:
+            # Enable dual-stack socket if supported
+            sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
+        except (AttributeError, socket.error) as e:
+            # IPV6_V6ONLY might not be available on all systems
+            logger.warning(f"Could not set IPV6_V6ONLY option: {e}")
+        
+        try:
+            sock.bind((host, port, 0, 0))  # The zeros are for flow info and scope id
+        except socket.error:
+            # If IPv6 binding fails, fall back to IPv4
+            sock.close()
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            
+            # Enable SO_REUSEPORT if available and requested
+            if config.reuse_port and hasattr(socket, 'SO_REUSEPORT'):
+                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+                
+            sock.bind((host, port))
+        
+    except socket.error as e:
+        logger.error(f"Failed to create or bind socket: {e}")
+        raise SocketCreationError(f"Failed to create socket: {e}")
+    
+    try:
+        sock.listen(backlog)
+        sock.setblocking(False)
+        return SocketWrapper(sock, config)
+    except socket.error as e:
+        logger.error(f"Failed to configure socket: {e}")
+        sock.close()
+        raise SocketBindError(f"Failed to configure socket: {e}")
+
+
+# -------------------- Config Parser and Main Function --------------------
+
+def parse_arguments() -> argparse.Namespace:
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(description="Start the socket server")
+    
+    parser.add_argument("--host", type=str, default="localhost",
+                        help="Host address to bind to (default: localhost)")
+    parser.add_argument("--port", type=int, default=8888,
+                        help="Port to bind to (default: 8888)")
+    parser.add_argument("--backlog", type=int, default=100,
+                        help="Connection backlog size (default: 100)")
+    parser.add_argument("--max-connections", type=int, default=1000,
+                        help="Maximum simultaneous connections (default: 1000)")
+    parser.add_argument("--recv-buffer", type=int, default=8192,
+                        help="Socket receive buffer size (default: 8192)")
+    parser.add_argument("--log-level", type=str, choices=["DEBUG", "INFO", "WARNING", "ERROR"],
+                        default="INFO", help="Logging level (default: INFO)")
+    parser.add_argument("--config-file", type=str,
+                        help="Path to JSON configuration file")
+    parser.add_argument("--idle-timeout", type=float, default=60.0,
+                        help="Idle connection timeout in seconds (default: 60)")
+    parser.add_argument("--metrics", action="store_true",
+                        help="Enable metrics collection")
+    parser.add_argument("--memory-profile", action="store_true",
+                        help="Enable memory profiling")
+                        
+    return parser.parse_args()
+
+
+def main() -> None:
+    """Main entry point for the server."""
+    # Parse command line arguments
+    args = parse_arguments()
+    
+    # Create default configuration
+    config = ServerConfig(
+        host=args.host,
+        port=args.port,
+        backlog=args.backlog,
+        max_connections=args.max_connections,
+        recv_buffer_size=args.recv_buffer,
+        connection_timeout=args.idle_timeout,
+        log_level=args.log_level,
+        enable_metrics=args.metrics,
+        enable_memory_profiling=args.memory_profile
+    )
+    
+    # Load config from file if specified
+    if args.config_file:
+        config.update_from_file(args.config_file)
+    
+    # Configure logging
+    logging.basicConfig(
+        level=getattr(logging, config.log_level),
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+    
+    logger.info(f"Starting server with configuration: {asdict(config)}")
+    
+    # Create and start the server
+    try:
+        server = ServerManager(config=config, handler=echo_handler)
+        
+        # Use memory profiling if requested
+        if config.enable_memory_profiling:
+            with memory_profiling():
+                server.start()
+        else:
+            server.start()
+            
+    except KeyboardInterrupt:
+        logger.info("Server stopped by keyboard interrupt")
+    except Exception as e:
+        logger.exception(f"Server failed with error: {e}")
+    finally:
+        logger.info("Server shutdown complete")
+
+
+if __name__ == "__main__":
+    main()
