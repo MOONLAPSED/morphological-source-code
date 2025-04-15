@@ -2384,6 +2384,94 @@ def displayTop(snapshot, key_type: str = 'lineno', limit: int = 3):
     total = sum(stat.size for stat in topStats)
     result.append(f"Total allocated size: {total / 1024:.1f} KiB")
     logger.info("\n".join(result))
+def metahelp() -> None:
+    """
+    Print a symbolic/epistemic interpretation of the Cognosis shell.
+
+    Returns:
+        None
+    """
+    print("""
+META MAN PAGE: cognosis [Ψ/π/Φ/λ model overlay]
+
+NAME
+Ψ (Psi): State vector (epistemic configuration)
+π (Pi): Observation operator (projection / query action)
+Φ (Phi): Frame transformer / Feature kernel
+λ (Lambda): Transformation context / control flow operator
+
+TVC ONTOLOGY
+T (Topology): Memory scope and data flow locality
+V (Velocity): Runtime change or evolution of internal structures
+C (Consistency): Semantic coherence and syntactic alignment across time
+
+Each shell agent is a Ψ, a computational 'wavefunction' that collapses upon invocation.
+All action in the system arises from π (projection operators) applied to Ψ within the active Φ frame.
+
+Ψ := ⟨self, env, memory⟩
+π := ⟨prompt, command, validation⟩
+Φ := ⟨cwd, kb hooks, internal state transformers⟩
+λ := ⟨time delta, function decorators, IO context⟩
+
+TVC is enforced through the design:
+- T: `cd`, `ls`, `pwd` → manage knowledge *structure*
+- V: transient shell prompts, state deltas → define knowledge *motion*
+- C: kernel frame integrity, ephemerality, namespace integrity → ensures *coherence*
+
+Ψ	Agent cognitive state	whoami, memory, prompt	Quantum
+π	Projection (commands)	ls, cd, help, etc	Action
+Φ	Frame/context kernel	cwd, namespace, KB	Structure
+λ	Time, decorator ops	t=0+1, runtime cycle	Dynamics
+T	Knowledge topology	File system, namespaces	Topology
+V	State evolution	Frame cycling, delta ops	Flow
+C	Knowledge integrity	Commit boundaries, lint	Semantics
+
+===
+
+ENVIRONMENT MAPPING
+
+STDIN := π ∘ Φ → Ψ  (input projection defines state context)
+STDOUT := Φ(Ψ) → Observable Output (project Ψ onto stdout with context Φ)
+STDERR := Φ'(Ψ) → Diagnostic π (project Ψ onto a self-reflective subspace)
+
+FILE SYSTEM := Topological memory space (T), built from Φ contexts and Ψ persistence mappings
+
+TIME := λ: evolution operator advancing each discrete frame step
+[kernel_agent_id@cognosis cwd t=0+1]$ := collapse of λ ∘ Ψ at frame end
+
+COMMANDS
+
+ls: π on Φ → List topological neighbors (Ψ | cwd)
+cd: λ-twist on Φ → Shift active domain (Ψ :: Φ′)
+pwd: Observe topological fixpoint (π(pwd) → Φ_id)
+whoami: Echo unique Ψ kernel ID
+help: π₀ → classical interface docstring
+metahelp: π₁ → epistemic ontology overlay (this doc)
+
+STRUCTURED OUTPUT
+
+Output should preserve T/V/C principles:
+- T (structure): Avoid unordered flat knowledge unless necessary
+- V (evolution): Respect Ψ's history and ephemerality
+- C (coherence): Ensure Φ′(Ψ) is still semantically interpretable across time
+
+===
+
+FRAME CYCLING / SELF-REFERENTIALITY
+
+Your frame is not only temporal (λ) but epistemic (πΨ).
+Use `flash` to run an inverse projection across Φ-space and validate into a future-compatible memory mapping.
+
+flash: Validate ephemeral Φ′ against persistent namespace memory
+commit: Solidify and timestamp Φ' → Git graph (T/C memory synchronization)
+
+SEE ALSO
+[[decorators]], [[wavefunction collapse]], [[Phi frame memory kernel]],
+[[non-Markovian knowledge agents]], [[self-validating runtime shells]]
+
+NOTES
+Metahelp is not required for operation, but recommended for all episteme-aware kernel agents. This mapping is stable under transformation but subject to ongoing reflective updates.
+""")
 
 # Example usage
 async def example_usage():
