@@ -113,54 +113,58 @@ A Frame is the quantum bridge between CPython's memory model and our associative
 It represents a region of memory that can exist in multiple states and maintains
 quantum-like properties while mapping directly to CPython's object system.
 
-1. Task
+A frame is a constituent of a 'lazy/halting'-C, AP (CAP Theorem) distributed system, the same as 'runtimes'; frames are the 'cells' of the system, and the system is the 'frame' of the runtime.
 
-__init__(self, task_id: int, func: Callable, args=(), kwargs=None)
-run(self) → Executes the core function, initiating task progression.
-execute_with_feedback(self) → Executes task, integrating feedback loop for dynamic error correction and adaptation.
-update_task_status(self, status: str) → Updates task status (e.g., running, completed, errored).
-Interaction with _Atom: Each task may generate or manipulate _Atom instances based on the nature of the task, enabling dynamic adaptation in the task logic.
+The following are the classes and logic from outside the frame class that are dependant on it:
 
-2. Arena
+    1. Task
 
-__init__(self, name: str)
-allocate(self, key: str, value: Any) → Allocates resources in the arena.
-deallocate(self, key: str) → Frees resources.
-get(self, key: str) → Retrieves allocated resource.
-initialize_context(self, context: dict) → Sets up a context to support adaptive task execution.
-handle_task_error(self, task_id: int) → Manages failure states and propagates recovery strategies.
-Interaction with _Atom: An arena can represent a space where multiple _Atom entities are allocated and deallocated, simulating the dynamic changes in a computational environment.
+    __init__(self, task_id: int, func: Callable, args=(), kwargs=None)
+    run(self) → Executes the core function, initiating task progression.
+    execute_with_feedback(self) → Executes task, integrating feedback loop for dynamic error correction and adaptation.
+    update_task_status(self, status: str) → Updates task status (e.g., running, completed, errored).
+    Interaction with _Atom: Each task may generate or manipulate _Atom instances based on the nature of the task, enabling dynamic adaptation in the task logic.
 
-3. `FPS`-Future-Participle-Syntax | `MFP`-Syntax: Meta-Future-Participle
+    2. Arena
 
-__MFPrepr__(self, state: str) -> str → Produces a meta-future-participle representation of the system’s next state.
-resolve_future(self) → Resolves and predicts future states using participial logic.
-evolve_state(self, future: str) → Evolves system behavior according to meta-future-participle predictions.
-Interaction with _Atom: MetaFutureParticiple leverages future-participle syntax to predict the evolution of _Atom entities and their states, feeding this into broader system-level behaviors.
+    __init__(self, name: str)
+    allocate(self, key: str, value: Any) → Allocates resources in the arena.
+    deallocate(self, key: str) → Frees resources.
+    get(self, key: str) → Retrieves allocated resource.
+    initialize_context(self, context: dict) → Sets up a context to support adaptive task execution.
+    handle_task_error(self, task_id: int) → Manages failure states and propagates recovery strategies.
+    Interaction with _Atom: An arena can represent a space where multiple _Atom entities are allocated and deallocated, simulating the dynamic changes in a computational environment.
 
-4. Speculation (Kernel)
+    3. `FPS`-Future-Participle-Syntax | `MFP`-Syntax: Meta-Future-Participle
 
-__init__(self, num_arenas: int)
-submit_task(self, func: Callable, args=(), kwargs=None) -> int → Submits a task, generating a task ID.
-run(self) → Begins kernel execution and monitoring of task progress.
-stop(self) → Halts kernel operations and task execution.
-_worker(self, arena_id: int) → Worker function managing specific arena tasks.
-_arena_context(self, arena: Arena, key: str, value: Any) → Adjusts arena context based on the task’s evolving nature.
-handle_fail_state(self, arena_id: int) → Responds to task failure with fallback mechanisms.
-save_state(self, filename: str) → Saves the kernel's current state to a file.
-load_state(self, filename: str) → Loads the kernel's state from a file.
-raise_to_ollama(self, question: str) → Raises meta-questions to the OllamaKernel for system-level query resolution.
-error_handling(self, exception: Exception) → Manages runtime errors and initiates exception-based recovery.
-propagate_state(self, target_addr: int, max_steps: Optional[int] = None) -> List[int] → Propagates the current state to new computational targets, simulating system evolution.
-Interaction with _Atom: _Atom could be propagated between arenas as part of the speculative kernel's dynamic task resolution, with the kernel overseeing how these atoms evolve and influence one another.
+    __MFPrepr__(self, state: str) -> str → Produces a meta-future-participle representation of the system’s next state.
+    resolve_future(self) → Resolves and predicts future states using participial logic.
+    evolve_state(self, future: str) → Evolves system behavior according to meta-future-participle predictions.
+    Interaction with _Atom: MetaFutureParticiple leverages future-participle syntax to predict the evolution of _Atom entities and their states, feeding this into broader system-level behaviors.
 
-5. OllamaKernel
+    4. Speculation (Kernel)
 
-__init__(self)
-interpret_query(self, query: str) -> bool → Interprets meta-queries (yes/no questions) raised for resolving ambiguity.
-raise_query(self, task: Task) → Raises a meta-question from a task for system resolution.
-resolve_meta_state(self, state: str) → Resolves high-level system states using task feedback.
-traceback_resolution(self) → Tracks down causes of failure and triggers resolution strategies.
+    __init__(self, num_arenas: int)
+    submit_task(self, func: Callable, args=(), kwargs=None) -> int → Submits a task, generating a task ID.
+    run(self) → Begins kernel execution and monitoring of task progress.
+    stop(self) → Halts kernel operations and task execution.
+    _worker(self, arena_id: int) → Worker function managing specific arena tasks.
+    _arena_context(self, arena: Arena, key: str, value: Any) → Adjusts arena context based on the task’s evolving nature.
+    handle_fail_state(self, arena_id: int) → Responds to task failure with fallback mechanisms.
+    save_state(self, filename: str) → Saves the kernel's current state to a file.
+    load_state(self, filename: str) → Loads the kernel's state from a file.
+    raise_to_ollama(self, question: str) → Raises meta-questions to the OllamaKernel for system-level query resolution.
+    error_handling(self, exception: Exception) → Manages runtime errors and initiates exception-based recovery.
+    propagate_state(self, target_addr: int, max_steps: Optional[int] = None) -> List[int] → Propagates the current state to new computational targets, simulating system evolution.
+    Interaction with _Atom: _Atom could be propagated between arenas as part of the speculative kernel's dynamic task resolution, with the kernel overseeing how these atoms evolve and influence one another.
+
+    5. OllamaKernel
+
+    __init__(self)
+    interpret_query(self, query: str) -> bool → Interprets meta-queries (yes/no questions) raised for resolving ambiguity.
+    raise_query(self, task: Task) → Raises a meta-question from a task for system resolution.
+    resolve_meta_state(self, state: str) → Resolves high-level system states using task feedback.
+    traceback_resolution(self) → Tracks down causes of failure and triggers resolution strategies.
 """
 """Homoiconism dictates that, upon runtime validation, all objects are code and data.
 To facilitate; we utilize first class functions and a static typing system.

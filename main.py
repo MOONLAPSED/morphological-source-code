@@ -28,6 +28,7 @@ import abc
 import dis
 import sys
 import ast
+import enum
 import time
 import json
 import math
