@@ -1325,6 +1325,37 @@ class Field(Frame[T, V, C], ABC):
     def transform(self, operator: Callable[[V], V]) -> None:
         """Applies a transformation operator to the value space."""
         pass
+
+@dataclass
+class CustomDelimiterFrame(Field):
+    content: str
+
+    def __post_init__(self):
+        # Set default delimiters
+        self.init()
+
+    def to_bytes(self) -> bytes:
+        """Return the frame data as bytes."""
+        return self.content.encode()
+
+    def parse_content(self, raw_content: str) -> str:
+        """Parse the raw content using custom delimiters."""
+        # Extract content between delimiters
+        start_index = raw_content.find(self.start_delimiter)
+        end_index = raw_content.rfind(self.end_delimiter)
+        if start_index == -1 or end_index == -1 or start_index >= end_index:
+            raise ValueError(
+                "Invalid content format: Missing or mismatched delimiters.")
+        return raw_content[start_index + len(self.start_delimiter):end_index]
+
+    def validate_content(self, content: str) -> bool:
+        """Validate the content based on delimiters."""
+        try:
+            parsed_content = self.parse_content(content)
+            return self.start_delimiter + parsed_content + self.end_delimiter == content
+        except ValueError:
+            return False
+
 class Space(Field[T, V, C]):
     """
     Space is the container for Fields and manages their interactions.
@@ -1348,20 +1379,6 @@ class Space(Field[T, V, C]):
                 new_field.entangle(field)
                 new_field.entangle(other.fields[handle])
         return new_space
-@dataclass
-class Atom(Generic[T, V, C], PyObjABC):
-    """
-    $STUB_VERSION$
-    Atoms are the fundamental particles of our system, existing within Fields.
-    They map directly to PyObjects while maintaining quantum properties.
-    """
-    frame: Frame[T, V, C]
-    handle: str
-    def __post_init__(self):
-        self.__weakref = weakref.ref(self)
-    def materialize(self) -> V:
-        """Collapses the quantum state and returns the value."""
-        return self.frame.collapse()
 class AsyncAtom(Generic[T_co, V_co, C_co], PyObjABC):
     """
     An asynchronous version of the Atom class that supports coroutines and async operations.
