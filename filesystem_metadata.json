@@ -1,6 +1,6 @@
 {
   "root_dir": "C:\\Users\\DEV\\cognosis\\src\\app",
-  "scan_time": 1744928190.9895082,
+  "scan_time": 1745048732.8606412,
   "files": {
     "basicwave.py": {
       "path": "C:\\Users\\DEV\\cognosis\\src\\app\\basicwave.py",
@@ -24,23 +24,23 @@
       "extension": ".py",
       "is_loadable": true
     },
-    "byteword.tsx": {
-      "path": "C:\\Users\\DEV\\cognosis\\src\\app\\byteword.tsx",
-      "relative_path": "byteword.tsx",
-      "file_size": 18943,
-      "last_modified": 1744776561.3112595,
-      "content_hash": "e58ad33f5994762f4d10484831a53ea0ab7cd06ed907f90b56f1f4da0196486c",
+    "bytewords2.tsx": {
+      "path": "C:\\Users\\DEV\\cognosis\\src\\app\\bytewords2.tsx",
+      "relative_path": "bytewords2.tsx",
+      "file_size": 22751,
+      "last_modified": 1745012552.37709,
+      "content_hash": "3cb7536ff75f5476333b232bff017887e0ccd89e78f47ff74e223e5d16a81bb5",
       "mime_type": "application/octet-stream",
       "content_type": "TEXT",
       "extension": ".tsx",
       "is_loadable": false
     },
-    "bytewordsee.tsx": {
-      "path": "C:\\Users\\DEV\\cognosis\\src\\app\\bytewordsee.tsx",
-      "relative_path": "bytewordsee.tsx",
-      "file_size": 20875,
-      "last_modified": 1744777858.7868671,
-      "content_hash": "219d62d62727a0abe0ed132a1eed04a3176ffb19332371c236f3d4eb0d39a048",
+    "bytewordtest2.tsx": {
+      "path": "C:\\Users\\DEV\\cognosis\\src\\app\\bytewordtest2.tsx",
+      "relative_path": "bytewordtest2.tsx",
+      "file_size": 8102,
+      "last_modified": 1745012981.703241,
+      "content_hash": "aa5a7114a338b39eb10738950653205b716ef270b4e47821d120db9cc08a845d",
       "mime_type": "application/octet-stream",
       "content_type": "TEXT",
       "extension": ".tsx",
@@ -57,23 +57,45 @@
       "extension": ".py",
       "is_loadable": true
     },
+    "firstscript.tsx": {
+      "path": "C:\\Users\\DEV\\cognosis\\src\\app\\firstscript.tsx",
+      "relative_path": "firstscript.tsx",
+      "file_size": 18943,
+      "last_modified": 1744776561.3112595,
+      "content_hash": "e58ad33f5994762f4d10484831a53ea0ab7cd06ed907f90b56f1f4da0196486c",
+      "mime_type": "application/octet-stream",
+      "content_type": "TEXT",
+      "extension": ".tsx",
+      "is_loadable": false
+    },
     "holoword.py": {
       "path": "C:\\Users\\DEV\\cognosis\\src\\app\\holoword.py",
       "relative_path": "holoword.py",
-      "file_size": 29563,
-      "last_modified": 1743653308.7069156,
-      "content_hash": "c6c63a31c77aac7c52dfcc5691d18bf828f1d49dd7acc76926e68c5ae25bd84e",
+      "file_size": 27173,
+      "last_modified": 1745013768.2399163,
+      "content_hash": "4c8d11765abcda42707790d7179e45899e2cc0ec32e298833b19e6a620c2c803",
       "mime_type": "text/x-python",
       "content_type": "PYTHON",
       "extension": ".py",
       "is_loadable": true
     },
-    "kbprodtest.py": {
-      "path": "C:\\Users\\DEV\\cognosis\\src\\app\\kbprodtest.py",
-      "relative_path": "kbprodtest.py",
-      "file_size": 44476,
-      "last_modified": 1744928187.1099446,
-      "content_hash": "a86f16a67807227596ca65398ca0aa166b6bf77cc43e0cca8cd1e2a9de80d08a",
+    "holowords2.py": {
+      "path": "C:\\Users\\DEV\\cognosis\\src\\app\\holowords2.py",
+      "relative_path": "holowords2.py",
+      "file_size": 26844,
+      "last_modified": 1745014355.206944,
+      "content_hash": "897fdfa26223cdf366ff68f35c28106a843b103625035cf104b1ad36c88205fb",
+      "mime_type": "text/x-python",
+      "content_type": "PYTHON",
+      "extension": ".py",
+      "is_loadable": true
+    },
+    "kb.prod.test.py": {
+      "path": "C:\\Users\\DEV\\cognosis\\src\\app\\kb.prod.test.py",
+      "relative_path": "kb.prod.test.py",
+      "file_size": 45372,
+      "last_modified": 1745048730.822705,
+      "content_hash": "b141e8074e05f691e353a9866710c3f797b5141e9160364bc0440f065a462690",
       "mime_type": "text/x-python",
       "content_type": "PYTHON",
       "extension": ".py",
@@ -165,6 +187,17 @@
       "mime_type": "text/markdown",
       "content_type": "TEXT",
       "extension": ".md",
+      "is_loadable": false
+    },
+    "secondscript.tsx": {
+      "path": "C:\\Users\\DEV\\cognosis\\src\\app\\secondscript.tsx",
+      "relative_path": "secondscript.tsx",
+      "file_size": 20875,
+      "last_modified": 1744777858.7868671,
+      "content_hash": "219d62d62727a0abe0ed132a1eed04a3176ffb19332371c236f3d4eb0d39a048",
+      "mime_type": "application/octet-stream",
+      "content_type": "TEXT",
+      "extension": ".tsx",
       "is_loadable": false
     },
     "stablecycle.py": {

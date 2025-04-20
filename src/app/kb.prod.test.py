@@ -1,5 +1,6 @@
 from __future__ import annotations
 import sys
+import ast
 import os
 import pathlib
 import importlib.util
@@ -1059,6 +1060,30 @@ def main():
     
     print("\nFileSystem demonstration complete!")
 
+# Folding function to strip class/method bodies while preserving structure
+def fold_source(source: str) -> str:
+    tree = ast.parse(source)
+    lines = source.splitlines()
+    output_lines = lines.copy()
+
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            start = node.body[0].lineno - 1
+            end = node.body[-1].end_lineno
+            folded_lines = end - start
+            # Replace lines with a placeholder for folding
+            output_lines[start:end] = [
+                f"    ...  # {folded_lines} lines folded"
+            ]
+
+    return '\n'.join(output_lines)
 
 if __name__ == "__main__":
     main()
+    script_path = pathlib.Path(sys.argv[0])
+    raw_code = script_path.read_text()
+
+    folded_code = fold_source(raw_code)
+
+    print("Folded source code for context injection:")
+    print(folded_code)
