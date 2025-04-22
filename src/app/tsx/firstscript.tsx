@@ -60,6 +60,16 @@ class ByteWord {
     return new ByteWord(parseInt(binStr, 2));
   }
 
+  selectTarget(byteWords, currentIndex) {
+    if (this._pointable) {
+      // Dynamic targeting based on state_data value
+      return this.state_data % byteWords.length;
+    } else {
+      // Default static targeting (next in sequence)
+      return (currentIndex + 1) % byteWords.length;
+    }
+  }
+
   // Transform based on morphism selector
   transform(targetWord) {
     switch(this.morphism) {
@@ -102,16 +112,25 @@ class QuineSystem {
     this.currentStep = 0;
   }
 
+  detectCycle() {
+    // Look for repeating patterns in replication history
+    const currentState = JSON.stringify(this.byteWords.map(bw => bw.value));
+    return this.replicationHistory.findIndex(state => 
+      JSON.stringify(state) === currentState
+    );
+  }
+
   step() {
     if (this.byteWords.length === 0) return;
     
     // Create a copy of the current state
     const newByteWords = [...this.byteWords];
+    const originalLength = this.byteWords.length;
     
-    // Process each ByteWord based on its morphism
-    for (let i = 0; i < this.byteWords.length; i++) {
+    // Process only the original ByteWords in this step
+    for (let i = 0; i < originalLength; i++) {
       const current = this.byteWords[i];
-      const targetIndex = (i + 1) % this.byteWords.length; // Point to next ByteWord
+      const targetIndex = (i + 1) % originalLength; // Point to next original ByteWord
       const target = this.byteWords[targetIndex];
       
       // Apply transformation based on the current ByteWord's morphism
@@ -130,11 +149,18 @@ class QuineSystem {
     
     return this.byteWords;
   }
-
-  reset(initialByteWords) {
-    this.byteWords = [...initialByteWords];
-    this.replicationHistory = [this.byteWords.map(bw => bw.value)];
-    this.currentStep = 0;
+  calculateEntropy() {
+    const values = this.byteWords.map(bw => bw.value);
+    const frequencies = {};
+    // Count occurrences
+    values.forEach(val => {
+      frequencies[val] = (frequencies[val] || 0) + 1;
+    });
+    // Calculate entropy
+    return Object.values(frequencies).reduce((entropy, freq) => {
+      const p = freq / values.length;
+      return entropy - p * Math.log2(p);
+    }, 0);
   }
 }
 
