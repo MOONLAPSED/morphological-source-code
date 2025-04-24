@@ -2299,7 +2299,7 @@ def atom(cls: Type[{T, V, C}]) -> Type[{T, V, C}]: # homoicon decorator
 
     cls.__init__ = new_init
     return cls
-def encode(atom: 'Atom') -> bytes:
+def encode(atom: '__Atom__') -> bytes:
     data = {
         'tag': atom.tag,
         'value': atom.value,
@@ -2308,9 +2308,9 @@ def encode(atom: 'Atom') -> bytes:
     }
     return pickle.dumps(data)
 
-def decode(data: bytes) -> 'Atom':
+def decode(data: bytes) -> '__Atom__':
     data = pickle.loads(data)
-    atom = Atom(data['tag'], data['value'], [decode(child) for child in data['children']], data['metadata'])
+    atom = __Atom__(data['tag'], data['value'], [decode(child) for child in data['children']], data['metadata'])
     return atom
 
 def validate(cls: Type[T]) -> Type[T]:
