@@ -613,8 +613,6 @@ class BYTE_WORD:
     def __repr__(self) -> str:
         return f"BYTE_WORD(value={self.value:08b})"
 
-SESSION_TIMEOUT = BYTE_WORD * 60  # 1 minute per byte-word default scale-factor
-
 class Missing:
     """Marker class to indicate a missing value."""
     pass
