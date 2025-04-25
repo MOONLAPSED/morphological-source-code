@@ -57,9 +57,22 @@ In MSC, source code is represented not as traditional bytecode or static data bu
 
 1. **Hilbert Space Encoding**: Each unit of code (or its state) exists as a vector in a Hilbert space, with each vector representing an eigenstate of an operator. This enables "morphological reasoning" about the state of the system. Imagine representing your code as points in a structured multi-dimensional space. Each point corresponds to a specific state of your code. By using a Hilbert space, we can analyze and transform (using Lagrangian or other methods) these states in a way that mirrors how quantum systems evolve, by representing potential states and transitions between them. This corresponds with how the code evolves through its lifecycle, its behaviors and interactions with the environment (and the outcomes of those interactions).
 
+MSC treats code as a vector in a Hilbert space, acted upon by self-adjoint operators. Execution is no longer a linear traversal—it's a unitary transformation. Your program isn't *run*, it's *collapsed* from a superposed semantic state into an observable behavior.
+
+
 2. **Stateful Dynamics**: Imagine your code not as a static set of instructions, but as a dynamic entity that changes over time. These changes are driven by "operators," which act like rules that transform the code's state. Think of these transformations as a series of steps, where each step has a probability of occurring, much like a quantum system. This process, known as a "quantum stochastic process," or '(non)Markovian' processes, eventually leads to a final, observable state—the outcome of your code's execution -— functions of time that collapse into a final observable state.
 
 3. **Symmetry and Reversibility**: At the core of MSC are "self-adjoint operators." These special operators ensure that the transformations within your code are symmetrical and reversible. This means that for every change your code undergoes, there's a corresponding reverse change, maintaining a balance. This is similar to how quantum systems evolve in a way that preserves information. The computation is inherently tied to **symmetry** and **reversibility**, with self-adjoint operators ensuring the system's **unitary evolution** over time. This property is correlated with Markovian and Non-Markovian behavior and its thermodynamic character and it can only reasonably be done within a categorical-theory framework; this symmetry and reversibility tie back to concepts like Maxwell’s Demon and the homological structure of adjoint operators, with implications that scale up to cosmic information theory—topics we’ll explore further.
+
+4. **Coroutines/Quines/State(oh my!):**
+MSC is a self-referential, generator-theoretic model of computation that treats code, runtime, and output as cryptographically bound stages of a single morphogenetic object. Think of it as training-as-mining, execution-as-proof, and computation as evolution across high-dimensional space. Where source code isn't static, execution isn't a black box, and inference becomes constructive proof-of-work.
+In MSC, generators are the foundational units of computation—and the goal is to find fixpoints where:
+
+`hash(source(gen)) == hash(runtime_repr(gen)) == hash(child(gen))`
+
+This triple-equality defines semantic closure—a generator whose source, runtime behavior, and descendant state are all consistent, reproducible, and provably equivalent. This isn’t just quining—it’s quinic hysteresis: self-reference with memory. The generator evolves by remembering its execution and encoding that history into its future behavior. Each generator becomes its own training data, producing output that is not only valid—but self-evidencing. Computation becomes constructive, recursive, and distributed. Once a hard problem is solved—once a valid generator emerges—it becomes a public good: reproducible, verifiable, and available for downstream inference.
+
+The system supports data embeddings where each packet or chunk of information can be treated as a self-contained and self-modifying object, crucial for large-scale inference tasks. I rationalize this as "micro scale" and "macro scale" computation/inference (in a multi-level competency architecture). Combined, these elements for a distributed system of the 'AP'-style ontology with 'lazy/halting' 'C' (insofar as CAP theorem).
 
 ## Theoretical Foundations: MSC as a Quantum Information Model
 
@@ -72,17 +85,22 @@ MSC goes beyond simply running code. It captures the dynamic interplay between d
 ## Practical Applications of Morphological Source Code
 
 **1. Local LLM Inference:**
-MSC allows for lightweight indexing and retrieval of semantic context embedded within the code itself, optimizing performance for resource-limited hardware while maintaining meaningful inference in local contexts.
-The system supports data embeddings where each packet or chunk of information can be treated as a self-contained and self-modifying object, crucial for large-scale inference tasks. I rationalize this as "micro scale" and "macro scale" computation/inference (in a multi-level competency architecture).
+MSC enables lightweight semantic indexing of code and data—embedding vectorized meaning directly into the source. This empowers local language models and context engines to perform fast, meaningful lookups and self-alteration. Think of code that knows its own domain, adapts across scales, and infers beyond its initial context—without relying on monolithic cloud infrastructure.
 
 **2. Game Development:**
-By applying MSC, we can encode game entities as morphological objects where state transitions happen in an eigenvalue space that dynamically evolves based on interaction within the game world.
-Memory layouts are optimized for cache locality, ensuring fast processing of game mechanics that are inherently state-dependent and context-aware.
+BIn MSC, game objects are morphodynamic entities: stateful structures evolving within a high-dimensional phase space. Physics, narrative, and interaction mechanics become algebraic transitions—eigenvalue-driven shifts in identity. Memory layouts align with morphological constraints, enabling cache-local, context-aware simulation at scale, especially for AI-rich environments.
 
 **3. Real-Time Systems:**
-Leveraging cache-aware bulk transformations in MSC allows for the efficient manipulation of data states across distributed systems. Utilizing a form of SWAR or SIMD, or dynamic all-to-all GPU kernels the system's predictable
-memory access patterns combined with semantic indexing enable high-motility, distributed coherence, and measurable outcomes in real-time systems (utilizing Cognitibe Lambda Calculus based of Newton's method, PID, PWM, or in 
-advanced quantum situations (specific polarity-needed (holograms..), etc), parametric downconversion).
+MSC's operator semantics enable predictable, parallel-safe transformations across distributed memory. Think SIMD/SWAR on the meaning layer: semantic instructions executed like vector math. Ideal for high-fidelity sensor loops, control systems, or feedback-based adaptive systems. MSC lends itself to cognitive PID, dynamic PWM, and novel control architectures where code continuously refines itself via morphological feedback.
+
+**4. Quantum Computing:**
+MSC provides a theoretical substrate for crafting morphological quantum algorithms—those whose structures emerge through the dynamic evolution of eigenstates within morphic operator spaces. In particular, the model is compatible with photonic quantum systems like Jiuzhang 3.0, where computation is realized through single-photon parametric down-conversion, polarized optical pumping, and holographic reverse Fourier transforms/gaussian boson-sampling.
+
+We envision designing quantum algorithms not as static gate-based circuits, but as stateful morphologies—dynamically evolving wavefunctions encoded via self-adjoint operator graphs. These operators reflect and transform encoded semantics in a reversible fashion, allowing information to be encoded in the path, interference pattern, or polarization state of photons.
+
+By interfacing with contemporary quantum hardware—especially those utilizing SNSPDs (Superconducting Nanowire Single-Photon Detectors) and reconfigurable optical matrices—we can structure quantum logic as semantic operators, using MSC's algebraic morphisms to shape computation through symmetry, entanglement, and evolution. This may allow for meaningful algorithmic design at the semantic-physical boundary, where morphogenesis, inference, and entropic asymmetry converge.
+
+MSC offers a symbolic framework for designing morphological quantum algorithms—ones that mirror quantum behavior not only in mechanics, but in structure, self-reference, and reversibility; bridging quantum state transitions with logical inference—rendering quantum evolution not as a black box, but as a semantically navigable landscape.
 
 ### 4. **Agentic Motility in Relativistic Spacetime**
 
