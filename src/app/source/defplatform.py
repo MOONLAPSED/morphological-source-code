@@ -1,11 +1,10 @@
-import os
-import sys
-import re
-import platform
 import ctypes
+import platform
+import sys
+import os
+import re
 from enum import IntFlag, auto
-from typing import Dict, Any, List, Optional, Tuple
-
+from typing import Optional, Dict, Any, List, Tuple, Callable
 
 # Platform detection constants
 IS_WINDOWS = sys.platform == 'win32'
@@ -13,7 +12,6 @@ IS_LINUX = sys.platform.startswith('linux')
 IS_MACOS = sys.platform == 'darwin'
 IS_POSIX = os.name == 'posix'
 IS_64BIT = sys.maxsize > 2**32
-
 
 class ProcessorFeatures(IntFlag):
     """Extensible processor feature detection."""
@@ -384,7 +382,6 @@ class ProcessorFeatures(IntFlag):
             return "BASIC"
         return " | ".join(self.get_feature_names())
 
-
 class VirtualizationType(IntFlag):
     """Types of virtualization environments."""
     NONE = 0
@@ -413,7 +410,6 @@ class VirtualizationType(IntFlag):
             if self & vtype and vtype != VirtualizationType.NONE:
                 names.append(vtype.name)
         return " | ".join(names)
-
 
 class PlatformInterface:
     """Abstract base class for platform-specific implementations."""
@@ -455,8 +451,6 @@ class PlatformInterface:
             'processor_features': str(self.processor_features),
             'is_64bit': IS_64BIT,
         }
-        
-        # Add virtualization information
         virt_info = self.detect_virtualization()
         info['virtualization'] = {
             'virtualized': virt_info['virtualized'],
@@ -464,7 +458,6 @@ class PlatformInterface:
             'confidence': virt_info['confidence'],
             'evidence': virt_info['evidence']
         }
-        
         # Add platform-specific information
         self._add_platform_specific_info(info)
         
@@ -493,7 +486,6 @@ class PlatformInterface:
             return proc.returncode, proc.stdout, proc.stderr
         except Exception as e:
             return -1, "", str(e)
-    
     def detect_virtualization(self) -> Dict[str, Any]:
         """Detect if running in a virtualized environment.
         
@@ -889,29 +881,46 @@ class PlatformInterface:
             # Ignore exceptions when checking cloud providers
             pass
 
-
 class WindowsPlatform(PlatformInterface):
     """Windows-specific platform implementation."""
     
     def load_c_library(self) -> Optional[ctypes.CDLL]:
-        """Load and return the Windows C library."""
+        """Load the Windows C runtime library."""
         try:
-            return ctypes.windll.kernel32
-        except Exception as e:
-            print(f"Error loading Windows kernel32 library: {e}")
-            return None
+            # Try to load msvcrt.dll (C runtime)
+            libc = ctypes.CDLL("msvcrt.dll")
+            return libc
+        except OSError as e:
+            print(f"Error loading C library on Windows: {e}")
+            
+            # Try alternative libraries if msvcrt fails
+            try:
+                # Try loading kernel32.dll
+                kernel32 = ctypes.WinDLL("kernel32.dll")
+                return kernel32
+            except OSError as e2:
+                print(f"Error loading kernel32.dll: {e2}")
+                return None
     
     def _add_platform_specific_info(self, info: Dict[str, Any]) -> None:
         """Add Windows-specific information to the info dictionary."""
-        # Add Windows version information
         try:
-            import winreg
+            # Windows version information
+            info['windows_version'] = sys.getwindowsversion()
             
-            # Get Windows edition
+            # Get Windows edition information
+            import winreg
+            key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, 
+                                r"SOFTWARE\Microsoft\Windows NT\CurrentVersion")
+            info['windows_product_name'] = winreg.QueryValueEx(key, "ProductName")[0]
+            info['windows_edition_id'] = winreg.QueryValueEx(key, "EditionID")[0]
+            
+            # CPU information
             key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,
-                               r'SOFTWARE\Microsoft\Windows NT\CurrentVersion')
-            info['windows_edition'] = winreg.QueryValueEx(key, 'EditionID')[0]
-            info['product_name'] = winreg.QueryValueEx(key, 'ProductName')[0]
+                               r"HARDWARE\DESCRIPTION\System\CentralProcessor\0")
+            info['cpu_name'] = winreg.QueryValueEx(key, "ProcessorNameString")[0]
+            info['cpu_vendor'] = winreg.QueryValueEx(key, "VendorIdentifier")[0]
+            info['cpu_mhz'] = winreg.QueryValueEx(key, "~MHz")[0]
             
             # Get build information
             try:
@@ -926,30 +935,8 @@ class WindowsPlatform(PlatformInterface):
                 pass
                 
             winreg.CloseKey(key)
-            
         except Exception as e:
-            info['windows_info_error'] = str(e)
-            
-        # Get domain information
-        try:
-            import socket
-            info['computer_name'] = socket.gethostname()
-            import subprocess
-            proc = subprocess.run(['systeminfo', '/fo', 'list'],
-                                capture_output=True, text=True, check=False)
-            if proc.returncode == 0:
-                # Parse the output
-                for line in proc.stdout.splitlines():
-                    if ':' in line:
-                        key, value = line.split(':', 1)
-                        key = key.strip()
-                        value = value.strip()
-                        if key == 'Domain':
-                            info['domain'] = value
-                        elif key == 'System Type':
-                            info['system_type'] = value
-        except Exception as e:
-            info['systeminfo_error'] = str(e)
+            info['windows_details_error'] = str(e)
     
     def get_memory_info(self) -> Dict[str, Any]:
         """Get Windows memory information."""
@@ -1006,84 +993,87 @@ class WindowsPlatform(PlatformInterface):
             
         return f"{value:.2f} {units[unit_index]}"
 
-
 class LinuxPlatform(PlatformInterface):
     """Linux-specific platform implementation."""
     
     def load_c_library(self) -> Optional[ctypes.CDLL]:
-        """Load and return the Linux C library."""
+        """Load the Linux C library."""
         try:
-            return ctypes.CDLL("libc.so.6")
-        except Exception as e:
-            print(f"Error loading Linux C library: {e}")
-            return None
+            # Try to load standard C library
+            libc = ctypes.CDLL("libc.so.6")
+            return libc
+        except OSError as e:
+            print(f"Error loading libc.so.6: {e}")
+            
+            # Try alternative libraries if libc.so.6 fails
+            try:
+                # Some systems use different paths
+                libc = ctypes.CDLL("libc.so")
+                return libc
+            except OSError as e2:
+                print(f"Error loading libc.so: {e2}")
+                
+                # Last resort - try to find libc dynamically
+                try:
+                    import ctypes.util
+                    libc_path = ctypes.util.find_library('c')
+                    if libc_path:
+                        libc = ctypes.CDLL(libc_path)
+                        return libc
+                except OSError as e3:
+                    print(f"Error loading dynamically found libc: {e3}")
+                    
+                return None
     
     def _add_platform_specific_info(self, info: Dict[str, Any]) -> None:
         """Add Linux-specific information to the info dictionary."""
-        # Add Linux distribution information
         try:
-            # Try to get distribution info from os-release
-            if os.path.exists('/etc/os-release'):
-                dist_info = {}
-                with open('/etc/os-release', 'r') as f:
-                    for line in f:
-                        if '=' in line:
-                            key, value = line.strip().split('=', 1)
-                            # Remove quotes if present
-                            value = value.strip('"\'')
-                            dist_info[key] = value
-                            
-                info['linux_distribution'] = {
-                    'name': dist_info.get('NAME', 'Unknown'),
-                    'id': dist_info.get('ID', 'unknown'),
-                    'version_id': dist_info.get('VERSION_ID', 'unknown'),
-                    'pretty_name': dist_info.get('PRETTY_NAME', 'Unknown Linux Distribution')
-                }
-            # Fallback to lsb_release command
+            # Get Linux distribution info
+            if hasattr(platform, 'freedesktop_os_release'):
+                # Python 3.10+ has built-in support
+                os_release = platform.freedesktop_os_release()
+                info['linux_distro'] = os_release.get('NAME', 'Unknown')
+                info['linux_version'] = os_release.get('VERSION', 'Unknown')
+                info['linux_id'] = os_release.get('ID', 'Unknown')
             else:
-                returncode, stdout, stderr = self.execute_command(['lsb_release', '-a'])
-                if returncode == 0:
-                    dist_info = {}
-                    for line in stdout.splitlines():
-                        if ':' in line:
-                            key, value = line.split(':', 1)
-                            dist_info[key.strip()] = value.strip()
-                            
-                    info['linux_distribution'] = {
-                        'name': dist_info.get('Distributor ID', 'Unknown'),
-                        'version': dist_info.get('Release', 'unknown'),
-                        'description': dist_info.get('Description', 'Unknown Linux Distribution')
-                    }
-        except Exception as e:
-            info['linux_distribution_error'] = str(e)
+                # Fallback for older Python versions
+                try:
+                    with open('/etc/os-release', 'r') as f:
+                        lines = f.readlines()
+                        os_release = {}
+                        for line in lines:
+                            if '=' in line:
+                                key, value = line.strip().split('=', 1)
+                                os_release[key] = value.strip('"\'')
+                        info['linux_distro'] = os_release.get('NAME', 'Unknown')
+                        info['linux_version'] = os_release.get('VERSION', 'Unknown')
+                        info['linux_id'] = os_release.get('ID', 'Unknown')
+                except Exception:
+                    info['linux_distro'] = 'Unknown'
+                    info['linux_version'] = 'Unknown'
             
-        # Add kernel information
-        try:
-            # Get kernel version
-            with open('/proc/version', 'r') as f:
-                info['kernel_version'] = f.read().strip()
-                
-            # Get kernel parameters
-            try:
-                with open('/proc/cmdline', 'r') as f:
-                    info['kernel_cmdline'] = f.read().strip()
-            except Exception:
-                pass
-        except Exception as e:
-            info['kernel_info_error'] = str(e)
-            
-        # Get SELinux status
-        try:
-            returncode, stdout, stderr = self.execute_command(['sestatus'])
+            # Get kernel information
+            returncode, stdout, stderr = self.execute_command(['uname', '-r'])
             if returncode == 0:
-                for line in stdout.splitlines():
-                    if ':' in line:
-                        key, value = line.split(':', 1)
-                        if key.strip() == 'SELinux status':
-                            info['selinux_status'] = value.strip()
-                            break
-        except Exception:
-            info['selinux_status'] = 'unknown'
+                info['kernel_version'] = stdout.strip()
+                
+            # Get CPU information
+            try:
+                with open('/proc/cpuinfo', 'r') as f:
+                    cpuinfo = f.read()
+                    
+                # Extract CPU model name
+                model_match = re.search(r'model name\s+:\s+(.*)', cpuinfo)
+                if model_match:
+                    info['cpu_model'] = model_match.group(1)
+                    
+                # Count CPU cores
+                info['cpu_cores'] = cpuinfo.count('processor\t:')
+            except Exception as e:
+                info['cpu_info_error'] = str(e)
+                
+        except Exception as e:
+            info['linux_details_error'] = str(e)
     
     def get_memory_info(self) -> Dict[str, Any]:
         """Get Linux memory information from /proc/meminfo."""
@@ -1125,47 +1115,69 @@ class LinuxPlatform(PlatformInterface):
             
         return f"{value:.2f} {units[unit_index]}"
 
-
 class MacOSPlatform(PlatformInterface):
     """macOS-specific platform implementation."""
     
     def load_c_library(self) -> Optional[ctypes.CDLL]:
-        """Load and return the macOS C library."""
+        """Load the macOS C library."""
         try:
-            return ctypes.CDLL("libc.dylib")
-        except Exception as e:
-            print(f"Error loading macOS C library: {e}")
+            # Try to load C library on macOS
+            libc = ctypes.CDLL("libc.dylib")
+            return libc
+        except OSError as e:
+            print(f"Error loading libc.dylib: {e}")
+            
+            # Try alternative libraries if libc.dylib fails
+            try:
+                # Use ctypes.util to find the C library
+                import ctypes.util
+                libc_path = ctypes.util.find_library('c')
+                if libc_path:
+                    libc = ctypes.CDLL(libc_path)
+                    return libc
+            except OSError as e2:
+                print(f"Error loading dynamically found libc: {e2}")
+                
             return None
     
     def _add_platform_specific_info(self, info: Dict[str, Any]) -> None:
         """Add macOS-specific information to the info dictionary."""
-        # Get macOS version information
         try:
-            returncode, stdout, stderr = self.execute_command(['sw_vers'])
-            if returncode == 0:
-                for line in stdout.splitlines():
-                    if ':' in line:
-                        key, value = line.split(':', 1)
-                        key = key.strip()
-                        value = value.strip()
-                        
-                        if key == 'ProductName':
-                            info['macos_product_name'] = value
-                        elif key == 'ProductVersion':
-                            info['macos_version'] = value
-                        elif key == 'BuildVersion':
-                            info['macos_build'] = value
+            # Get macOS version details
+            import subprocess
+            
+            # Get macOS version
+            result = subprocess.run(['sw_vers', '-productVersion'], 
+                                   capture_output=True, text=True, check=False)
+            if result.returncode == 0:
+                info['macos_version'] = result.stdout.strip()
+            
+            # Get macOS build number
+            result = subprocess.run(['sw_vers', '-buildVersion'], 
+                                   capture_output=True, text=True, check=False)
+            if result.returncode == 0:
+                info['macos_build'] = result.stdout.strip()
+                
+            # Get CPU information
+            result = subprocess.run(['sysctl', '-n', 'machdep.cpu.brand_string'], 
+                                   capture_output=True, text=True, check=False)
+            if result.returncode == 0:
+                info['cpu_model'] = result.stdout.strip()
+                
+            # Get CPU core count
+            result = subprocess.run(['sysctl', '-n', 'hw.physicalcpu'], 
+                                   capture_output=True, text=True, check=False)
+            if result.returncode == 0:
+                info['physical_cpu_cores'] = int(result.stdout.strip())
+                
+            result = subprocess.run(['sysctl', '-n', 'hw.logicalcpu'], 
+                                   capture_output=True, text=True, check=False)
+            if result.returncode == 0:
+                info['logical_cpu_cores'] = int(result.stdout.strip())
+                
         except Exception as e:
-            info['macos_version_error'] = str(e)
-            
-        # Get hardware model
-        try:
-            returncode, stdout, stderr = self.execute_command(['sysctl', '-n', 'hw.model'])
-            if returncode == 0:
-                info['hardware_model'] = stdout.strip()
-        except Exception:
-            pass
-            
+            info['macos_details_error'] = str(e)
+
         # Check if SIP (System Integrity Protection) is enabled
         try:
             returncode, stdout, stderr = self.execute_command(['csrutil', 'status'])
@@ -1188,7 +1200,7 @@ class MacOSPlatform(PlatformInterface):
                     info['running_under_rosetta2'] = False
             except Exception:
                 pass
-    
+
     def get_memory_info(self) -> Dict[str, Any]:
         """Get macOS memory information."""
         memory_info = {}
@@ -1248,100 +1260,201 @@ class MacOSPlatform(PlatformInterface):
             
         return f"{value:.2f} {units[unit_index]}"
 
+class PlatformFactory:
+    """Factory class for creating the appropriate platform interface."""
+    
+    @staticmethod
+    def create_platform() -> PlatformInterface:
+        """Create and return the appropriate platform interface based on the current system."""
+        try:
+            if IS_WINDOWS:
+                return WindowsPlatform()
+            elif IS_LINUX:
+                return LinuxPlatform()
+            elif IS_MACOS:
+                return MacOSPlatform()
+            else:
+                print(f"Warning: Unsupported platform {sys.platform}, using generic platform interface")
+                return PlatformInterface()  # Fallback to generic implementation
+        except Exception as e:
+            print(f"Error creating platform interface: {e}")
+            # Last resort fallback
+            return PlatformInterface()
+    
+    @staticmethod
+    def create_specific_platform(platform_type: str) -> Optional[PlatformInterface]:
+        """Create a specific platform interface regardless of the current system."""
+        try:
+            if platform_type.lower() == 'windows':
+                return WindowsPlatform()
+            elif platform_type.lower() == 'linux':
+                return LinuxPlatform()
+            elif platform_type.lower() in ('macos', 'darwin', 'mac'):
+                return MacOSPlatform()
+            else:
+                print(f"Unknown platform type: {platform_type}")
+                return None
+        except Exception as e:
+            print(f"Error creating specific platform interface: {e}")
+            return None
 
-def get_platform_interface() -> PlatformInterface:
-    """Factory function to get the appropriate platform interface."""
-    if IS_WINDOWS:
-        return WindowsPlatform()
-    elif IS_LINUX:
-        return LinuxPlatform()
-    elif IS_MACOS:
-        return MacOSPlatform()
-    else:
-        # Default to a basic implementation
-        return PlatformInterface()
 
+class FallbackPlatformInterface(PlatformInterface):
+    """Resilient fallback platform interface that tries multiple approaches."""
+    
+    def __init__(self):
+        """Initialize with multiple platform interfaces as fallbacks."""
+        super().__init__()
+        self._platforms = []
+        self._current_platform = None
+        
+        # Try to create all platform interfaces
+        for platform_class in [WindowsPlatform, LinuxPlatform, MacOSPlatform]:
+            try:
+                self._platforms.append(platform_class())
+            except Exception:
+                pass
+        
+        # Set the most appropriate platform as current
+        self._select_appropriate_platform()
+    
+    def _select_appropriate_platform(self) -> None:
+        """Select the most appropriate platform based on the current system."""
+        # First try the native platform
+        if IS_WINDOWS:
+            for platform in self._platforms:
+                if isinstance(platform, WindowsPlatform):
+                    self._current_platform = platform
+                    return
+        elif IS_LINUX:
+            for platform in self._platforms:
+                if isinstance(platform, LinuxPlatform):
+                    self._current_platform = platform
+                    return
+        elif IS_MACOS:
+            for platform in self._platforms:
+                if isinstance(platform, MacOSPlatform):
+                    self._current_platform = platform
+                    return
+        
+        # If no matching platform, use the first available
+        if self._platforms:
+            self._current_platform = self._platforms[0]
+    
+    def _try_all_platforms(self, method_name: str, *args, **kwargs) -> Any:
+        """Try a method on all available platforms until one succeeds."""
+        # First try the current selected platform
+        if self._current_platform:
+            try:
+                method = getattr(self._current_platform, method_name)
+                return method(*args, **kwargs)
+            except Exception as e:
+                print(f"Error with current platform {type(self._current_platform).__name__}.{method_name}: {e}")
+        
+        # Try all other platforms
+        for platform in self._platforms:
+            if platform is not self._current_platform:
+                try:
+                    method = getattr(platform, method_name)
+                    return method(*args, **kwargs)
+                except Exception as e:
+                    print(f"Error with fallback platform {type(platform).__name__}.{method_name}: {e}")
+        
+        # If all platforms fail, raise exception
+        raise RuntimeError(f"All platforms failed for method {method_name}")
+    
+    def load_c_library(self) -> Optional[ctypes.CDLL]:
+        """Try to load a C library using all available platforms."""
+        try:
+            return self._try_all_platforms('load_c_library')
+        except Exception as e:
+            print(f"All platforms failed to load C library: {e}")
+            return None
+    
+    def get_memory_info(self) -> Dict[str, Any]:
+        """Get memory info using all available platforms."""
+        try:
+            return self._try_all_platforms('get_memory_info')
+        except Exception as e:
+            print(f"All platforms failed to get memory info: {e}")
+            return {'error': str(e)}
+
+# Enhanced platform factory with resilient fallback option
+class EnhancedPlatformFactory:
+    """Enhanced factory class with resilient fallback options."""
+    
+    @staticmethod
+    def create_platform(resilient: bool = True) -> PlatformInterface:
+        """
+        Create and return the appropriate platform interface.
+        
+        Args:
+            resilient: If True, returns a resilient platform interface that tries
+                      multiple approaches if the primary one fails.
+        """
+        try:
+            if resilient:
+                return FallbackPlatformInterface()
+            else:
+                return PlatformFactory.create_platform()
+        except Exception as e:
+            print(f"Error creating platform: {e}")
+            # Ultimate fallback
+            return PlatformInterface()
+
+
+# Module level convenience function
+def get_platform(resilient: bool = True) -> PlatformInterface:
+    """
+    Get the appropriate platform interface for the current system.
+    
+    Args:
+        resilient: If True, returns a resilient platform interface that tries
+                  multiple approaches if the primary one fails.
+    
+    Returns:
+        A platform interface instance appropriate for the current system.
+    """
+    return EnhancedPlatformFactory.create_platform(resilient)
 
 def main():
-    print(f"{'=' * 50}")
-    print(f"Platform Detection and virtualization stats (virtualization is required).")
-    print(f"{'=' * 50}")
-    
-    # Get platform interface
-    platform_interface = get_platform_interface()
-    
-    # Display basic platform information
-    print(f"\n[System Information]")
-    print(f"Platform: {platform.platform()}")
-    print(f"System: {platform.system()} {platform.release()}")
-    print(f"Architecture: {platform.machine()}")
-    print(f"Python: {platform.python_version()} ({platform.python_implementation()})")
-    
-    # Display processor features
-    processor_features = ProcessorFeatures.detect_features()
-    print(f"\n[Processor Features]")
-    print(f"Detected features: {processor_features}")
-    
-    feature_list = processor_features.get_feature_names()
-    if feature_list:
-        print("Feature list:")
-        for feature in feature_list:
-            print(f"  - {feature}")
-    else:
-        print("No extended processor features detected")
-    
-    # Display virtualization information
-    print(f"\n[Virtualization Detection]")
-    virt_info = platform_interface.detect_virtualization()
-    print(f"Virtualized: {virt_info['virtualized']}")
-    print(f"Virtualization type: {virt_info['virt_type']}")
-    print(f"Confidence: {virt_info['confidence']:.2f}")
-    
-    if virt_info['evidence']:
-        print("Evidence:")
-        for evidence in virt_info['evidence']:
-            print(f"  - {evidence}")
-    
-    # Display memory information
-    print(f"\n[Memory Information]")
-    memory_info = platform_interface.get_memory_info()
-    
-    # Format display based on platform
-    if IS_WINDOWS:
-        print(f"Total physical memory: {memory_info.get('total_physical_formatted', 'Unknown')}")
-        print(f"Available physical memory: {memory_info.get('available_physical_formatted', 'Unknown')}")
-        print(f"Memory load: {memory_info.get('memory_load_percent', 'Unknown')}%")
-    elif IS_LINUX:
-        print(f"Total memory: {memory_info.get('MemTotal_formatted', 'Unknown')}")
-        print(f"Available memory: {memory_info.get('MemAvailable_formatted', 'Unknown')}")
-        print(f"Memory used: {memory_info.get('memory_used_percent', 'Unknown'):.1f}%")
-    elif IS_MACOS:
-        print(f"Total memory: {memory_info.get('total_physical_formatted', 'Unknown')}")
-        print(f"Free memory: {memory_info.get('free_memory_formatted', 'Unknown')}")
-        print(f"Memory used: {memory_info.get('memory_used_percent', 'Unknown'):.1f}%")
-    
-    # Display full platform information (condensed for readability)
-    print(f"\n[Detailed Platform Information]")
-    platform_info = platform_interface.get_platform_info()
-    
-    # Simplified output of platform details
-    if IS_WINDOWS:
-        print(f"Windows edition: {platform_info.get('windows_edition', 'Unknown')}")
-        print(f"Product name: {platform_info.get('product_name', 'Unknown')}")
-        print(f"Current build: {platform_info.get('current_build', 'Unknown')}.{platform_info.get('ubr', 'Unknown')}")
-    elif IS_LINUX:
-        dist_info = platform_info.get('linux_distribution', {})
-        print(f"Distribution: {dist_info.get('pretty_name', 'Unknown Linux Distribution')}")
-        print(f"Kernel: {platform_info.get('kernel_version', 'Unknown')}")
-    elif IS_MACOS:
-        print(f"macOS: {platform_info.get('macos_product_name', 'macOS')} {platform_info.get('macos_version', 'Unknown')}")
-        print(f"Build: {platform_info.get('macos_build', 'Unknown')}")
-        print(f"Hardware model: {platform_info.get('hardware_model', 'Unknown')}")
-        if platform_info.get('running_under_rosetta2') is not None:
-            print(f"Running under Rosetta 2: {platform_info['running_under_rosetta2']}")
-    
-    print(f"\nPlatform detection completed successfully.")
-
+    try:
+        print("Platform Detection System")
+        print("========================")
+        
+        # Create platform using the factory
+        platform_interface = get_platform(resilient=True)
+        
+        # Get platform information
+        platform_info = platform_interface.get_platform_info()
+        print("\nPlatform Information:")
+        for key, value in platform_info.items():
+            print(f"  {key}: {value}")
+        
+        # Get memory information
+        memory_info = platform_interface.get_memory_info()
+        print("\nMemory Information:")
+        for key, value in memory_info.items():
+            if isinstance(value, int) and key.endswith(('_physical', '_virtual', 'total', 'available', 'free')):
+                # Convert bytes to MB for readability
+                print(f"  {key}: {value / (1024 * 1024):.2f} MB")
+            else:
+                print(f"  {key}: {value}")
+        # Format display based on platform
+        if IS_WINDOWS:
+            print(f"Total physical memory: {memory_info.get('total_physical_formatted', 'Unknown')}")
+            print(f"Available physical memory: {memory_info.get('available_physical_formatted', 'Unknown')}")
+            print(f"Memory load: {memory_info.get('memory_load_percent', 'Unknown')}%")
+        elif IS_LINUX:
+            print(f"Total memory: {memory_info.get('MemTotal_formatted', 'Unknown')}")
+            print(f"Available memory: {memory_info.get('MemAvailable_formatted', 'Unknown')}")
+            print(f"Memory used: {memory_info.get('memory_used_percent', 'Unknown'):.1f}%")
+        elif IS_MACOS:
+            print(f"Total memory: {memory_info.get('total_physical_formatted', 'Unknown')}")
+            print(f"Free memory: {memory_info.get('free_memory_formatted', 'Unknown')}")
+            print(f"Memory used: {memory_info.get('memory_used_percent', 'Unknown'):.1f}%")    
+    except Exception as e:
+        print(f"Error in platform detection demo: {e}")
 
 if __name__ == "__main__":
     main()
