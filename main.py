@@ -516,6 +516,23 @@ BYTE_WORD = 0b1010_1100
 - High nibble (0b1010): Static type/state (T).
 - Low nibble (0b1100): Full 4-bit address (target location).
 In this case, the control bit (C) becomes part of the address itself, expanding the addressable space
+
+Morphic Source Code → ByteWord Compiler → Holographic Memory Channel → Dereference Engine → Runtime Entity  
+                                  ↓  
+                               Spectral Observers, Demonic Forks, Lambda Dracula
+
+Channel-less Gaussian white noise channel:
+| Syntax | Mapping |
+|--------|----------------------|
+| Signal | Active `C=1` transformations |
+| Noise | Bit-level uncertainty, side-channel leakage |
+| Encoding | `T`, `V`, `C` structure |
+| Decoding | Dereference chains and kernel agents |
+| Channel Capacity | Limited by MEMORY_SIZE = 16 |
+| Attenuation | Loss of control bit propagation |
+| Interference | Recursive dereference loops |
+| Detection | RaiseOllama() call to macro-agent |
+| Collapse | Termination of unaligned speculative branches |
 """
 
 """
