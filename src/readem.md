@@ -5,7 +5,7 @@ Goal: Plausibly define QSD for a laymen
 
  - Grothendieck-style abstraction : for sheaves, fibered categories, and structured dependency 
 
- - Dirac/Pauli-style operators : for probabilistic evolution and spinor-like transformations quaternion+octonian possible extensions.
+ - Dirac/Pauli-style operators : for probabilistic evolution and spinor-like transformations quaternion+octonion possible extensions.
 
  - TODO: Liouvillian, Lagrangian look into Nakajima-Zwanzig, etc.
 
@@ -177,11 +177,7 @@ Evolution is holonomic.
 
 ---
 ### Computational Order Parameter  
-$\Phi_{\text{QSD}} = \frac{\mathcal{C}_{\text{global}}}{S_{\text{total}}}
-\
-\quad \text{or} \quad
-\
-\Phi_{\text{QSD}}(x) = \nabla \cdot \left( \frac{1}{S(x)} \mathcal{C}(x) \right)$
+$\Phi_{\text{QSD}} = \frac{\mathcal{C}_{\text{global}}}{S_{\text{total}}}$ |or| $\Phi_{\text{QSD}}(x) = \nabla \cdot \left( \frac{1}{S(x)} \mathcal{C}(x) \right)$
 
 Captures the global-to-local tension between:
 
