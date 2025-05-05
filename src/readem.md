@@ -180,7 +180,7 @@ Evolution is holonomic.
 The computational order parameter, $\Phi_{\text{QSD}}$, can be expressed in two dual forms:
 
 $$
-\Phi\_{{\text{QSD}}} = \frac{\mathcal{C}\_{{\text{global}}}}{S\_{\text{total}}}
+\Phi_{\text{QSD}} = \frac{\mathcal{C}_{\text{global}}}{S_{\text{total}}}
 $$
 or (field equation)
 
