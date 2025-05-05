@@ -171,19 +171,19 @@ Evolution is holonomic.
 | Feature | Markovian View | Non-Markovian View |
 |--------|----------------|--------------------|
 | Path Type | Contractible (simplex dim 1) | Non-contractible (dim ≥ 2) |
-| Sheaf Cohomology | $ H^0 $ only | $ H^n \neq 0 $ |
+| Sheaf Cohomology |  $H^0$ only  |  $H^n \neq 0$  |
 | Operator Evolution | Local Liouville-type | Memory-kernel integro-differential |
 | Geometric Interpretation | Flat connection | Curved connection (entanglement) |
-| Order Parameter | Low $ |\Phi| $ | High $ |\Phi| $ |
-| Logical Depth | Shallow | Deep (recursive quining paths) |
+
 ---
 ### Computational Order Parameter (rough draft, see: [[pi/psi/phi]] in kb)
 $|\Phi_{\text{QSD}}| = \frac{\text{Coherence}(\mathcal{C})}{\text{Entropy}(S)}$
 
 Distinguishes regimes:
 
-- Disordered, local Markovian behavior → $ |\Phi| \to 0 $
-- Ordered, global Non-Markovian behavior → $ |\Phi| \to \infty $
+Disordered, local Markovian behavior → $|\Phi| \to 0$
+
+Ordered, global Non-Markovian behavior → $|\Phi| \to \infty$
 
 Landau theory of phase transitions, applied to computational coherence.
 
