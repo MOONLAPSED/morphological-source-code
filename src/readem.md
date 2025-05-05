@@ -201,8 +201,8 @@ $|\psi_{t+1}\rangle = \mathcal{L} |\psi_t\rangle$
 
 Key operators:
 
-- Quining: unitary $ U $  
-- Branching: superposition $ \Psi \mapsto \sum_i c_i \Psi_i $  
+- Quining: unitary $U$  
+- Branching: superposition $\Psi \mapsto \sum_i c_i \Psi_i$  
 - Merge: measurement collapse via oracle consensus  
 
 Use Pauli matrices for binary decision paths.
@@ -221,5 +221,3 @@ Quaternion/octonion structure emerges in path composition over z-coordinate shif
 - This gives rise to descent data; how local observations glue into global coherence & encodes non-Markovian memory.
 
 ---
-
-affine?
