@@ -177,11 +177,9 @@ Evolution is holonomic.
 
 ---
 ### Computational Order Parameter  
-$$
-\Phi_{\text{QSD}} = \frac{\mathcal{C}_{\text{global}}}{S_{\text{total}}}
+$\Phi_{\text{QSD}} = \frac{\mathcal{C}_{\text{global}}}{S_{\text{total}}}
 \quad \text{or} \quad
-\Phi_{\text{QSD}}(x) = \nabla \cdot \left( \frac{1}{S(x)} \mathcal{C}(x) \right)
-$$
+\Phi_{\text{QSD}}(x) = \nabla \cdot \left( \frac{1}{S(x)} \mathcal{C}(x) \right)$
 
 Captures the global-to-local tension between:
 
@@ -190,19 +188,19 @@ Captures the global-to-local tension between:
 
 Interpretation:
 
-- $ |\Phi| \to 0 $ → Disordered, Markovian regime  
-- $ |\Phi| \to \infty $ → Ordered, Non-Markovian regime  
-- $ |\Phi| \sim 1 $ → Critical transition zone  
-
-See also: [[pi/psi/phi]]
+- $|\Phi|$ to 0 → Disordered, Markovian regime  
+- $|\Phi|$ to $\infty $ → Ordered, Non-Markovian regime  
+- $|\Phi|$ sim 1 → Critical transition zone  
 
 Distinguishes regimes:
 
-Disordered, local Markovian behavior → $|\Phi| \to 0$
+Disordered, local Markovian behavior → $|\Phi|$ to $0$
 
-Ordered, global Non-Markovian behavior → $|\Phi| \to \infty$
+Ordered, global Non-Markovian behavior → $|\Phi|$ to $\infty$
 
 Landau theory of phase transitions, applied to computational coherence.
+
+See also: [[pi/psi/phi]]
 
 ---
 ## Pauli/Dirac Matrix Mechanics Kernel (rough draft)
