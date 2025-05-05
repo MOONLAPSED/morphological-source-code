@@ -178,7 +178,9 @@ Evolution is holonomic.
 ---
 ### Computational Order Parameter  
 $\Phi_{\text{QSD}} = \frac{\mathcal{C}_{\text{global}}}{S_{\text{total}}}
+\
 \quad \text{or} \quad
+\
 \Phi_{\text{QSD}}(x) = \nabla \cdot \left( \frac{1}{S(x)} \mathcal{C}(x) \right)$
 
 Captures the global-to-local tension between:
