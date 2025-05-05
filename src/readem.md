@@ -190,7 +190,7 @@ Landau theory of phase transitions, applied to computational coherence.
 ---
 ## Pauli/Dirac Matrix Mechanics Kernel (rough draft)
 
-Define Hilbert-like space of runtime states $ \mathcal{H}_{\text{RT}} $, where:
+Define Hilbert-like space of runtime states $\mathcal{H}_{\text{RT}}$, where:
 
 - Basis vectors: runtime quanta  
 - Inner product: entropy-weighted similarity  
