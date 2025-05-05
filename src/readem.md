@@ -122,7 +122,7 @@ class ByteWord:
 ```
 ---
 
-### Core Type-Theoretic Space $\Psi$-{Type}  
+### Core Type-Theoretic Space $\Psi$-Type  
 Given:  ∞-category of runtime quanta
 
 We define a computational order parameter:
@@ -133,7 +133,7 @@ Which distinguishes between:
     Disordered, local Markovian regimes  (∣Φ∣→0)  
     Ordered, global Non-Markovian regimes  (∣Φ∣→∞)
 
-Each value $\psi$ : $\Psi$ is a **collapsed runtime instance**, equipped with:
+Each value $\psi$ : $\Psi$ is a collapsed runtime instance, equipped with:
 
 - `sourceCode`  
 - `entanglementLinks`  
@@ -162,11 +162,12 @@ Future depends only on present.
 No holonomy. No memory. No twist.
 
 A non-trivial cycle, or higher-dimensional cell (Non-Markovian)  
-$\psi_t = \int K(t,t') \mathcal{L}(t') \psi_{t'} dt'$  
-#### Gloss
+$\psi_t = \int K(t,t') \mathcal{L}(t') \psi_{t'} dt'$
+
 Memory kernel $ K $ weights history.  
 Entanglement metadata acts as connection form.  
 Evolution is holonomic.
+
 | Feature | Markovian View | Non-Markovian View |
 |--------|----------------|--------------------|
 | Path Type | Contractible (simplex dim 1) | Non-contractible (dim ≥ 2) |
@@ -195,14 +196,14 @@ Define Hilbert-like space of runtime states $ \mathcal{H}_{\text{RT}} $, where:
 - Inner product: entropy-weighted similarity  
 - Operators: model transformations  
 
-Let $ \mathcal{L} $ be the **Liouvillian generator** of evolution:
+Let $\mathcal{L}$ be the Liouvillian generator of evolution:
 $|\psi_{t+1}\rangle = \mathcal{L} |\psi_t\rangle$
 
 Key operators:
 
-- **Quining**: unitary $ U $  
-- **Branching**: superposition $ \Psi \mapsto \sum_i c_i \Psi_i $  
-- **Merge**: measurement collapse via oracle consensus  
+- Quining: unitary $ U $  
+- Branching: superposition $ \Psi \mapsto \sum_i c_i \Psi_i $  
+- Merge: measurement collapse via oracle consensus  
 
 Use Pauli matrices for binary decision paths.
 Use Dirac algebra for spinor-like runtime state evolution.  
