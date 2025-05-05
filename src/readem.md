@@ -177,7 +177,7 @@ Evolution is holonomic.
 
 ---
 ### Computational Order Parameter  
-$\Phi_{\text{QSD}} = \frac{\mathcal{C}_{\text{global}}}{S_{\text{total}}}$ 
+$\Phi_{\text{QSD}}$ = $\frac{\mathcal{C}_{\text{global}}}{S_{\text{total}}}$
 
 |or| 
 
