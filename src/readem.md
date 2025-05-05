@@ -176,8 +176,25 @@ Evolution is holonomic.
 | Geometric Interpretation | Flat connection | Curved connection (entanglement) |
 
 ---
-### Computational Order Parameter (rough draft, see: [[pi/psi/phi]] in kb)
-$|\Phi_{\text{QSD}}| = \frac{\text{Coherence}(\mathcal{C})}{\text{Entropy}(S)}$
+### Computational Order Parameter  
+$$
+\Phi_{\text{QSD}} = \frac{\mathcal{C}_{\text{global}}}{S_{\text{total}}}
+\quad \text{or} \quad
+\Phi_{\text{QSD}}(x) = \nabla \cdot \left( \frac{1}{S(x)} \mathcal{C}(x) \right)
+$$
+
+Captures the global-to-local tension between:
+
+- `Coherence(C)` — alignment across entangled runtimes  
+- `Entropy(S)` — internal disorder within each collapsed instance  
+
+Interpretation:
+
+- $ |\Phi| \to 0 $ → Disordered, Markovian regime  
+- $ |\Phi| \to \infty $ → Ordered, Non-Markovian regime  
+- $ |\Phi| \sim 1 $ → Critical transition zone  
+
+See also: [[pi/psi/phi]]
 
 Distinguishes regimes:
 
