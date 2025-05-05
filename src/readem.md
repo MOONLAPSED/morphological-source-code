@@ -180,15 +180,14 @@ Evolution is holonomic.
 The computational order parameter, $\Phi_{\text{QSD}}$, can be expressed in two dual forms:
 
 $$
-\Phi_{\text{QSD}} = \frac{\mathcal{C}_{\text{global}}}{S_{\text{total}}}
+\Phi_{\text{QSD}} = \frac{C_{\text{global}}}{S_{\text{total}}}
 $$
 
 (global version) or (field equation):
 
 $$
-\Phi_{\text{QSD}}(x) = \nabla \cdot \left( \frac{1}{S(x)} \mathcal{C}(x) \right)
+\Phi_{\text{QSD}}(x) = \nabla \cdot \left( \frac{1}{S(x)} C(x) \right)
 $$
-
 
 Captures the global-to-local tension between:
 
