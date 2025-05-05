@@ -183,9 +183,7 @@ $$
 \Phi_{\text{QSD}} = \frac{\mathcal{C}_{\text{global}}}{S_{\text{total}}}
 $$
 
-
 (global version) or (field equation):
-
 
 $$
 \Phi_{\text{QSD}}(x) = \nabla \cdot \left( \frac{1}{S(x)} \mathcal{C}(x) \right)
