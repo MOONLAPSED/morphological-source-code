@@ -321,6 +321,7 @@ def FireFirst() -> None:
         t.add(server)
 
         # Run the event loop
+        print(f'Use ctrl+c to stop/abort the active quine/server.')
         t.run()
     except KeyboardInterrupt:
         print("\nShutting down server...")
