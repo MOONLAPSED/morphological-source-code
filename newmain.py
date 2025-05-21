@@ -94,7 +94,7 @@ class PlatformInterface:
     def load_c_library(self) -> Optional[ctypes.CDLL]:
         """Load and return the platform-specific C library."""
         raise NotImplementedError("Subclasses must implement this method")
-    def get_c_library_symbol(self, symbol_name: str) -> Optional[ctypes.CFUNCTYPE]:
+    def get_c_library_symbol(self, symbol_name: str) -> Optional[ctypes.CFUNCTYPE]: # type: ignore
         """Get and return the platform-specific C library symbol."""
         raise NotImplementedError("Subclasses must implement this method")
 class WindowsPlatform(PlatformInterface):
@@ -429,7 +429,43 @@ def log(level=logging.INFO):
                 raise
         return async_wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper
     return decorator
-
+@log()
+def snapShot(func: Callable) -> Callable:
+    """
+    Capture memory snapshots before and after function execution. OBJECT not a wrapper
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        tracemalloc.start()
+        result = func(*args, **kwargs)
+        snapshot = tracemalloc.take_snapshot()
+        tracemalloc.stop()
+        displayTop(snapshot)
+        return result
+    return wrapper
+def displayTop(snapshot, key_type: str = 'lineno', limit: int = 3):
+    """
+    Display top memory-consuming lines.
+    """
+    tracefilter = ("<frozen importlib._bootstrap>", "<frozen importlib._bootstrap_external>")
+    filters = [tracemalloc.Filter(False, item) for item in tracefilter]
+    filtered_snapshot = snapshot.filter_traces(filters)
+    topStats = filtered_snapshot.statistics(key_type)
+    result = [f"Top {limit} lines:"]
+    for index, stat in enumerate(topStats[:limit], 1):
+        frame = stat.traceback[0]
+        result.append(f"#{index}: {frame.filename}:{frame.lineno}: {stat.size / 1024:.1f} KiB")
+        line = linecache.getline(frame.filename, frame.lineno).strip()
+        if line:
+            result.append(f"    {line}")
+    # Show the total size and count of other items
+    other = topStats[limit:]
+    if other:
+        size = sum(stat.size for stat in other)
+        result.append(f"{len(other)} other: {size / 1024:.1f} KiB")
+    total = sum(stat.size for stat in topStats)
+    result.append(f"Total allocated size: {total / 1024:.1f} KiB")
+    logger.info("\n".join(result))
 class WordSize(enum.IntEnum):
     """Standardized computational word sizes"""
     BYTE = 1     # 8-bit
@@ -456,17 +492,19 @@ StateHash = Union[str, bytes, int, dict, Tuple, Hashable]
 # LRU cache with size limit to prevent memory issues
 _lsu_cache: Dict[Tuple[StateHash, int], Any] = {}  # type: ignore
 MaxCache = 10_000  # Hard-cap for now
+class AccessLevel(Enum):
+    READ = "read"
+    WRITE = "write"
+    EXECUTE = "execute"
+    ADMIN = "admin"
 class Symmetry(Enum):
     TRANSLATION = "Translation"
     ROTATION = "Rotation"
     PHASE = "Phase"
-
-
 class Conservation(Enum):
     INFORMATION = "Information"
     COHERENCE = "Coherence"
     BEHAVIORAL = "Behavioral"
-
 @dataclass
 class OrderParameter:
     """Tracks symmetry breaking in a phase transition system."""
@@ -491,8 +529,6 @@ class State:
     symmetry: Symmetry
     conservation: Conservation
     order_parameter: Optional[OrderParameter] = None  # Track symmetry breaking
-
-
 class MemoryState(StrEnum):
     QUANTUM = auto()      # Superposition state, uncommitted changes
     CLASSICAL = auto()    # Committed state (persisted to Git)
@@ -503,7 +539,8 @@ class MemoryState(StrEnum):
     SHARED = auto()       # Memory is shared between multiple runtimes
     DEALLOCATED = auto()  # Memory has been freed or process retired
 @dataclass
-class QuantumCell:
+class QCell:
+    """Second-order finite difference with future support for inner products."""
     address: int
     segment: int
     value: bytes = b'\x00' * WordSize.INT
@@ -511,8 +548,6 @@ class QuantumCell:
     commit_hash: Optional[str] = None
     data: Optional[array.array] = None
     metadata: Optional[Dict] = None
-
-
 @dataclass
 class MemoryVector:
     """Represents the quantum state of virtual memory regions"""
@@ -521,41 +556,14 @@ class MemoryVector:
     entanglement: float   # Degree of entanglement with other memory regions
     state: MemoryState
     size: int            # Size of memory region in bytes
-
-class QuantumOpType(Enum):
-    """Types of quantum operations"""
+class QOpType(Enum):
+    """Types of quinic/quantum operations"""
     IDENTITY = auto()     # No change
     HADAMARD = auto()     # Superposition
     PHASE = auto()        # Phase shift
     CNOT = auto()         # Controlled-NOT
     SWAP = auto()         # Swap bits
     MEASURE = auto()      # Collapse superposition
-
-def hash_state(state: Any) -> int:
-    """
-    Creates a hashable representation of any state object.
-    
-    Args:
-        state: Any object to be hashed
-        
-    Returns:
-        An integer hash value
-    """
-    if isinstance(state, (int, float, bool, str, bytes)):
-        return hash(state)
-    elif isinstance(state, dict):
-        # Sort keys for consistent hashing
-        items = sorted(state.items(), key=lambda x: str(x[0]))
-        return hash(tuple((str(k), hash_state(v)) for k, v in items))
-    elif isinstance(state, (list, tuple, set)):
-        return hash(tuple(hash_state(item) for item in state))
-    else:
-        # Fallback for custom objects
-        try:
-            return hash(state)
-        except TypeError:
-            # If object is unhashable, use its string representation
-            return hash(str(state))
 class QuantumState(enum.Enum):
     """Represents a computational state that tracks its quantum-like properties."""
     CLASSICAL = 0

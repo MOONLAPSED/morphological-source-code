@@ -321,6 +321,7 @@ def FireFirst() -> None:
         t.add(server)
 
         # Run the event loop
+        print(f'Use ctrl+c to stop/abort the active quine/server.')
         t.run()
     except KeyboardInterrupt:
         print("\nShutting down server...")
@@ -330,23 +331,23 @@ def FireFirst() -> None:
         if 'server_socket' in locals():
             server_socket.sock.close()
 
-    try:
-        available_port = find_available_port(PORT)
-        logger.info(f"Using port: {available_port}")
-        plat = PlatformFactory.create_platform_instance()
-        if plat is not None:
-            logger.info(f"Platform: {plat.__class__.__name__}")
-            libc = plat.load_c_library()
-            if libc is not None:
-                logger.info("C library loaded successfully.")
-                libc.printf(b"Hello from C library on %s\n" % plat.__class__.__name__)
-            else:
-                logger.info("Failed to load C library.")
-        print("FireFirst executed!")
-    except Exception as e:
-        logger.error(f"An error occurred in FireFirst: {e}")
-    finally:
-        return True
+        try:
+            available_port = find_available_port(PORT)
+            logger.info(f"Using port: {available_port}")
+            plat = PlatformFactory.create_platform_instance()
+            if plat is not None:
+                logger.info(f"Platform: {plat.__class__.__name__}")
+                libc = plat.load_c_library()
+                if libc is not None:
+                    logger.info("C library loaded successfully.")
+                    libc.printf(b"Hello from C library on %s\n" % plat.__class__.__name__.encode())
+                else:
+                    logger.info("Failed to load C library.")
+            print("FireFirst executed!")
+        except Exception as e:
+            logger.error(f"An error occurred in FireFirst: {e}")
+        finally:
+            return True
 def memoize(func: Callable) -> Callable:
     """
     Caching decorator using LRU cache with unlimited size.
