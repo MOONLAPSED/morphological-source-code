@@ -62,7 +62,7 @@ from types import SimpleNamespace, MethodType, MethodWrapperType, LambdaType, co
 from typing import (
     Any, Dict, List, Optional, Union, Callable, TypeVar, Tuple, Generic, Set,
     Coroutine, Type, NamedTuple, ClassVar, Protocol, runtime_checkable, AsyncContextManager,
-    AsyncGenerator, AsyncIterator, cast, overload, Generator, Awaitable
+    AsyncGenerator, AsyncIterator, cast, overload, Generator, Awaitable, Hashable, Iterator
 )
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -94,7 +94,7 @@ class PlatformInterface:
     def load_c_library(self) -> Optional[ctypes.CDLL]:
         """Load and return the platform-specific C library."""
         raise NotImplementedError("Subclasses must implement this method")
-    def get_c_library_symbol(self, symbol_name: str) -> Optional[ctypes.CFUNCTYPE]:
+    def get_c_library_symbol(self, symbol_name: str) -> Optional[ctypes.CFUNCTYPE]: # type: ignore
         """Get and return the platform-specific C library symbol."""
         raise NotImplementedError("Subclasses must implement this method")
 class WindowsPlatform(PlatformInterface):
@@ -119,26 +119,20 @@ class LinuxPlatform(PlatformInterface):
         except OSError as e:
             print("Error loading C library on Linux:", e)
             return None
-
 class SocketWrapper:
     def __init__(self, sock):
         if not sock:
             raise ValueError("Socket cannot be None")
         self.sock = sock
-    
     def fileno(self):
         return self.sock.fileno()
-    
     def send(self, data):
         return self.sock.send(data)
-    
     def recv(self, size):
         return self.sock.recv(size)
-    
     def accept(self):
         client, addr = self.sock.accept()
         return SocketWrapper(client), addr
-
 def nonblocking_read(sock, chunk_size=8192):
     if not isinstance(sock, SocketWrapper):
         sock = SocketWrapper(sock)
@@ -153,7 +147,6 @@ def nonblocking_read(sock, chunk_size=8192):
             yield None
         except socket.error:
             raise ConnectionLost()
-
 def nonblocking_write(sock, data):
     if not isinstance(sock, SocketWrapper):
         sock = SocketWrapper(sock)
@@ -166,7 +159,6 @@ def nonblocking_write(sock, data):
             yield None
         except socket.error:
             raise ConnectionLost()
-
 def nonblocking_accept(sock):
     if not isinstance(sock, SocketWrapper):
         sock = SocketWrapper(sock)
@@ -180,7 +172,6 @@ def nonblocking_accept(sock):
             yield None
         except socket.error:
             raise ConnectionLost()
-
 def listening_socket(host, port):
     # Create dual-stack socket that works for both IPv4 and IPv6
     sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
@@ -191,22 +182,16 @@ def listening_socket(host, port):
     sock.listen(5)
     sock.setblocking(False)
     return SocketWrapper(sock)
-
 class ConnectionLost(Exception):
     pass
-
 class Trampoline:
     """Manage communications between coroutines"""
-
     running = False
-
     def __init__(self):
         self.queue = collections.deque()
-
     def add(self, coroutine):
         """Request that a coroutine be executed"""
         self.schedule(coroutine)
-
     def run(self):
         result = None
         self.running = True
@@ -221,10 +206,8 @@ class Trampoline:
             return result
         finally:
             self.running = False
-
     def stop(self):
         self.running = False
-
     def schedule(self, coroutine, stack=(), val=None, *exc):
         def resume():
             value = val
@@ -244,40 +227,32 @@ class Trampoline:
                     # handle it, let it propagate to the
                     # run loop
                     raise
-
             if isinstance(value, types.GeneratorType):
                 # Yielded to a specific coroutine, push the
                 # current one on the stack, and call the new
                 # one with no args
                 self.schedule(value, (coroutine,stack))
-
             elif stack:
                 # Yielded a result, pop the stack and send the
                 # value to the caller
                 self.schedule(stack[0], stack[1], value)
-
             # else: this pseudothread has ended
-
         self.queue.append(resume)
-
 def echo_handler(sock):
     # Ensure socket is valid before starting
     if sock is None:
         raise ValueError("Socket must be initialized")
     wrapped_sock = SocketWrapper(sock)
-    
     while True:
         try:
             data = yield nonblocking_read(wrapped_sock)
             yield nonblocking_write(wrapped_sock, data)
         except ConnectionLost:
             break
-
 def listen_on(trampoline, sock, handler):
     if sock is None:
         raise ValueError("Listening socket must be initialized")
     wrapped_sock = SocketWrapper(sock)
-    
     while True:
         try:
             client_sock = yield from nonblocking_accept(wrapped_sock)
@@ -301,25 +276,21 @@ def find_available_port(start_port: int) -> int:
     return port
 @(lambda f: f())
 def FireFirst() -> None:
-    """Function that fires on import.
+    """Function that fires on import; before main().
     Checks for an available port starting at 8420 and logs the result.
     """
     PORT = 8420
     try:
         # Create a scheduler to manage all our coroutines
         t = Trampoline()
-
         # Initialize server socket with explicit validation
         server_socket = listening_socket("localhost", 8888)
         if not server_socket:
             raise ValueError("Failed to create server socket")
-
         # Create server coroutine with validated socket
         server = listen_on(t, server_socket, echo_handler)
-
         # Add the coroutine to the scheduler
         t.add(server)
-
         # Run the event loop
         print(f'Use ctrl+c to stop/abort the active quine/server.')
         t.run()
@@ -330,7 +301,6 @@ def FireFirst() -> None:
     finally:
         if 'server_socket' in locals():
             server_socket.sock.close()
-
         try:
             available_port = find_available_port(PORT)
             logger.info(f"Using port: {available_port}")
@@ -353,6 +323,29 @@ def memoize(func: Callable) -> Callable:
     Caching decorator using LRU cache with unlimited size.
     """
     return lru_cache(maxsize=None)(func)
+def displayTop(snapshot, key_type: str = 'lineno', limit: int = 3):
+    """
+    Display top memory-consuming lines.
+    """
+    tracefilter = ("<frozen importlib._bootstrap>", "<frozen importlib._bootstrap_external>")
+    filters = [tracemalloc.Filter(False, item) for item in tracefilter]
+    filtered_snapshot = snapshot.filter_traces(filters)
+    topStats = filtered_snapshot.statistics(key_type)
+    result = [f"Top {limit} lines:"]
+    for index, stat in enumerate(topStats[:limit], 1):
+        frame = stat.traceback[0]
+        result.append(f"#{index}: {frame.filename}:{frame.lineno}: {stat.size / 1024:.1f} KiB")
+        line = linecache.getline(frame.filename, frame.lineno).strip()
+        if line:
+            result.append(f"    {line}")
+    # Show the total size and count of other items
+    other = topStats[limit:]
+    if other:
+        size = sum(stat.size for stat in other)
+        result.append(f"{len(other)} other: {size / 1024:.1f} KiB")
+    total = sum(stat.size for stat in topStats)
+    result.append(f"Total allocated size: {total / 1024:.1f} KiB")
+    logger.info("\n".join(result))
 @contextmanager
 def memoryProfiling(active: bool = True):
     """
@@ -420,29 +413,6 @@ def snapShot(func: Callable) -> Callable:
         displayTop(snapshot)
         return result
     return wrapper
-def displayTop(snapshot, key_type: str = 'lineno', limit: int = 3):
-    """
-    Display top memory-consuming lines.
-    """
-    tracefilter = ("<frozen importlib._bootstrap>", "<frozen importlib._bootstrap_external>")
-    filters = [tracemalloc.Filter(False, item) for item in tracefilter]
-    filtered_snapshot = snapshot.filter_traces(filters)
-    topStats = filtered_snapshot.statistics(key_type)
-    result = [f"Top {limit} lines:"]
-    for index, stat in enumerate(topStats[:limit], 1):
-        frame = stat.traceback[0]
-        result.append(f"#{index}: {frame.filename}:{frame.lineno}: {stat.size / 1024:.1f} KiB")
-        line = linecache.getline(frame.filename, frame.lineno).strip()
-        if line:
-            result.append(f"    {line}")
-    # Show the total size and count of other items
-    other = topStats[limit:]
-    if other:
-        size = sum(stat.size for stat in other)
-        result.append(f"{len(other)} other: {size / 1024:.1f} KiB")
-    total = sum(stat.size for stat in topStats)
-    result.append(f"Total allocated size: {total / 1024:.1f} KiB")
-    logger.info("\n".join(result))
 class AccessLevel(Enum):
     READ = "read"
     WRITE = "write"
@@ -470,7 +440,6 @@ class SecurityContext:
             "success": success,
             "timestamp": datetime.now().timestamp()
         })
-
 # ------------------------------------------------------------------------------
 # Type Definitions
 # ------------------------------------------------------------------------------
@@ -517,11 +486,9 @@ BYTE_WORD = 0b1010_1100
 - High nibble (0b1010): Static type/state (T).
 - Low nibble (0b1100): Full 4-bit address (target location).
 In this case, the control bit (C) becomes part of the address itself, expanding the addressable space
-
 Morphic Source Code → ByteWord Compiler → Holographic Memory Channel → Dereference Engine → Runtime Entity  
                                   ↓  
                                Spectral Observers, Demonic Forks, Lambda Dracula
-
 Channel-less Gaussian white noise channel:
 | Syntax | Mapping |
 |--------|----------------------|
@@ -534,77 +501,43 @@ Channel-less Gaussian white noise channel:
 | Interference | Recursive dereference loops |
 | Detection | RaiseOllama() call to macro-agent |
 | Collapse | Termination of unaligned speculative branches |
-"""
 
-"""
 Hilbert Space in Quantum Mechanics:
-
 In quantum mechanics, a Hilbert space is a complete inner product space, typically used to describe quantum states. The states are vectors, and the inner product between them represents the probability of transitioning from one state to another. When you perform an observation in quantum mechanics (e.g., measuring a physical observable), you’re essentially taking an inner product between the state and the observable (operator).
-
     Quantum States: ∣Ψ⟩∣Ψ⟩
-
     Observable Operators: A^A^
-
     Inner Product: ⟨Ψ∣A^∣Ψ⟩⟨Ψ∣A^∣Ψ⟩, which gives the expectation value of A^A^ in the state ∣Ψ⟩∣Ψ⟩.
 """
-
-class Morphology(enum.Enum):
-    """
-    Represents the floor morphic state of a BYTE_WORD.
-    C = 0: Floor morphic state (stable, low-energy)
-    C = 1: Dynamic or high-energy state
-    The control bit (C) indicates whether other holoicons can point to this holoicon:
-    - DYNAMIC (1): Other holoicons CAN point to this holoicon
-    - QUINIC (0): Other holoicons CANNOT point to this holoicon
-    This ontology roughly maps to thermodynamic character; intensive & extensive - a
-    'quine' (self-instantiated runtime, for example) is a low-energy, intensive system,
-    while a a dynamic holoicon is a high-energy, extensive system which is inhernetly-
-    tied to it's environment. The comparison to QFT, Fermi-Dirac, and Bose-Einstein (spin
-    statistics), is also leaned-on. A 'stable quine' "exists" in the ontological sense, even
-    in it's in an 'offline' source code form; this entire process is out of scope of python-
-    alone, as an interpreted language, and is instead stylistic and grammatical
-    positioning, or, it could also be seen as a call to action for [[JIT]] just-in-time
-    compilation-based pure python system. The PyObject (CPython) concept, below, is the
-    work-around implementation of this concept where one can foist the 'dynamic' state
-    onto CPython's 'compilation', as it were. In-instances of inevitable run-ins with 
-    classical CS-problems, look to C/CPython/LLVM for the hard compilation and Racket
-    (LISP) for homoiconic representation and meta-compilation (morphisms, etc.), failing-
-    that, Erlang, SmallTalk or, worst-case scenario, JVM."""
-    MORPHIC = 0         # Stable, low-energy state
-    DYNAMIC = 1         # High-energy, potentially transformative state
-    """Fundamental computational orientation and symmetry"""
-    MARKOVIAN = -1    # Forward-evolving, irreversible
-    NON_MARKOVIAN = math.e  # Reversible, with memory
-class MorphicComplex:
-    """Represents a complex number with morphic properties."""
-    def __init__(self, real: float, imag: float):
-        self.real = real
-        self.imag = imag
-    def conjugate(self) -> 'MorphicComplex':
-        """Return the complex conjugate."""
-        return MorphicComplex(self.real, -self.imag)
-    def __add__(self, other: 'MorphicComplex') -> 'MorphicComplex':
-        return MorphicComplex(self.real + other.real, self.imag + other.imag)
-    def __mul__(self, other: 'MorphicComplex') -> 'MorphicComplex':
-        return MorphicComplex(
-            self.real * other.real - self.imag * other.imag,
-            self.real * other.imag + self.imag * other.real
-        )
-    """Derivations/alternatives (irrational-attractor, state::logic bisector, the bifurcation basis?):
-    # NON_MARKOVIAN = math.log(2).as_integer_ratio()  # Information-theoretic entropy baseline
-    # MARKOVIAN = 1 / (math.exp(-1))  # Fermi-Dirac 'occupation probability'
-    # NON_MARKOVIAN = 1 / (1 - math.exp(-1))  # Bose-Einstein 'bosonic correlation'
-    # MARKOVIAN = (1 - 5 ** 0.5) / 2  # Inverse golden ratio (entropy-dominant)
-    # NON_MARKOVIAN = (1 + 5 ** 0.5) / 2  # Phi as self-organizing structure
-    # MARKOVIAN = 1 / (1 + math.exp(-1))  # Logistic
-    # MARKOVIAN triggers a lossless (bijective) mapping.
-    # NON_MARKOVIAN triggers a lossy (entropic) mapping with a "feedback term."
-    def evolve(state: int, morphic: Morphology) -> int:
-        if morphic == Morphology.MARKOVIAN:
-            return state ^ 0b1111  # XNOR-like forward evolution
-        elif morphic == Morphology.NON_MARKOVIAN:
-            return int(state * math.e % 256)  # Feedback-dominated evolution
-        return state"""
+class Symmetry(Enum):
+    TRANSLATION = "Translation"
+    ROTATION = "Rotation"
+    PHASE = "Phase"
+class Conservation(Enum):
+    INFORMATION = "Information"
+    COHERENCE = "Coherence"
+    BEHAVIORAL = "Behavioral"
+@dataclass
+class OrderParameter:
+    """Tracks symmetry breaking in a phase transition system."""
+    value: complex
+    preserved_symmetries: Set[str]
+    broken_symmetries: Set[str]
+    def break_symmetry(self, sym: str) -> None:
+        """Move symmetry from preserved to broken."""
+        if sym in self.preserved_symmetries:
+            self.preserved_symmetries.remove(sym)
+            self.broken_symmetries.add(sym)
+    def restore_symmetry(self, sym: str) -> None:
+        """Move symmetry from broken back to preserved."""
+        if sym in self.broken_symmetries:
+            self.broken_symmetries.remove(sym)
+            self.preserved_symmetries.add(sym)
+class WordSize(enum.IntEnum):
+    """Standardized computational word sizes"""
+    BYTE = 1     # 8-bit
+    SHORT = 2    # 16-bit
+    INT = 4      # 32-bit
+    LONG = 8     # 64-bit
 # Static Markovian-Noetherian Holographic-types (Binary and guaranteed unitary - the basis in Hilbert space where suprise (or [[Free Energy Principle]] maxima/minima) is minimized/optimized and symetries-conserved.) These Noetherian-ivariant static types are the basis for the [[Holographic duality]]. They are (largley) irrational or complex, wholly non-integer, and associated with [[C*-Algebra]] and [[Algebraic Topology]], and related-pedagogy like Categories, Lagrangians, etc.
 T = TypeVar('T', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type], covariant=False, contravariant=False) # T for TypeVar, V for ValueVar. Homoicons are T+V.
 V = TypeVar('V', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type], covariant=False, contravariant=False)
@@ -622,139 +555,91 @@ V_anti = TypeVar('V_anti', bound=Union[int, float, str, bool, list, dict, tuple,
 C_anti = TypeVar('C_anti', bound=Callable[..., Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type]], contravariant=True) # Computation space with contravariance
 # C_anti = TypeVar(f"{T}or{V}or{C}", bound=Callable[..., Union[int, float, str, bool, list, dict, tuple, set, object, Callable, type]], contravariant=True)
 # By defining C_anti as a "superposition" of T, V, and C (in the f"{T}or{V}or{C}" format), this type represents all possible states (or branches of computation) that could arise from the interaction between those three spaces, but with the constraint that C_anti has contravariance. This is a way to represent the "anti-holographic" or 'Morphic' aspect of the system, where the computation space is not just a passive observer, but an active participant
+# Forward references - shadow pattern due to Monolithic format; should be modularized
+_C_ = TypeVar('Dunder_C', covariant=True)  # Morphic V-bit which replaes the most-significant V bit when present.
+class BYTE: pass  # type: ignore
+class QuantumState: pass  # type: ignore
+class HilbertSpace: pass  # type: ignore
+class MorphicComplex: pass  # type: ignore
 BYTE = TypeVar("BYTE", bound="BYTE_WORD")
-
-class BYTE_WORD:
-    def __init__(self, value: int = 0):
-        self.value = value
-
-    def __repr__(self) -> str:
-        return f"BYTE_WORD(value={self.value:08b})"
-
-class Missing:
-    """Marker class to indicate a missing value."""
-    pass
-
-
-class Reduced:
-    """Sentinel class to signal early termination during reduction."""
-    def __init__(self, val: Any):
-        self.val = val
-
-
-def ensure_reduced(x: Any) -> Union[Any, Reduced]:
-    """Ensure the value is wrapped in a Reduced sentinel."""
-    return x if isinstance(x, Reduced) else Reduced(x)
-
-
-def unreduced(x: Any) -> Any:
-    """Unwrap a Reduced value or return the value itself."""
-    return x.val if isinstance(x, Reduced) else x
-
-
-def reduce(function: Callable[[Any, T], Any], iterable: Iterable[T], initializer: Any = Missing) -> Any:
-    """A custom reduce implementation that supports early termination with Reduced."""
-    accum_value = initializer if initializer is not Missing else function()
-    for x in iterable:
-        accum_value = function(accum_value, x)
-        if isinstance(accum_value, Reduced):
-            return accum_value.val
-    return accum_value
-
-
-class Transducer:
-    """Base class for defining transducers."""
-    def __init__(self, step: Callable[[Any, T], Any]):
-        self.step = step
-
-    def __call__(self, step: Callable[[Any, T], Any]) -> Callable[[Any, T], Any]:
-        """The transducer's __call__ method allows it to be used as a decorator."""
-        return self.step(step)
-
-
-class Map(Transducer):
-    def __init__(self, f: Callable[[T], R]):
-        def _map_step(step):
-            def new_step(r: Any = Missing, x: Optional[T] = Missing):
-                if r is Missing:
-                    return step()
-                if x is Missing:
-                    return step(r)
-                return step(r, f(x))
-            return new_step
-        super().__init__(_map_step)
-
-
-class Filter(Transducer):
-    """Transducer for filtering elements based on a predicate."""
-    def __init__(self, pred: Callable[[T], bool]):
-        def _filter_step(r: Any = Missing, x: Optional[T] = Missing):
-            if r is Missing:
-                return step()
-            if x is Missing:
-                return step(r)
-            return step(r, x) if pred(x) else r
-        super().__init__(_filter_step)
-
-
-def compose(*fns: Callable[[Any], Any]) -> Callable[[Any], Any]:
-    """Compose functions in reverse order."""
-    return functools.reduce(lambda f, g: lambda x: f(g(x)), fns)
-
-
-def transduce(xform: Transducer, f: Callable[[Any, T], Any], start: Any, coll: Iterable[T]) -> Any:
-    """Apply a transducer to a collection with an initial value."""
-    reducer = xform(f)
-    return reduce(reducer, coll, start)
-
-
-def mapcat(f: Callable[[T], Iterable[R]]) -> Transducer:
-    """Map then flatten results into one collection."""
-    return compose(Map(f), Cat())
-
-
-def _cat_step(r: Any = Missing, x: Optional[Any] = Missing):
-    """Flattens nested collections during reduction.
-    
-    Args:
-        r: Accumulated result
-        x: Current iterable to flatten
-        
-    Returns:
-        Reduced collection with flattened elements
+StateHash = Union[str, bytes, int, dict, Tuple, Hashable]
+# LRU cache with size limit to prevent memory issues
+_lsu_cache: Dict[Tuple[StateHash, int], Any] = {}  # type: ignore
+MaxCache = 10_000  # Hard-cap for now
+@dataclass
+class State:
+    type_space: T
+    value_space: V
+    computation_space: C
+    SecurityContext: None
+    symmetry: Symmetry
+    conservation: Conservation
+    order_parameter: Optional[OrderParameter] = None  # Track symmetry breaking
+def hash_state(state: Any) -> int:
     """
-    if not hasattr(x, '__iter__') and x is not Missing:
-        raise TypeError(f"Expected iterable, got {type(x)}")
-    def __init__(self):
-        def _cat_step(r: Any = Missing, x: Optional[Any] = Missing):
-            if r is Missing:
-                return step()
-            if x is Missing:
-                return step(r)
-            return functools.reduce(step, x, r)
-        super().__init__(_cat_step)
-
-
-def into(target: Union[list, set], xducer: Transducer, coll: Iterable[T]) -> Any:
-    """Apply transducer and collect results into a target container."""
-    return transduce(xducer, append, target, coll)
-
-
-def append(r: Any = Missing, x: Optional[Any] = Missing) -> Any:
-    """Append to a collection, used by `into`."""
-    if r is Missing:
-        return []
-    r.append(x)
-    return r
-
-
-
-class QuantumState(enum.Enum):
+    Creates a hashable representation of any state object.
+    Args:
+        state: Any object to be hashed
+    Returns:
+        An integer hash value
+    """
+    if isinstance(state, (int, float, bool, str, bytes)):
+        return hash(state)
+    elif isinstance(state, dict):
+        # Sort keys for consistent hashing
+        items = sorted(state.items(), key=lambda x: str(x[0]))
+        return hash(tuple((str(k), hash_state(v)) for k, v in items))
+    elif isinstance(state, (list, tuple, set)):
+        return hash(tuple(hash_state(item) for item in state))
+    else:
+        # Fallback for custom objects
+        try:
+            return hash(state)
+        except TypeError:
+            # If object is unhashable, use its string representation
+            return hash(str(state))
+class MemoryState(StrEnum):
+    QUANTUM = auto()      # Superposition state, uncommitted changes
+    CLASSICAL = auto()    # Committed state (persisted to Git)
+    CACHED = auto()       # Loaded from disk; may be out-of-date
+    ALLOCATED = auto()    # Memory is allocated but not yet initialized
+    INITIALIZED = auto()  # Memory is initialized with data
+    PAGED = auto()        # Memory is paged to secondary storage
+    SHARED = auto()       # Memory is shared between multiple runtimes
+    DEALLOCATED = auto()  # Memory has been freed or process retired
+@dataclass
+class QCell:
+    """Second-order finite difference with future support for inner products."""
+    address: int
+    segment: int
+    value: bytes = b'\x00' * WordSize.INT
+    state: Optional[str] = None
+    commit_hash: Optional[str] = None
+    data: Optional[array.array] = None
+    metadata: Optional[Dict] = None
+@dataclass
+class MemoryVector:
+    """Represents the mixed quantum state of virtual memory regions"""
+    address_space: complex  # Complex number representing memory location probability
+    coherence: float      # Memory coherence across runtime boundaries
+    entanglement: float   # Degree of entanglement with other memory regions
+    state: MemoryState
+    size: int             # Size of memory region in bytes
+class QOpType(Enum):
+    """Types of quinic/quantum operations"""
+    IDENTITY = auto()     # No change
+    HADAMARD = auto()     # Superposition
+    PHASE = auto()        # Phase shift
+    CNOT = auto()         # Controlled-NOT
+    SWAP = auto()         # Swap bits
+    MEASURE = auto()      # Collapse superposition
+class QuantumState(enum.Enum):  # rebuild this to be a clas with a StrEnum
     """Represents a computational state that tracks its quantum-like properties."""
+    CLASSICAL = 0
     SUPERPOSITION = 1   # Known by handle only
     ENTANGLED = 2       # Referenced but not loaded
     COLLAPSED = 4       # Fully materialized
-    DECOHERENT = 8    # Garbage collected
+    DECOHERENT = 8      # Garbage collected
     def measure(self) -> int:
         """
         Perform a measurement on the quantum state.
@@ -797,14 +682,524 @@ class QuantumState(enum.Enum):
         # For simplicity, we'll just return a superposition
         coeff = MorphicComplex(1/math.sqrt(2), 0)
         return self.superposition(other, coeff, coeff)
-class WordSize(enum.IntEnum):
-    """Standardized computational word sizes"""
-    BYTE = 1     # 8-bit
-    SHORT = 2    # 16-bit
-    INT = 4      # 32-bit
-    LONG = 8     # 64-bit
+
+@dataclass
+class _Atom_(Generic[T, V, C]):  # type: ignore
+    """
+    Represents a quantum state in a Hilbert space with complex amplitudes.
+    """
+    def __init__(self, amplitudes: List[MorphicComplex], space: HilbertSpace):
+        if len(amplitudes) != space.dimension:
+            raise ValueError("Number of amplitudes must match Hilbert space dimension")
+        self.amplitudes = amplitudes
+        self.space = space
+        self.normalize()
+    def normalize(self) -> None:
+        """Normalize the state vector"""
+        norm_squared = sum(amp.real**2 + amp.imag**2 for amp in self.amplitudes)
+        norm = math.sqrt(norm_squared)
+        if norm < 1e-10:
+            raise ValueError("Cannot normalize zero state vector")
+        self.amplitudes = [MorphicComplex(amp.real/norm, amp.imag/norm) 
+                         for amp in self.amplitudes]
+    def measure(self) -> int:
+        """
+        Perform a measurement on the quantum state.
+        Returns the index of the basis state that was measured.
+        """
+        # Calculate probabilities for each basis state
+        probabilities = []
+        for amp in self.amplitudes:
+            # Probability is |amplitude|²
+            prob = amp.real**2 + amp.imag**2
+            probabilities.append(prob)
+        # Simulate measurement using the probabilities
+        r = random.random()
+        cumulative_prob = 0
+        for i, prob in enumerate(probabilities):
+            cumulative_prob += prob
+            if r <= cumulative_prob:
+                return i
+        # Fallback (shouldn't happen with normalized state)
+        return len(self.amplitudes) - 1
+    def superposition(self, other: 'QuantumState', coeff1: MorphicComplex, 
+                     coeff2: MorphicComplex) -> 'QuantumState':
+        """
+        Create a superposition of two quantum states.
+        |ψ⟩ = a|ψ₁⟩ + b|ψ₂⟩
+        """
+        if self.space.dimension != other.space.dimension:
+            raise ValueError("Quantum states must belong to same Hilbert space")
+        new_amplitudes = []
+        for i in range(len(self.amplitudes)):
+            new_amp = (self.amplitudes[i] * coeff1) + (other.amplitudes[i] * coeff2)
+            new_amplitudes.append(new_amp)
+        return QuantumState(new_amplitudes, self.space)
+    def entangle(self, other: 'QuantumState') -> 'QuantumState':
+        """
+        Create an entangled state from two quantum states.
+        |ψ⟩ = (|ψ₁⟩|0⟩ + |ψ₂⟩|1⟩)/√2
+        This is a simplified version of entanglement for demonstration.
+        """
+        # For simplicity, we'll just return a superposition
+        coeff = MorphicComplex(1/math.sqrt(2), 0)
+        return self.superposition(other, coeff, coeff)
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, QuantumState):
+            return False
+        if self.space.dimension != other.space.dimension:
+            return False
+        return all(self.amplitudes[i] == other.amplitudes[i] 
+                  for i in range(self.space.dimension))
+    def __repr__(self) -> str:
+        return f"QuantumState(amplitudes={self.amplitudes})"
+    def tensor_product(self, other: 'QuantumState') -> 'QuantumState':
+        """Create a tensor product state |ψ₁⟩ ⊗ |ψ₂⟩"""
+        dim1, dim2 = len(self.amplitudes), len(other.amplitudes)
+        new_dim = dim1 * dim2
+        new_space = HilbertSpace(new_dim)
+        new_amplitudes = []
+        for i in range(dim1):
+            for j in range(dim2):
+                product = self.amplitudes[i] * other.amplitudes[j]
+                new_amplitudes.append(product)
+        return QuantumState(new_amplitudes, new_space)
+def least_significant_unit(state: StateHash, word_size: int, 
+                          MaxCache: int = 1_000) -> Any:
+    """
+    Extracts the least significant unit of a given state based on word_size.
+    Uses an in-memory cache to avoid redundant computation.
+    Args:
+        state: The state to analyze.
+        word_size: The size of the word (1=BYTE, 2=SHORT, 4=INT, 8=LONG).
+        max_cache_size: Maximum size of the cache to prevent memory issues.
+    Returns:
+        The least significant unit of the state.
+    """
+    # Manage cache size
+    if len(_lsu_cache) > MaxCache:
+        # Clear 25% of the cache when it gets too big
+        keys_to_remove = list(_lsu_cache.keys())[:MaxCache // 4]
+        for key in keys_to_remove:
+            _lsu_cache.pop(key)
+    
+    cache_key = (state, word_size)
+    if cache_key in _lsu_cache:
+        return _lsu_cache[cache_key]
+    result = None
+    if word_size == WordSize.BYTE:  # BYTE (8-bit)
+        if isinstance(state, int):
+            result = state & 0xFF  # Extract least significant byte
+        elif isinstance(state, bytes):
+            result = state[-1] if state else 0
+        elif isinstance(state, str):
+            result = ord(state[-1]) if state else 0
+        else:
+            # Handle other types by converting to bytes first
+            result = int(hash_state(state) & 0xFF)
+    elif word_size == WordSize.SHORT:  # SHORT (16-bit)
+        if isinstance(state, int):
+            result = state & 0xFFFF  # Extract least significant 2 bytes
+        elif isinstance(state, bytes):
+            result = int.from_bytes(state[-2:].rjust(2, b'\0'), byteorder='little')
+        elif isinstance(state, str):
+            encoded = state.encode()
+            result = int.from_bytes(encoded[-2:].rjust(2, b'\0'), byteorder='little')
+        else:
+            # Handle other types by converting to bytes first
+            result = int(hash_state(state) & 0xFFFF)
+    elif word_size >= WordSize.INT:  # INT/LONG (32/64-bit)
+        if isinstance(state, int):
+            mask = (1 << (word_size * 8)) - 1
+            result = state & mask
+        elif isinstance(state, (str, bytes)):
+            data = state.encode() if isinstance(state, str) else state
+            hash_value = hashlib.sha256(data).digest()
+            result = int.from_bytes(hash_value[:word_size], byteorder='little')
+        elif isinstance(state, dict):
+            if not state:
+                result = 0
+            else:
+                # More sophisticated approach for dictionaries
+                key_hash = hash_state(tuple(sorted(str(k) for k in state.keys())))
+                val_hash = hash_state(tuple(str(v) for v in state.values()))
+                combined = (key_hash ^ val_hash) & ((1 << (word_size * 8)) - 1)
+                result = combined
+        else:
+            result = hash_state(state) & ((1 << (word_size * 8)) - 1)
+    else:
+        raise ValueError(f"Unsupported word_size: {word_size}")
+    # Cache the result
+    _lsu_cache[cache_key] = result
+    return result
+class Category(Generic[T_co, V_co, C_co]):
+    """
+    Represents a mathematical category with objects and morphisms.
+    """
+    def __init__(self, name: str):
+        self.name = name
+        self.objects: List[T_co] = []
+        self.morphisms: Dict[Tuple[T_co, T_co], List[C_co]] = {}
+    def add_object(self, obj: T_co) -> None:
+        """Add an object to the category."""
+        if obj not in self.objects:
+            self.objects.append(obj)
+    def add_morphism(self, source: T_co, target: T_co, morphism: C_co) -> None:
+        """Add a morphism between objects."""
+        if source not in self.objects:
+            self.add_object(source)
+        if target not in self.objects:
+            self.add_object(target)
+        key = (source, target)
+        if key not in self.morphisms:
+            self.morphisms[key] = []
+        self.morphisms[key].append(morphism)
+    def compose(self, f: C_co, g: C_co) -> C_co:
+        """
+        Compose two morphisms.
+        For morphisms f: A → B and g: B → C, returns g ∘ f: A → C
+        """
+        def composed(x):
+            return g(f(x))
+        return cast(C_co, composed)
+    def find_morphisms(self, source: T_co, target: T_co) -> List[C_co]:
+        """Find all morphisms between two objects."""
+        return self.morphisms.get((source, target), [])
+class Morphism(Generic[T_co, T_anti]):
+    """Abstract morphism between type structures"""
+    @abstractmethod
+    def apply(self, source: T_anti) -> T_co:
+        """Apply this morphism to transform source into target"""
+        pass
+    def __call__(self, source: T_anti) -> T_co:
+        return self.apply(source)
+    def compose(self, other: 'Morphism[U, T_co]') -> 'Morphism[U, T_anti]':
+        """Compose this morphism with another (this ∘ other)"""
+        # Type U is implied here
+        original_self = self
+        original_other = other
+        class ComposedMorphism(Morphism[T_co, T_anti]):  # type: ignore
+            def apply(self, source: T_anti) -> T_co:
+                return original_self.apply(original_other.apply(source))
+        return ComposedMorphism()
+class BYTE(Generic[T, V, C]):
+    """
+    The most fundamental unit of computation in our system.
+    Represents an 8-bit register that can be manipulated at the bit level.
+    """
+    def __init__(self, value: int = 0):
+        # Ensure value is always an 8-bit word (0-255)
+        self.value = value & 0xFF
+    """
+    Core Logic Definition (<C_C_VV|TTTT>):
+        Structure: 8 bits
+            Bit 7: C (Outer/Meta C)
+            Bit 6: _C_ (Dunder C / Contextual Bit)
+            Bits 5, 4: VV (Core Morphism)
+            Bits 3-0: TTTT (Topology/State)
+        Interpretation Rule:
+            If C == 1 (Active State):
+                Bit 6 (_C_) is the MSB of the 3-bit morphism VVV = _C_VV.
+                There are 8 possible operations defined by VVV.
+                The internal "anchor" state is not explicitly represented by _C_.
+            If C == 0 (Settled/Anchored State):
+                Bit 6 (_C_) represents the internal anchor state C_internal (0=Anchored/Static, 1=Pointable/Error?).
+                The operation is determined solely by the 2-bit VV.
+                There are 4 possible operations defined by VV.
+        Operations (Placeholders): We need 8 ops for VVV and 4 for VV. Let's define simple ones for now:
+            VVV (when C=1):
+                000 (0): Identity (Target T unchanged)
+                001 (1): Inc T ((T+1) & 0xF)
+                010 (2): Dec T ((T-1) & 0xF)
+                011 (3): Flip T (T ^ 0xF) (Pauli-X like)
+                100 (4): Flip High Nibble T (T ^ 0b1100) (Pauli-Z like?)
+                101 (5): Flip Low Nibble T (T ^ 0b0011)
+                110 (6): Set T to 0
+                111 (7): Set T to 15 (0xF)
+            VV (when C=0):
+                00 (0): Identity (Target T unchanged)
+                01 (1): Flip T (T ^ 0xF)
+                10 (2): Set T based on C_internal (T = _C_)
+                11 (3): Rotate T Left (((T << 1) | (T >> 3)) & 0xF)
+        Transformation: Source.transform(Target) applies the operation determined by Source's C and VVV/VV bits onto the Target's TTTT bits, returning a new ByteWord for the target. Crucially, the target's C, C, VV bits usually remain unchanged unless the operation specifically modifies them (none of our placeholders do).
+    """
+    def __repr__(self) -> str:
+        return f"BYTE(0x{self.value:02x}, 0b{self.value:08b})"
+    def __eq__(self, other) -> bool:
+        if isinstance(other, BYTE):
+            return self.value == other.value
+        elif isinstance(other, int):
+            return self.value == (other & 0xFF)
+        return False
+    def __hash__(self) -> int:
+        return hash(self.value)
+    # Bit-level operations
+    def get_bit(self, position: int) -> int:
+        """Get the bit at a specific position (0-7)"""
+        if not 0 <= position <= 7:
+            raise ValueError("Bit position must be between 0 and 7")
+        return (self.value >> position) & 1
+    def set_bit(self, position: int, bit_value: int) -> None:
+        """Set the bit at a specific position (0-7)"""
+        if not 0 <= position <= 7:
+            raise ValueError("Bit position must be between 0 and 7")
+        if bit_value == 1:
+            self.value |= (1 << position)
+        else:
+            self.value &= ~(1 << position)
+    def flip_bit(self, position: int) -> None:
+        """Flip the bit at a specific position (0-7)"""
+        if not 0 <= position <= 7:
+            raise ValueError("Bit position must be between 0 and 7")
+        self.value ^= (1 << position)
+    # Bitwise operations
+    def __and__(self, other: BYTE) -> BYTE:
+        return BYTE(self.value & other.value)
+    def __or__(self, other: BYTE) -> BYTE:
+        return BYTE(self.value | other.value)
+    def __xor__(self, other: BYTE) -> BYTE:
+        return BYTE(self.value ^ other.value)
+    def __invert__(self) -> BYTE:
+        return BYTE(~self.value & 0xFF)  # Keep it 8-bit
+# Utility functions for bit operations
+def pack_bits(bits: List[int]) -> BYTE:
+    """Pack a list of bits into a BYTE"""
+    result = BYTE()
+    for i, bit in enumerate(bits[:8]):  # Ensure we don't exceed 8 bits
+        if bit:
+            result.set_bit(i, 1)
+    return result
+def unpack_bits(byte: BYTE) -> List[int]:
+    """Unpack a BYTE into a list of 8 bits"""
+    return [byte.get_bit(i) for i in range(8)]
+class MorphicComplex:
+    """Represents a complex number with morphic properties.
+    Derivations/alternatives (irrational-attractor, state::logic bisector, the bifurcation basis?):
+    # self.mophology = morphism.morphology(strenum)
+    # NON_MARKOVIAN = math.log(2).as_integer_ratio()  # Information-theoretic entropy baseline
+    # MARKOVIAN = 1 / (math.exp(-1))  # Fermi-Dirac 'occupation probability'
+    # NON_MARKOVIAN = 1 / (1 - math.exp(-1))  # Bose-Einstein 'bosonic correlation'
+    # MARKOVIAN = (1 - 5 ** 0.5) / 2  # Inverse golden ratio (entropy-dominant)
+    # NON_MARKOVIAN = (1 + 5 ** 0.5) / 2  # Phi as self-organizing structure
+    # MARKOVIAN = 1 / (1 + math.exp(-1))  # Logistic
+    # MARKOVIAN triggers a lossless (bijective) mapping.
+    # NON_MARKOVIAN triggers a lossy (entropic) mapping with a "feedback term."
+    def evolve(state: int, morphic: Morphology) -> int:
+        if morphic == Morphology.MARKOVIAN:
+            return state ^ 0b1111  # XNOR-like forward evolution
+        elif morphic == Morphology.NON_MARKOVIAN:
+            return int(state * math.e % 256)  # Feedback-dominated evolution
+        return state"""
+    def __init__(self, real: float, imag: float):
+        self.real = real
+        self.imag = imag
+    def conjugate(self) -> 'MorphicComplex':
+        """Return the complex conjugate."""
+        return MorphicComplex(self.real, -self.imag)
+    def __add__(self, other: 'MorphicComplex') -> 'MorphicComplex':
+        return MorphicComplex(self.real + other.real, self.imag + other.imag)
+    def __sub__(self, other: 'MorphicComplex') -> 'MorphicComplex':
+        return MorphicComplex(self.real - other.real, self.imag - other.imag)
+    def __mul__(self, other: Union['MorphicComplex', float, int]) -> 'MorphicComplex':
+        if isinstance(other, (int, float)):
+            return MorphicComplex(self.real * other, self.imag * other)
+        return MorphicComplex(
+            self.real * other.real - self.imag * other.imag,
+            self.real * other.imag + self.imag * other.real
+        )
+    def __rmul__(self, other: Union[float, int]) -> 'MorphicComplex':
+        return self.__mul__(other)
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, MorphicComplex):
+            return False
+        return (abs(self.real - other.real) < 1e-10 and 
+                abs(self.imag - other.imag) < 1e-10)
+    def __hash__(self) -> int:
+        return hash((self.real, self.imag))
+    def __repr__(self) -> str:
+        if self.imag >= 0:
+            return f"{self.real} + {self.imag}i"
+        return f"{self.real} - {abs(self.imag)}i"
+class Matrix:
+    """Simple matrix implementation using standard Python"""
+    def __init__(self, data: List[List[Any]]):
+        if not data:
+            raise ValueError("Matrix data cannot be empty")
+        # Verify all rows have the same length
+        cols = len(data[0])
+        if any(len(row) != cols for row in data):
+            raise ValueError("All rows must have the same length")
+        self.data = data
+        self.rows = len(data)
+        self.cols = cols
+
+    def __getitem__(self, idx: Tuple[int, int]) -> Any:
+        i, j = idx
+        if not (0 <= i < self.rows and 0 <= j < self.cols):
+            raise IndexError(f"Matrix indices {i},{j} out of range")
+        return self.data[i][j]
+    def __setitem__(self, idx: Tuple[int, int], value: Any) -> None:
+        i, j = idx
+        if not (0 <= i < self.rows and 0 <= j < self.cols):
+            raise IndexError(f"Matrix indices {i},{j} out of range")
+        self.data[i][j] = value
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, Matrix):
+            return False
+        if self.rows != other.rows or self.cols != other.cols:
+            return False
+        return all(self.data[i][j] == other.data[i][j] 
+                  for i in range(self.rows) 
+                  for j in range(self.cols))
+    def __matmul__(self, other: Union['Matrix', List[Any]]) -> Union['Matrix', List[Any]]:
+        """Matrix multiplication operator @"""
+        if isinstance(other, list):
+            # Matrix @ vector
+            if len(other) != self.cols:
+                raise ValueError(f"Dimensions don't match for matrix-vector multiplication: "
+                                f"matrix cols={self.cols}, vector length={len(other)}")
+            return [sum(self.data[i][j] * other[j] for j in range(self.cols)) 
+                    for i in range(self.rows)]
+        else:
+            # Matrix @ Matrix
+            if self.cols != other.rows:
+                raise ValueError(f"Dimensions don't match for matrix multiplication: "
+                                f"first matrix cols={self.cols}, second matrix rows={other.rows}")
+            result = [[sum(self.data[i][k] * other.data[k][j] 
+                          for k in range(self.cols))
+                      for j in range(other.cols)]
+                      for i in range(self.rows)]
+            return Matrix(result)
+    def trace(self) -> Any:
+        """Calculate the trace of the matrix"""
+        if self.rows != self.cols:
+            raise ValueError("Trace is only defined for square matrices")
+        return sum(self.data[i][i] for i in range(self.rows))
+    def transpose(self) -> 'Matrix':
+        """Return the transpose of this matrix"""
+        return Matrix([[self.data[j][i] for j in range(self.rows)] 
+                      for i in range(self.cols)])
+    @staticmethod
+    def zeros(rows: int, cols: int) -> 'Matrix':
+        """Create a matrix of zeros"""
+        if rows <= 0 or cols <= 0:
+            raise ValueError("Matrix dimensions must be positive")
+        return Matrix([[0 for _ in range(cols)] for _ in range(rows)])
+    @staticmethod
+    def identity(n: int) -> 'Matrix':
+        """Create an n×n identity matrix"""
+        if n <= 0:
+            raise ValueError("Matrix dimension must be positive")
+        return Matrix([[1 if i == j else 0 for j in range(n)] for i in range(n)])
+    def __repr__(self) -> str:
+        return "\n".join([str(row) for row in self.data])
+class HilbertSpace:
+    """
+    Represents a Hilbert space that uses MorphicComplex numbers for coordinates.
+    """
+    def __init__(self, dimension: int = 3):
+        if dimension <= 0:
+            raise ValueError("Hilbert space dimension must be positive")
+        self.dimension = dimension
+        self.basis_vectors = [self._create_basis_vector(i) for i in range(dimension)]
+    def _create_basis_vector(self, index: int) -> List[MorphicComplex]:
+        """Create a basis vector with a 1 at the specified index."""
+        vector = [MorphicComplex(0, 0) for _ in range(self.dimension)]
+        vector[index] = MorphicComplex(1, 0)
+        return vector
+    def inner_product(self, vec1: List[MorphicComplex], vec2: List[MorphicComplex]) -> MorphicComplex:
+        """
+        Compute the inner product of two vectors in the Hilbert space.
+        <u, v> = ∑ᵢ (u*ᵢ × vᵢ) where u*ᵢ is the complex conjugate
+        """
+        if len(vec1) != len(vec2) or len(vec1) != self.dimension:
+            raise ValueError("Vectors must have the same dimension as the space")
+        result = MorphicComplex(0, 0)
+        for i in range(self.dimension):
+            # For each component, compute u*ᵢ × vᵢ
+            conj_u = vec1[i].conjugate()
+            result = result + (conj_u * vec2[i])
+        return result
+    def norm(self, vector: List[MorphicComplex]) -> float:
+        """Compute the norm (magnitude) of a vector."""
+        inner = self.inner_product(vector, vector)
+        return math.sqrt(inner.real)  # Inner product with self should be real
+    def normalize(self, vector: List[MorphicComplex]) -> List[MorphicComplex]:
+        """Return a normalized copy of the vector."""
+        norm_val = self.norm(vector)
+        if abs(norm_val) < 1e-10:
+            raise ValueError("Cannot normalize zero vector")
+        return [MorphicComplex(c.real/norm_val, c.imag/norm_val) for c in vector]
+    def is_orthogonal(self, vec1: List[MorphicComplex], vec2: List[MorphicComplex]) -> bool:
+        """Check if two vectors are orthogonal."""
+        inner = self.inner_product(vec1, vec2)
+        return abs(inner.real) < 1e-10 and abs(inner.imag) < 1e-10
+    def project(self, vector: List[MorphicComplex], subspace_basis: List[List[MorphicComplex]]) -> List[MorphicComplex]:
+        """Project a vector onto a subspace defined by a basis."""
+        projection = [MorphicComplex(0, 0) for _ in range(self.dimension)]
+        for basis_vec in subspace_basis:
+            # Compute <v, basis> / <basis, basis>
+            inner_v_basis = self.inner_product(vector, basis_vec)
+            inner_basis_basis = self.inner_product(basis_vec, basis_vec).real
+            if abs(inner_basis_basis) < 1e-10:
+                raise ValueError("Basis vector must not be zero")
+            # Compute the coefficient
+            coeff = MorphicComplex(inner_v_basis.real / inner_basis_basis, 
+                                  inner_v_basis.imag / inner_basis_basis)
+            # Add the contribution of this basis vector to the projection
+            for i in range(self.dimension):
+                projection[i] = projection[i] + (basis_vec[i] * coeff)
+        return projection
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, HilbertSpace):
+            return False
+        return self.dimension == other.dimension
+
+
+# ----
+# redraft this into above classes
+@dataclass
+class QuantumByte:
+    """
+    Quantum-informed byte representation. Implements entropy-based state evolution with Born rule-like collapse behavior.
+    """
+    state: int  # 8-bit state (0-255)
+    psi: float = 0.2  # Ψ parameter controlling rotations
+    pi: float = 0.05  # Π parameter controlling rotations
+    
+    def __post_init__(self):
+        # Ensure state is within 8-bit range
+        self.state = self.state & 0xFF
+    
+    def entropy(self) -> float:
+        """Calculate Shannon entropy of the state"""
+        p = self.state / 255.0
+        if p == 0 or p == 1:
+            return 0
+        return -p * math.log(p) - (1 - p) * math.log(1 - p)
+    
+    def rotate(self) -> None:
+        """
+        Implement entropy-modulated rotation
+        This creates quantum-like non-deterministic behavior
+        """
+        e = self.entropy()
+        theta = self.psi * e - self.pi * (1 - e)
+        self.state = int((self.state + 255 * theta) % 256)
+    
+    def evolve(self, steps: int = 1) -> List[int]:
+        """
+        Create a feedback loop evolution
+        Returns the history of states
+        """
+        history = [self.state]
+        for _ in range(steps):
+            self.rotate()
+            history.append(self.state)
+        return history
+
 class PyObjABC(ABC):  # Abstract Base Class for PyObject-like objects
-    """Abstract Base Class for PyObject-like objects (including __Atom__)."""
+    """Abstract Base Class for PyObject-like objects (including _Atom_)."""
     @abstractmethod
     def __getattribute__(self, name: str) -> Any:
         raise NotImplementedError
@@ -840,2093 +1235,760 @@ class PyObjABC(ABC):  # Abstract Base Class for PyObject-like objects
     def ob_ttl(self, value: Optional[int]) -> None:
         """Sets the object's time-to-live."""
         self._ttl = value
-"""py objects are implemented as C structures.
-typedef struct _object {
-    Py_ssize_t ob_refcnt;
-    PyTypeObject *ob_type;
-} PyObject;
-Everything in Python is an object, and every object has a type. The type of an object is a class. Even the
-type class itself is an instance of type. Functions defined within a class become method objects when accessed
-through an instance of the class; 3.13 std lib)Functions are instances of the function class. Methods are instances
-of the method class (which wraps functions). Both function and method are subclasses of object. Homoiconism dictates the need for a way to represent all Python constructs as first class citizen(fcc):
-    (functions, classes, control structures, operations, primitive values)
-nominative 'true OOP'(SmallTalk) and my specification demands code as data and value as logic, structure.
-The __Atom__()(s), our polymorph of object and fcc-apparent at runtime, always represents the literal source
-    cod which makes up their logic and possess the ability to be stateful source code data structure
-"""
+    """py objects are implemented as C structures.
+    typedef struct _object {
+        Py_ssize_t ob_refcnt;
+        PyTypeObject *ob_type;
+    } PyObject;
+    Everything in Python is an object, and every object has a type. The type of an object is a class. Even the
+    type class itself is an instance of type. Functions defined within a class become method objects when accessed
+    through an instance of the class; 3.13 std lib)Functions are instances of the function class. Methods are instances
+    of the method class (which wraps functions). Both function and method are subclasses of object. Homoiconism dictates the need for a way to represent all Python constructs as first class citizen(fcc):
+        (functions, classes, control structures, operations, primitive values)
+    nominative 'true OOP'(SmallTalk) and my specification demands code as data and value as logic, structure.
+    The __Atom__()(s), our polymorph of object and fcc-apparent at runtime, always represents the literal source
+        cod which makes up their logic and possess the ability to be stateful source code data structure
+    """
 @dataclass
-class CPythonFrame(PyObjABC): # type: ignore
+class CPythonFrame(PyObjABC):
     """
     Quantum-informed object representation 
-    Maps directly to CPython's PyObject structure"""
+    Maps directly to CPython's PyObject structure with quantum properties
+    """
     type_ptr: int  # Memory address of type object
     value: V
     type: Type[T]
     refcount: int = field(default=1)
     ttl: Optional[int] = None
     state: QuantumState = field(default=QuantumState.SUPERPOSITION)
+    
+    # Add a quantum byte to represent the quantum state evolution
+    quantum_byte: QuantumByte = field(default=None)
+
+    def setattr(self, name, value):
+        return super().__setattr__(name, value)
+
     @classmethod
     def from_object(cls, obj: object) -> 'CPythonFrame':
         """Extract CPython frame data from any Python object"""
+        # Create a quantum byte based on the object's hash
+        obj_hash = hash(obj) if hasattr(obj, '__hash__') and obj.__hash__ is not None else id(obj)
+        q_byte = QuantumByte(state=obj_hash & 0xFF)
+        
         return cls(
             type_ptr=id(type(obj)),
             value=obj,
             type=type(obj),
-            refcount=sys.getrefcount(obj) - 1
+            refcount=sys.getrefcount(obj) - 1,
+            quantum_byte=q_byte
         )
-        # CPythonFrame.__abstractmethods__ = set()
-        # return cls(obj.__class__.__mro__[0].__dict__.get('type_ptr'))
+    
     def __post_init__(self):
         """Initialize with timestamp and quantum properties"""
         self._birth_timestamp = time.time()
+        self._state = QuantumState.CLASSICAL  # Initialize default state
+        self._value = self.value  # Initialize _value from the provided value
+        
+        # Initialize quantum byte if not provided
+        if self.quantum_byte is None:
+            # Create a quantum byte from the hash of the value
+            value_hash = hash(self.value) if hasattr(self.value, '__hash__') and self.value.__hash__ is not None else id(self.value)
+            self.quantum_byte = QuantumByte(state=value_hash & 0xFF)
+        
         if self.ttl is not None:
             self._ttl_expiration = self._birth_timestamp + self.ttl
             self._ttl_expiration_timestamp = time.time()
-        else: self._ttl_expiration = None
+        else: 
+            self._ttl_expiration = None
+            
         if self.state == QuantumState.SUPERPOSITION:
-            self._superposition = [self.value]
+            # Initialize superposition with multiple potential states
+            # by evolving the quantum byte
+            states = self.quantum_byte.evolve(5)  # Generate 5 potential states
+            self._superposition = [self.value] + [states[i] for i in range(1, len(states))]
             self._superposition_timestamp = time.time()
-        else: self._superposition = None
-        if self.state == QuantumState.ENTANGLEMENT:
+        else: 
+            self._superposition = None
+            
+        if self.state == QuantumState.ENTANGLED:
             self._entanglement = [self.value]
             self._entanglement_timestamp = time.time()
-        else: self._entanglement = None
-        if self.type.__module__=='builtins':
+        else: 
+            self._entanglement = None
+            
+        if self.type.__module__ == 'builtins':
             """All 'knowledge' aka data is treated as python modules and these are the flags for controlling what is canon."""
             self._is_primitive = True
             self._primitive_type = self.type.__name__
             self._primitive_value = self.value
-        else: self._is_primitive = False
+        else: 
+            self._is_primitive = False
+    
     @property
     def refcount(self) -> int:
         """Reference count tracking"""
         return self._refcount
+        
+    @refcount.setter
+    def refcount(self, value: int) -> None:
+        """Set the reference count"""
+        self._refcount = value
+    
     @property
     def state(self) -> QuantumState:
         """Current quantum-like state"""
-        return self._state
+        return self._state if self._state is not None else QuantumState.CLASSICAL
+    
     def collapse(self) -> V:
-        """Force state resolution"""
+        """
+        Force state resolution using Born rule-like probability
+        Collapses superposition based on entropy values
+        """
         if self._state != QuantumState.COLLAPSED:
+            if self._state == QuantumState.SUPERPOSITION and self._superposition:
+                # Use entropy to guide probability of collapse
+                # This mimics the Born rule from quantum mechanics
+                weights = []
+                for _ in range(len(self._superposition)):
+                    self.quantum_byte.rotate()  # Rotate to get a new state
+                    weights.append(self.quantum_byte.entropy())
+                
+                # Normalize weights to sum to 1.0
+                total = sum(weights) or 1.0  # Avoid division by zero
+                normalized_weights = [w/total for w in weights]
+                
+                # Choose a value based on weights
+                chosen_index = random.choices(
+                    range(len(self._superposition)), 
+                    weights=normalized_weights, 
+                    k=1
+                )[0]
+                
+                self._value = self._superposition[chosen_index]
+            
             self._state = QuantumState.COLLAPSED
+        
         return self._value
+    
     def entangle_with(self, other: 'CPythonFrame') -> None:
-        """Create quantum entanglement with another object."""
+        """
+        Create quantum entanglement with another object.
+        Entangled objects share quantum state evolution.
+        """
         if self._entanglement is None:
             self._entanglement = [self.value]
         if other._entanglement is None:
             other._entanglement = [other.value]
+            
+        # Entangle quantum byte states through XOR operation
+        # This creates a shared quantum state
+        entangled_state = (self.quantum_byte.state ^ other.quantum_byte.state) & 0xFF
+        self.quantum_byte.state = entangled_state
+        other.quantum_byte.state = entangled_state
+        
+        # Share superposition states between objects
         self._entanglement.extend(other._entanglement)
         other._entanglement = self._entanglement
         self.state = other.state = QuantumState.ENTANGLED
+    
     def check_ttl(self) -> bool:
         """Check if TTL expired and collapse state if necessary."""
         if self.ttl is not None and time.time() >= self._ttl_expiration:
             self.collapse()
             return True
         return False
+    
     def observe(self) -> V:
-        """Collapse state upon observation if necessary."""
+        """
+        Collapse state upon observation if necessary.
+        This implements Born rule by using the quantum byte's entropy.
+        """
         self.check_ttl()
+        
         if self.state == QuantumState.SUPERPOSITION:
-            self.state = QuantumState.COLLAPSED
-            self._value = random.choice(self._superposition)
+            # Before collapsing, evolve the quantum state to mimic wave function dynamics
+            self.quantum_byte.rotate()
+            
+            # Calculate probability distribution based on entropy
+            entropy = self.quantum_byte.entropy()
+            collapse_prob = entropy / math.log(2)  # Normalized entropy
+            
+            # Collapse with probability proportional to entropy
+            if random.random() <= collapse_prob:
+                self.collapse()
         elif self.state == QuantumState.ENTANGLED:
-            self.state = QuantumState.COLLAPSED
+            # Evolve entangled state when observed
+            self.quantum_byte.rotate()
+            self.collapse()
+            
         return self.value
-class ByteWord:
-    """
-    Represents an 8-bit BYTE_WORD with a comprehensive interpretation of its structure.
-    Bit Decomposition:
-    - T (4 bits): State or data field
-    - V (3 bits): Morphism selector or transformation rule
-    - C (1 bit): Floor morphic state (pointability)
-    """
-    def __init__(self, raw: int):
+    
+    def get_measurement_histogram(self, measurements: int = 100) -> dict:
         """
-        Initialize a ByteWord from its raw 8-bit representation.
-        Args:
-            raw (int): 8-bit integer representing the BYTE_WORD
+        Perform multiple measurements to build a probability histogram.
+        This helps visualize the Born rule distribution.
         """
-        if raw < 0 or raw > 255:
-            raise ValueError("ByteWord must be an 8-bit integer (0-255)")
-        self.raw = raw
-        self.value = raw & 0xFF  # Ensure 8-bit resolution
-        # Decompose the raw value
-        self.state_data = (raw >> 4) & 0x0F    # High nibble (4 bits)
-        # Low nibble (3+1 bits);
-        self.morphism = (raw >> 1) & 0x07            # Middle 3 bits
-        self.floor_morphic = Morphology(raw & 0x01)  # Least significant bit
-        self._refcount = 1
-        self._state = QuantumState.SUPERPOSITION
-    @property
-    def _pointable(self) -> bool:
-        """
-        Determine if other holoicons can point to this holoicon.
-        Returns:
-            bool: True if the holoicon is in a dynamic (pointable) state
-        """
-        return self.floor_morphic == Morphology.DYNAMIC
-    def __repr__(self):
-        return f"BYTE_WORD({bin(self.value)})"
-    """
-    def xnor(self, other: 'BYTE_WORD') -> 'BYTE_WORD':
-        result = ~(self.value ^ other.value) & 0xFF
-        return BYTE_WORD(result)
-    """
-    @staticmethod
-    def xnor(a: int, b: int, width: int = 4) -> int:
-        return ~(a ^ b) & ((1 << width) - 1) # Mask to 4-bit output
-    @staticmethod
-    def abelian_transform(t: int, v: int, c: int) -> int:
-        """Perform the XNOR-based Abelian transformation."""
-        if c == 1:
-            return xnor(t, v)  # Apply XNOR transformation
-        return t  # Identity morphism when c = 0
-    """
-    # Example computation
-    T, V, C = 0b1010, 0b0110, 1
-    new_T = abelian_transform(T, V, C)
-    print(f"New T: {bin(new_T)}")  # Output the transformed state
-    """
-    """Flexible byte-word encoding strategy."""
-    @staticmethod
-    def extract_lsb(state: Union[str, int, bytes], word_size: int) -> Any:
-        """Extract least significant bit/byte based on word size."""
-        if word_size == 1:
-            return state[-1] if isinstance(state, str) else str(state)[-1]
-        elif word_size == 2:
-            return (
-                state & 0xFF if isinstance(state, int) else
-                state[-1] if isinstance(state, bytes) else
-                state.encode()[-1]
-            )
-        elif word_size >= 3:
-            return hashlib.sha256(
-                state.encode() if isinstance(state, str) else state
-            ).digest()[-1]
-    """Rules that map structural transformations in code morphologies."""
-    symmetry: str
-    conservation: str
-    lhs: str
-    rhs: List[Union[str, 'Morphology', 'ByteWord']]
-    def apply(self, input_seq: List[str]) -> List[str]:
-        """Applies the morphological transformation to an input sequence."""
-        if self.lhs in input_seq:
-            idx = input_seq.index(self.lhs)
-            return input_seq[:idx] + [elem for elem in self.rhs] + input_seq[idx + 1:]
-        return input_seq
-class MorphologicPyOb(CPythonFrame, PyObjABC):  # Ensure correct MRO
+        if self.state == QuantumState.COLLAPSED:
+            return {str(self.value): measurements}
+        
+        # Save original state to restore after measurements
+        original_state = self.state
+        original_value = self.value
+        
+        # Create a copy of superposition/entanglement
+        if self._superposition:
+            original_superposition = self._superposition.copy()
+        if hasattr(self, '_entanglement') and self._entanglement:
+            original_entanglement = self._entanglement.copy()
+        
+        # Perform measurements
+        results = {}
+        for _ in range(measurements):
+            # Need to reset state for each measurement
+            if original_state == QuantumState.SUPERPOSITION:
+                self._state = QuantumState.SUPERPOSITION
+                self._superposition = original_superposition.copy()
+            elif original_state == QuantumState.ENTANGLED:
+                self._state = QuantumState.ENTANGLED
+                self._entanglement = original_entanglement.copy()
+            
+            # Observe (which may collapse)
+            result = str(self.observe())
+            results[result] = results.get(result, 0) + 1
+        
+        # Restore original state
+        self._state = original_state
+        self._value = original_value
+        
+        return results
 
-    """
-    The unification of Morphologic transformations and PyObType behavior.
-    This is the grandparent class for all runtime polymorphs.
-    It encapsulates stateful, structural, and computational potential.
-    """
-    def __init__(
-        self,
-        symmetry: str,
-        conservation: str,
-        lhs: str,
-        rhs: List[Union[str, 'Morphology']],
-        value: V,
-        ttl: Optional[int] = None,
-    ):
-        PyObjABC.__init__(self, value, type(value), ttl)
-        Morphology.__init__(self, symmetry, conservation, lhs, rhs)
-    def apply_transformation(self, input_seq: List[str]) -> List[str]:
-        """
-        Applies morphological transformation while preserving object state.
-        """
-        transformed_seq = self.apply(input_seq)
-        self._state = QuantumState.ENTANGLED
-        return transformed_seq
-    def collapse_and_transform(self) -> V:
-        """Collapse to resolved state and apply morphological transformation to value."""
-        collapsed_value = self.collapse()
-        if isinstance(collapsed_value, list):
-            return self.apply_transformation(collapsed_value)
-        return collapsed_value
-    def entangle_with(self, other: 'MorphologicPyOb') -> None:
-        """Entangle with another MorphologicPyOb to preserve state & entanglement symmetry in Morphologic terms."""
-        self.entangle(other)
-        if self.lhs == other.lhs and self.conservation == other.conservation:
-            self._state = QuantumState.ENTANGLED
-            other._state = QuantumState.ENTANGLED
-    """# usage example:
-    # Instantiate a MorphologicPyOb polymorph
-    polymorph = MorphologicPyOb(
-        symmetry="Rotation",
-        conservation="Information",
-        lhs="A",
-        rhs=["B", "C"],
-        value=["A", "X", "Y"],
-    )
-    # Apply transformation
-    transformed_seq = polymorph.collapse_and_transform()
-    print(transformed_seq)  # Expected: ['B', 'C', 'X', 'Y']
-    # Create another polymorph for entanglement
-    polymorph2 = MorphologicPyOb(
-        symmetry="Rotation",
-        conservation="Information",
-        lhs="A",
-        rhs=["D", "E"],
-        value=["A", "M", "N"],
-    )
-    # Entangle them
-    polymorph.entangle_with(polymorph2)
-    print(polymorph.state)  # QuantumState.ENTANGLED
-    print(polymorph2.state)  # QuantumState.ENTANGLED
-    """
-class QuantumFrame(Generic[T, V, C]): # type: ignore
-    """
-    Bridge between CPython's memory model and quantum state space.
-    Acts as a superposition of type, value, and computation spaces.
-    """
-    def __init__(self, type_structure: T, value_space: V, computation_space: C):
-        self._type = type_structure
-        self._value = value_space
-        self._compute = computation_space
-        self._state = QuantumState.SUPERPOSITION
-        self._cpython_frame: Optional[CPythonFrame] = None
-        self._observers: set[weakref.ref] = set()
-    @property
-    def cpython_frame(self) -> CPythonFrame:
-        """Get or create the CPython frame representation"""
-        if self._cpython_frame is None:
-            # Create frame on first access
-            self._cpython_frame = CPythonFrame.from_object(self._value)
-        return self._cpython_frame
-    def entangle(self, other: 'QuantumFrame') -> None:
-        """Create quantum entanglement between frames"""
-        if self._state == QuantumState.SUPERPOSITION:
-            self._state = QuantumState.ENTANGLED
-            other._state = QuantumState.ENTANGLED
-            # Store weak reference to avoid circular references
-            self._observers.add(weakref.ref(other))
-            other._observers.add(weakref.ref(self))
-    def collapse(self) -> V:
-        """Collapse quantum state into concrete value"""
-        if self._state == QuantumState.SUPERPOSITION:
-            self._state = QuantumState.COLLAPSED
-            # Notify entangled observers
-            for obs_ref in self._observers:
-                obs = obs_ref()
-                if obs is not None:
-                    obs._state = QuantumState.COLLAPSED
-        return self._value
-    def transform(self, transformation: Callable[[V], V]) -> 'QuantumFrame[T, V, C]':
-        """Apply transformation while preserving quantum state"""
-        if self._state == QuantumState.COLLAPSED:
-            new_value = transformation(self._value)
-        else:
-            # Create transformation composition without collapsing
-            old_compute = self._compute
-            new_compute = lambda x: transformation(old_compute(x))
-            return QuantumFrame(self._type, self._value, new_compute)
-        return QuantumFrame(self._type, new_value, self._compute)
 class QuantumOperator:
-    def __init__(self, hilbert_space, matrix=None):
+    """
+    Represents a quantum operator as a matrix in a Hilbert space.
+    """
+    def __init__(self, hilbert_space: HilbertSpace, matrix: Optional[List[List[MorphicComplex]]] = None):
         self.hilbert_space = hilbert_space
         dim = hilbert_space.dimension
+        
         if matrix:
             if len(matrix) != dim or any(len(row) != dim for row in matrix):
                 raise ValueError("Operator matrix must match Hilbert space dimension")
             self.matrix = matrix
         else:
-            self.matrix = [[complex(0, 0)] * dim for _ in range(dim)]
-    def apply_to(self, state):
-        if state.hilbert_space.dimension != self.hilbert_space.dimension:
+            # Default to identity operator
+            self.matrix = [[MorphicComplex(1 if i == j else 0, 0) 
+                          for j in range(dim)] 
+                          for i in range(dim)]
+    
+    def apply_to(self, state: QuantumState) -> None:
+        """Apply this operator to a quantum state, modifying it in place"""
+        if state.space.dimension != self.hilbert_space.dimension:
             raise ValueError("Hilbert space dimensions don't match")
-        result = [sum(self.matrix[i][j] * state.amplitudes[j] 
-                 for j in range(self.hilbert_space.dimension))
-                 for i in range(self.hilbert_space.dimension)]
+            
+        result = []
+        for i in range(self.hilbert_space.dimension):
+            amplitude = MorphicComplex(0, 0)
+            for j in range(self.hilbert_space.dimension):
+                amplitude = amplitude + (self.matrix[i][j] * state.amplitudes[j])
+            result.append(amplitude)
+            
         state.amplitudes = result
         state.normalize()
-class TemporalBridge:
-    """Manages quantum state observations and temporal sorting of computations."""
-    def __init__(self):
-        self.states = {}
-        self.history = []
-        self.kT = 1.380649e-23 * 298  # Boltzmann * Room temp
-        self.execution_queue = []
-    def observe(self, func):
-        """Decorator to observe function execution, enforcing causal ordering."""
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            state_key = f"{func.__name__}_{hash(str(args) + str(kwargs))}"
-            if state_key not in self.states:
-                self.states[state_key] = QuantumState.SUPERPOSITION
-            start = time.time()
-            result = func(*args, **kwargs)
-            duration = time.time() - start
-            energy = self.kT * math.log(2) * duration
-            self.history.append((datetime.now(), func.__name__, energy))
-            self.states[state_key] = result  # Store result in state
-            return result
-        return wrapper
-    def schedule(self, func: Callable, delay: float = 0.0):
-        """Schedules a function call with a given delay, ensuring temporal sorting."""
-        heapq.heappush(self.execution_queue, (time.time() + delay, func))
-    def execute_batch(self):
-        """Executes scheduled computations in causal order."""
-        while self.execution_queue:
-            execute_time, func = heapq.heappop(self.execution_queue)
-            now = time.time()
-            if now < execute_time:
-                time.sleep(execute_time - now)
-            func()
-class RuntimeNamespace:
-    """Manages hierarchical runtime namespaces with security controls, module loading, and content embedding. Similar to a ContextManager."""
-
-    def __init__(self, name: str = "root", parent: Optional['RuntimeNamespace'] = None):
-        self._name = name
-        self._parent = parent
-        self._children: Dict[str, 'RuntimeNamespace'] = {}
-        self._content = SimpleNamespace()
-        self._security_context: Optional[SecurityContext] = None
-        self.available_modules: Dict[str, ModuleType] = {}
-        self.frame_model: Optional[FrameModel] = None  # Reference a FrameModel to 'atomize'
-
-    @property
-    def full_path(self) -> str:
-        if self._parent:
-            return f"{self._parent.full_path}.{self._name}"
-        return self._name
-
-    def add_child(self, name: str) -> 'RuntimeNamespace':
-        child = RuntimeNamespace(name, self)
-        self._children[name] = child
-        return child
-
-    def get_child(self, path: str) -> Optional['RuntimeNamespace']:
-        parts = path.split(".", 1)
-        if len(parts) == 1:
-            return self._children.get(parts[0])
-        child = self._children.get(parts[0])
-        return child.get_child(parts[1]) if child and len(parts) > 1 else None
-
-    def load_modules(self):
-        """Load available modules into the namespace."""
-        try:
-            for path in pathlib.Path(__file__).parent.glob("*.py"):
-                if path.name.startswith("_"):
-                    continue
-                module_name = path.stem
-                spec = spec_from_file_location(module_name, path)
-                if spec is None or spec.loader is None:
-                    raise ImportError(f"Cannot load module {module_name}")
-                module = module_from_spec(spec)
-                sys.modules[module_name] = module
-                spec.loader.exec_module(module)
-                self.available_modules[module_name] = module  # Store in the namespace
-            logging.info("Modules loaded successfully.")
-        except Exception as e:
-            logging.error(f"Error importing internal modules: {e}")
-            sys.exit(1)
-
-    def set_security_context(self, security_context: SecurityContext):
-        """Set the security context for this namespace."""
-        self._security_context = security_context
-
-    def set_frame_model(self, frame_model: FrameModel):
-        """Set the FrameModel for this namespace."""
-        self.frame_model = frame_model
-
-    def embed_content(self, raw_content: str) -> None:
-        """Embed raw content using the defined FrameModel."""
-        if not self.frame_model:
-            raise ValueError("No FrameModel set for this namespace.")
-        if not self.frame_model.validate_content(raw_content):
-            raise ValueError("Content validation failed. Invalid delimiters or format.")
-        parsed_content = self.frame_model.parse_content(raw_content)
-        setattr(self._content, "embedded_data", parsed_content)
-
-    def retrieve_content(self) -> str:
-        """Retrieve the embedded content from the namespace."""
-        if hasattr(self._content, "embedded_data"):
-            return self.frame_model.start_delimiter + self._content.embedded_data + self.frame_model.end_delimiter
-        raise ValueError("No content embedded in this namespace.")
-
-    # Example usage:
-    # namespace = RuntimeNamespace()
-    # namespace.load_modules()
-    # namespace.set_frame_model(some_frame_model)
-    # namespace.embed_content("raw content")
-class RuntimeManager:
-    def __init__(self):
-        self.root = RuntimeNamespace("root")
-        self._security_contexts: Dict[str, SecurityContext] = {}
-    def register_user(self, user_id: str, access_policy: AccessPolicy):
-        self._security_contexts[user_id] = SecurityContext(user_id, access_policy)
-    async def execute_query(self, user_id: str, query: str) -> Any:
-        security_context = self._security_contexts.get(user_id)
-        if not security_context:
-            raise PermissionError("User not registered")
-        try:
-            # Parse query and validate
-            parsed = ast.parse(query, mode='eval')
-            validator = QueryValidator(security_context)
-            validator.visit(parsed)
-            # Execute in isolated namespace
-            namespace = self._create_restricted_namespace(security_context)
-            result = eval(compile(parsed, '<string>', 'eval'), namespace)
-            security_context.log_access(
-                namespace="query_execution",
-                operation="execute",
-                success=True
-            )
-            return result
-        except Exception as e:
-            security_context.log_access(
-                namespace="query_execution",
-                operation="execute",
-                success=False
-            )
-            logging.error(f"Error executing query: {e}")
-            raise
-    def _create_restricted_namespace(self, security_context: SecurityContext) -> dict:
-        # Create a restricted namespace based on security context
-        return {
-            "__builtins__": None,  # Disable built-in functions
-            "print": print if security_context.access_policy.level >= AccessLevel.READ else None,
-            # Add other safe functions as needed
-        }
-    def isModule(rawClsOrFn: Union[Type, Callable]) -> Optional[str]:
-        pyModule = inspect.getmodule(rawClsOrFn)
-        if hasattr(pyModule, "__file__"):
-            return str(Path(pyModule.__file__).resolve())
-        return None
-    def getModuleImportInfo(rawClsOrFn: Union[Type, Callable]) -> Tuple[Optional[str], str, str]:
-        """
-        Given a class or function in Python, get all the information needed to import it in another Python process.
-        This version balances portability and optimization using camel case.
-        """
-        pyModule = inspect.getmodule(rawClsOrFn)
-        if pyModule is None or pyModule.__name__ == '__main__':
-            return None, 'interactive', rawClsOrFn.__name__
-        modulePath = isModule(rawClsOrFn)
-        if not modulePath:
-            # Built-in or frozen module
-            return None, pyModule.__name__, rawClsOrFn.__name__
-        rootPath = str(Path(modulePath).parent)
-        moduleName = pyModule.__name__
-        clsOrFnName = getattr(rawClsOrFn, "__qualname__", rawClsOrFn.__name__)
-        if getattr(pyModule, "__package__", None):
-            try:
-                package = __import__(pyModule.__package__)
-                packagePath = str(Path(package.__file__).parent)
-                if Path(packagePath) in Path(modulePath).parents:
-                    rootPath = str(Path(packagePath).parent)
-                else:
-                    print(f"Warning: Module is not in the expected package structure. Using file parent as root path.")
-            except Exception as e:
-                print(f"Warning: Error processing package structure: {e}. Using file parent as root path.")
-        return rootPath, moduleName, clsOrFnName
-class QueryValidator(ast.NodeVisitor):
-    def __init__(self, security_context: SecurityContext):
-        self.security_context = security_context
-    def visit_Name(self, node):
-        # Validate access to variables
-        if not self.security_context.access_policy.can_access(
-            node.id, "read"
-        ):
-            raise PermissionError(f"Access denied to name: {node.id}")
-        self.generic_visit(node)
-    def visit_Call(self, node):
-        # Validate function calls
-        if isinstance(node.func, ast.Name):
-            if not self.security_context.access_policy.can_access(
-                node.func.id, "execute"
-            ):
-                raise PermissionError(f"Access denied to function: {node.func.id}")
-        self.generic_visit(node)
-def load_modules():
-    """Function to load modules into the global runtime manager."""
-    manager = RuntimeManager()
-    manager.root.load_modules()
-    return manager.root.available_modules  # Return available modules for access
-mixins = load_modules() # Import the internal modules and literal stdlibs
-if mixins:
-    __all__ = [mixin.__name__ for mixin in mixins]
-else:
-    __all__ = []
-""" hacked namespace uses `__all__` as a whitelist of symbols which are executable source code.
-Non-whitelisted modules or runtime SimpleNameSpace()(s) are treated as 'data' which we call associative 
-'articles' within the knowledge base, loaded at runtime. They are, however, logic and state."""
-def reload_module(module):
-    try:
-        importlib.reload(module)
+    
+    def apply(self, state_vector: List[MorphicComplex]) -> List[MorphicComplex]:
+        """Apply this operator to a raw state vector, returning a new vector"""
+        if len(state_vector) != self.hilbert_space.dimension:
+            raise ValueError("Vector dimension doesn't match Hilbert space dimension")
+            
+        result = []
+        for i in range(self.hilbert_space.dimension):
+            amplitude = MorphicComplex(0, 0)
+            for j in range(self.hilbert_space.dimension):
+                amplitude = amplitude + (self.matrix[i][j] * state_vector[j])
+            result.append(amplitude)
+            
+        return result
+    
+    def __mul__(self, other: Union['QuantumOperator', float, int]) -> 'QuantumOperator':
+        """Multiply by another operator or a scalar"""
+        if isinstance(other, (int, float)):
+            # Scalar multiplication
+            result = [[self.matrix[i][j] * other 
+                      for j in range(self.hilbert_space.dimension)]
+                      for i in range(self.hilbert_space.dimension)]
+            return QuantumOperator(self.hilbert_space, result)
+        
+        elif isinstance(other, QuantumOperator):
+            # Operator composition (matrix multiplication)
+            if self.hilbert_space.dimension != other.hilbert_space.dimension:
+                raise ValueError("Hilbert space dimensions don't match")
+                
+            dim = self.hilbert_space.dimension
+            result = [[MorphicComplex(0, 0) for _ in range(dim)] for _ in range(dim)]
+            
+            for i in range(dim):
+                for j in range(dim):
+                    for k in range(dim):
+                        result[i][j] = result[i][j] + (self.matrix[i][k] * other.matrix[k][j])
+                        
+            return QuantumOperator(self.hilbert_space, result)
+    
+    def __rmul__(self, other: Union[float, int]) -> 'QuantumOperator':
+        """Right multiplication by a scalar"""
+        return self.__mul__(other)
+    
+    def __add__(self, other: 'QuantumOperator') -> 'QuantumOperator':
+        """Add two operators"""
+        if self.hilbert_space.dimension != other.hilbert_space.dimension:
+            raise ValueError("Hilbert space dimensions don't match")
+            
+        result = [[self.matrix[i][j] + other.matrix[i][j] 
+                  for j in range(self.hilbert_space.dimension)]
+                  for i in range(self.hilbert_space.dimension)]
+                  
+        return QuantumOperator(self.hilbert_space, result)
+    
+    def __sub__(self, other: 'QuantumOperator') -> 'QuantumOperator':
+        """Subtract an operator from this one"""
+        if self.hilbert_space.dimension != other.hilbert_space.dimension:
+            raise ValueError("Hilbert space dimensions don't match")
+            
+        result = [[self.matrix[i][j] - other.matrix[i][j] 
+                  for j in range(self.hilbert_space.dimension)]
+                  for i in range(self.hilbert_space.dimension)]
+                  
+        return QuantumOperator(self.hilbert_space, result)
+    
+    def __neg__(self) -> 'QuantumOperator':
+        """Negate this operator"""
+        return self.__mul__(-1)
+    
+    def is_hermitian(self) -> bool:
+        """Check if this operator is Hermitian (self-adjoint)"""
+        dim = self.hilbert_space.dimension
+        for i in range(dim):
+            for j in range(dim):
+                # Check if M[i,j] = M[j,i]*
+                if self.matrix[i][j] != self.matrix[j][i].conjugate():
+                    return False
         return True
-    except Exception as e:
-        logger.error(f"Error reloading module {module.__name__}: {e}")
-        return False
-# Truncated "Space ontology" -- think Hilbert Space Kernel
-"""
-class HilbertSpace(Generic[T, V, C]):
-    def __init__(self):
-        self.dimensions: int = 0
-        self.basis_vectors: List[Frame[T, V, C]] = []
-        self.inner_product_fn: Optional[Callable[[V, V], float]] = None
+    
+    def is_unitary(self) -> bool:
+        """Check if this operator is unitary"""
+        dim = self.hilbert_space.dimension
+        # Create matrix of inner products
+        product = [[MorphicComplex(0, 0) for _ in range(dim)] for _ in range(dim)]
+        
+        for i in range(dim):
+            for j in range(dim):
+                for k in range(dim):
+                    conj = self.matrix[k][i].conjugate()
+                    product[i][j] = product[i][j] + (conj * self.matrix[k][j])
+        
+        # Check if it equals the identity matrix
+        identity = [[MorphicComplex(1 if i == j else 0, 0) for j in range(dim)] for i in range(dim)]
+        return all(abs(product[i][j].real - identity[i][j].real) < 1e-10 and
+                   abs(product[i][j].imag - identity[i][j].imag) < 1e-10
+                  for i in range(dim) for j in range(dim))
+    
+    def __repr__(self) -> str:
+        return f"QuantumOperator(matrix={self.matrix})"
 
-    def add_dimension(self, basis_vector: Frame[T, V, C]) -> None:
-        # Adds a new basis vector to the space, increasing its dimensionality.
-        self.basis_vectors.append(basis_vector)
-        self.dimensions += 1
-    def set_inner_product(self, fn: Callable[[V, V], float]) -> None:
-        # Sets the inner product function for this Hilbert space.
-        self.inner_product_fn = fn
-    def inner_product(self, v1: V, v2: V) -> float:
-        # Computes the inner product between two vectors in this space.
-        if self.inner_product_fn is None:
-            raise ValueError("Inner product function not defined")
-        return self.inner_product_fn(v1, v2)
-    def project(self, vector: V) -> Dict[int, float]:
-        # Projects a vector onto the basis vectors of this space.
-        if self.inner_product_fn is None:
-            raise ValueError("Inner product function not defined")
-        projections = {}
-        for i, basis in enumerate(self.basis_vectors):
-            basis_value = basis.collapse()
-            projection = self.inner_product_fn(vector, basis_value)
-            projections[i] = projection
-        return projections
-"""
+class DensityMatrix:
+    """
+    Represents the quantum state as a density matrix,
+    enabling mixed state representations.
+    """
+    def __init__(self, atoms: List[_Atom_]):
+        self.atoms = atoms
+        # Assuming all atoms have quantum states
+        quantum_states = [atom.quantum_state for atom in atoms if atom.quantum_state]
+        if not quantum_states:
+            raise ValueError("No quantum states found in atoms")
+        self.matrix = self._construct_matrix(quantum_states)
+    
+    def _construct_matrix(self, states: List[QuantumState]) -> Matrix:
+        """Construct a density matrix from quantum states"""
+        n = len(states)
+        matrix_data = [[MorphicComplex(0, 0) for _ in range(n)] for _ in range(n)]
+        
+        for i, state1 in enumerate(states):
+            for j, state2 in enumerate(states):
+                # Simple outer product
+                inner_product = state1.space.inner_product(state1.amplitudes, state2.amplitudes)
+                matrix_data[i][j] = inner_product
+                
+        return Matrix(matrix_data)
+    
+    def trace(self) -> MorphicComplex:
+        """Calculate the trace of the density matrix"""
+        return self.matrix.trace()
+    
+    def __repr__(self) -> str:
+        return f"DensityMatrix(matrix={self.matrix})"
 
-class RuntimeMemory(Generic[T, V, C]):
-    """Integrates quantum memory management with runtime behavior"""
-    def __init__(self, memory_size: int):
-        self.memory_manager = __Atom__(memory_size)
-        self.page_size = 4096  # Standard page size
-        self.runtime_id = id(self)
-        self.allocated_pages: Dict[int, QuantumPage] = {}
-    def allocate_memory(self, size: int) -> Optional[QuantumPage]:
-        """Allocate memory for this runtime"""
-        page = self.memory_manager.allocate(size)
-        if page:
-            self.allocated_pages[id(page)] = page
-        return page
-    def share_with_runtime(self, 
-                          other_runtime: 'RuntimeMemory[T, V, C]',
-                          page: QuantumPage) -> bool:
-        """Share memory with another runtime"""
-        return self.memory_manager.share_memory(
-            self.runtime_id,
-            other_runtime.runtime_id,
-            page
+class PauliOperators:
+    """
+    Implementation of Pauli matrices as fundamental quantum operators.
+    These form a basis for quantum operations.
+    """
+    @staticmethod
+    def create_hilbert_space() -> HilbertSpace:
+        """Create a 2-dimensional Hilbert space for qubit operations"""
+        return HilbertSpace(2)
+    
+    @staticmethod
+    def identity(space: HilbertSpace) -> QuantumOperator:
+        """Identity matrix"""
+        I = [[MorphicComplex(1, 0), MorphicComplex(0, 0)],
+             [MorphicComplex(0, 0), MorphicComplex(1, 0)]]
+        return QuantumOperator(space, I)
+    
+    @staticmethod
+    def pauli_x(space: HilbertSpace) -> QuantumOperator:
+        """Pauli X (NOT gate)"""
+        X = [[MorphicComplex(0, 0), MorphicComplex(1, 0)],
+             [MorphicComplex(1, 0), MorphicComplex(0, 0)]]
+        return QuantumOperator(space, X)
+    
+    @staticmethod
+    def pauli_y(space: HilbertSpace) -> QuantumOperator:
+        """Pauli Y"""
+        Y = [[MorphicComplex(0, 0), MorphicComplex(0, -1)],
+             [MorphicComplex(0, 1), MorphicComplex(0, 0)]]
+        return QuantumOperator(space, Y)
+    
+    @staticmethod
+    def pauli_z(space: HilbertSpace) -> QuantumOperator:
+        """Pauli Z"""
+        Z = [[MorphicComplex(1, 0), MorphicComplex(0, 0)],
+             [MorphicComplex(0, 0), MorphicComplex(-1, 0)]]
+        return QuantumOperator(space, Z)
+    
+    @staticmethod
+    def hadamard(space: HilbertSpace) -> QuantumOperator:
+        """Hadamard gate - creates superposition"""
+        coeff = 1/math.sqrt(2)
+        H = [[MorphicComplex(coeff, 0), MorphicComplex(coeff, 0)],
+             [MorphicComplex(coeff, 0), MorphicComplex(-coeff, 0)]]
+        return QuantumOperator(space, H)
+
+class CompositeOperator:
+    """Represents a sequence of operators composed together"""
+    def __init__(self, operators: List[QuantumOperator]):
+        # Verify all operators use the same Hilbert space
+        if not all(op.hilbert_space.dimension == operators[0].hilbert_space.dimension 
+                  for op in operators):
+            raise ValueError("All operators must use the same Hilbert space")
+            
+        self.operators = operators
+        self.hilbert_space = operators[0].hilbert_space
+    
+    def apply_to(self, state: QuantumState) -> None:
+        """Apply the sequence of operators to a quantum state"""
+        for op in reversed(self.operators):  # Apply in reverse order (right to left)
+            op.apply_to(state)
+    
+    def to_matrix(self) -> QuantumOperator:
+        """Convert this composite operator to a single matrix operator"""
+        # Start with the identity matrix
+        identity = PauliOperators.identity(self.hilbert_space)
+        result = identity
+        
+        # Multiply all operators together
+        for op in reversed(self.operators):  # Apply in reverse order (right to left)
+            result = op * result
+            
+        return result
+
+@dataclass
+class MorphologicalBasis(Generic[T, V, C]):
+    """Defines a structured basis with symmetry evolution."""
+    type_structure: T  # Topological/Type representation
+    value_space: V     # State space (e.g., physical degrees of freedom)
+    compute_space: C   # Operator space (e.g., Lie Algebra of transformations)
+    
+    def evolve(self, generator: Matrix, time: float) -> 'MorphologicalBasis[T, V, C]':
+        """Evolves the basis using a symmetry generator over time."""
+        # Implement actual evolution logic based on the generator
+        new_compute_space = self._transform_compute_space(generator, time)
+        return MorphologicalBasis(
+            self.type_structure, 
+            self.value_space, 
+            new_compute_space
         )
-    def __post_init__(self,
-                     total_memory: int,
-                     source_runtime_id: int,
-                     target_runtime_id: int,
-                     memory_size: int,
-                     page_size: int,
-                     page: QuantumPage) -> bool:
-        self.total_memory = total_memory
-        self.allocated_memory = 0
-        self.pages: Dict[int, QuantumPage] = {}
-    def allocate(self, size: int) -> Optional[QuantumPage]:
-        """Allocate a quantum page of specified size"""
-        if self.allocated_memory + size > self.total_memory:
-            logger.error(f"Memory allocation failed: Not enough space for {size} bytes.")
-            return None
-        # Round up to nearest page size
-        pages_needed = (size + self.page_size - 1) // self.page_size
-        total_size = pages_needed * self.page_size
-        page = QuantumPage(total_size)
-        page_id = id(page)
-        self.pages[page_id] = page
-        self.allocated_memory += total_size
-        return page
-    def share_memory(self, 
-                     source_runtime_id: int,
-                     target_runtime_id: int,
-                     page: QuantumPage) -> bool:
-        """Share memory between runtimes, establishing quantum entanglement"""
-        if page.vector.state == MemoryState.DEALLOCATED:
-            logger.warning("Attempting to share deallocated memory.")
-            return False
-        # Create weak references to track runtime usage
-        page.references[source_runtime_id] = weakref.ref(source_runtime_id)
-        page.references[target_runtime_id] = weakref.ref(target_runtime_id)
-        # Update memory state to reflect sharing
-        page.vector.state = MemoryState.SHARED
-        # Reduce coherence due to sharing
-        page.vector.coherence *= 0.9
-        return True
-    def measure_memory_state(self, page: QuantumPage) -> MemoryVector:
-        """Measure the quantum state of a memory page"""
-        page.vector.coherence *= 0.8
-        # If coherence drops too low, force a page to disk
-        if page.vector.coherence < 0.3 and page.vector.state != MemoryState.PAGED:
-            page.vector.state = MemoryState.PAGED
-            logger.info(f"Page {id(page)} paged due to low coherence.")
-        return page.vector
-    def deallocate(self, page: QuantumPage):
-        """Deallocate a quantum page, handling entanglement"""
-        page_id = id(page)
-        if page.vector.state == MemoryState.DEALLOCATED:
-            logger.warning(f"Page {page_id} already deallocated.")
-            return
-        # Handle entangled pages
-        if page.vector.entanglement > 0:
-            for ref in page.references.values():
-                runtime_id = ref()
-                if runtime_id is not None:
-                    runtime_page = self.pages.get(runtime_id)
-                    if runtime_page:
-                        runtime_page.vector.coherence *= (1 - page.vector.entanglement)
-        page.vector.state = MemoryState.DEALLOCATED
-        self.allocated_memory -= page.vector.size
-        del self.pages[page_id]
-        logger.info(f"Page {page_id} deallocated.")
-    def __enter__(self):
-        """Initialize runtime memory context"""
+    
+    def _transform_compute_space(self, generator: Matrix, time: float) -> C:
+        """Transform the compute space using the generator"""
+        # This would depend on the specific implementation of C
+        # For demonstration, assuming C is a Matrix:
+        if isinstance(self.compute_space, Matrix) and isinstance(generator, Matrix):
+            # Simple time evolution using matrix exponential approximation
+            # exp(tA) ≈ I + tA + (tA)²/2! + ...
+            identity = Matrix.zeros(generator.rows, generator.cols)
+            for i in range(identity.rows):
+                identity.data[i][i] = 1
+                
+            scaled_gen = Matrix([[generator[i, j] * time for j in range(generator.cols)] 
+                               for i in range(generator.rows)])
+            
+            # First-order approximation: I + tA
+            result = identity
+            for i in range(result.rows):
+                for j in range(result.cols):
+                    result.data[i][j] += scaled_gen.data[i][j]
+                    
+            return cast(C, result @ self.compute_space)
+        
+        return self.compute_space  # Default fallback
+
+class QuantumAlgorithm(ABC):
+    """Abstract base class for quantum algorithms"""
+    
+    @abstractmethod
+    def initialize(self, hilbert_space: HilbertSpace) -> QuantumState:
+        """Initialize the quantum state for this algorithm"""
+        pass
+    
+    @abstractmethod
+    def apply_circuit(self, state: QuantumState) -> QuantumState:
+        """Apply the quantum circuit for this algorithm"""
+        pass
+    
+    @abstractmethod
+    def measure_result(self, state: QuantumState) -> Any:
+        """Extract the classical result from the quantum state"""
+        pass
+    
+    def run(self, hilbert_space: HilbertSpace) -> Any:
+        """Run the complete algorithm"""
+        state = self.initialize(hilbert_space)
+        final_state = self.apply_circuit(state)
+        return self.measure_result(final_state)
+
+class Oracle(Generic[T_co, V_co, C_co, T_anti, V_anti, C_anti], ABC):
+    """
+    An Oracle is a generator that transforms between types in the category.
+    It maintains the state of its first input and provides morphisms.
+    """
+    def __init__(self):
+        self.initialized = False
+        self.first_input = None
+        self.state = {}
+    
+    def __iter__(self):
         return self
     
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        """Async context manager exit."""
-        self._lock.release()
-        return False  # Re-raise exceptions
+    def __next__(self):
+        raise StopIteration("Oracle must be used as a generator")
     
-    def __getattribute__(self, name: str) -> Any:
-        """
-        Get attribute with support for async properties.
-        Internal attributes are accessed directly, otherwise delegates to code execution.
-        """
-        # Direct access to internal attributes
-        if name in ('_code', '_value', '_local_env', '_refcount', '_ttl', '_created_at', 
-                    '_lock', '_async_cache', '_future_results', 'request_data', 'session', 
-                    'runtime_namespace', 'security_context'):
-            return super().__getattribute__(name)
-            
-        # Check for cached async results
-        _async_cache = super().__getattribute__('_async_cache')
-        if name in _async_cache:
-            return _async_cache[name]
-            
-        # Attribute lookup in local environment
-        _local_env = super().__getattribute__('_local_env')
-        if name in _local_env:
-            return _local_env[name]
-            
-        # Execute code to generate attribute
-        try:
-            _code = super().__getattribute__('_code')
-            exec(_code, globals(), _local_env)
-            if name in _local_env:
-                return _local_env[name]
-        except Exception as e:
-            raise AttributeError(f"Attribute '{name}' not found: {e}")
-    
-    def __setattr__(self, name: str, value: Any) -> None:
-        """Set attribute with support for invalidating async cache entries."""
-        if name in ('_code', '_value', '_local_env', '_refcount', '_ttl', '_created_at',
-                    '_lock', '_async_cache', '_future_results', 'request_data', 'session',
-                    'runtime_namespace', 'security_context'):
-            super().__setattr__(name, value)
+    def send(self, value: Any) -> Any:
+        """Send value to the oracle, preserving first input state."""
+        if not self.initialized:
+            self.first_input = value
+            self.initialized = True
+            result = self.initialize_state(value)
         else:
-            # Invalidate any cached async results for this attribute
-            if hasattr(self, '_async_cache') and name in self._async_cache:
-                del self._async_cache[name]
-            self._local_env[name] = value
-    
-    async def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        """
-        Asynchronously execute the code with given arguments.
-        
-        If the code defines an async function or returns a coroutine, awaits it.
-        Otherwise, executes synchronously in a thread pool to avoid blocking.
-        """
-        async with self._lock:
-            local_env = self._local_env.copy()
-            
-            # Create a hash of the arguments for caching purposes
-            cache_key = hashlib.md5(
-                str((args, frozenset(kwargs.items()))).encode()
-            ).hexdigest()
-            
-            # Return cached result if available
-            if cache_key in self._async_cache:
-                return self._async_cache[cache_key]
-            
-            # Prepare arguments for execution
-            try:
-                # Parse the code to detect if it's an async function
-                ast_obj = ast.parse(self._code)
-                is_async = any(
-                    isinstance(node, ast.AsyncFunctionDef) 
-                    for node in ast.walk(ast_obj)
-                )
-                
-                # Bind arguments
-                try:
-                    code_obj = compile(self._code, '<string>', 'exec')
-                    exec(code_obj, globals(), local_env)
-                    
-                    # Find the main function in the code
-                    main_func = None
-                    for item_name, item in local_env.items():
-                        if callable(item) and not item_name.startswith('_'):
-                            main_func = item
-                            break
-                    
-                    if main_func:
-                        sig = inspect.signature(main_func)
-                        bound_args = sig.bind(*args, **kwargs)
-                        bound_args.apply_defaults()
-                    else:
-                        # No function found, just use the arguments as locals
-                        for i, arg in enumerate(args):
-                            local_env[f'arg{i}'] = arg
-                        local_env.update(kwargs)
-                        
-                except Exception as e:
-                    raise RuntimeError(f"Error binding arguments: {e}")
-                
-                # Execute the code
-                if is_async:
-                    # If it's an async function, await it
-                    if main_func:
-                        result = await main_func(*args, **kwargs)
-                    else:
-                        # Execute as async code block
-                        async_code = f"async def __async_exec():\n" + \
-                                    "\n".join(f"    {line}" for line in self._code.split("\n"))
-                        async_code += "\n__async_result = await __async_exec()"
-                        
-                        exec(async_code, globals(), local_env)
-                        result = local_env.get('__async_result')
-                else:
-                    # Run synchronous code in a thread pool
-                    loop = asyncio.get_running_loop()
-                    result = await loop.run_in_executor(
-                        None,
-                        lambda: self._execute_sync(args, kwargs, local_env)
-                    )
-                
-                # Cache the result
-                self._async_cache[cache_key] = result
-                return result
-                
-            except Exception as e:
-                raise RuntimeError(f"Error executing AsyncAtom code: {e}")
-    
-    def _execute_sync(self, args, kwargs, local_env):
-        """Execute code synchronously for non-async code."""
-        # Create a copy of the environment for this execution
-        exec_env = local_env.copy()
-        
-        # Add arguments to the environment
-        for i, arg in enumerate(args):
-            exec_env[f'arg{i}'] = arg
-        exec_env.update(kwargs)
-        
-        # Execute the code
-        exec(self._code, globals(), exec_env)
-        
-        # Look for return value (by convention)
-        for k, v in exec_env.items():
-            if k.startswith('__return__'):
-                return v
-        
-        # No explicit return, check for changes to the environment
-        result = {k: v for k, v in exec_env.items() 
-                 if k not in local_env or local_env[k] != v}
-        return result if result else None
-    
-    async def handle_request(self, *args: Any, **kwargs: Any) -> Any:
-        """Handles a request asynchronously with proper error handling and logging."""
-        # Pre-processing
-        if not await self.is_authenticated_async():
-            return {"status": "error", "message": "Authentication failed"}
-        
-        await self.log_request_async()
-        
-        # Context creation
-        request_context = {
-            "session": self.session,
-            "request_data": self.request_data,
-            "runtime_namespace": self.runtime_namespace,
-            "security_context": self.security_context
-        }
-        
-        # Core logic with concurrency control
-        try:
-            if "operation" in self.request_data:
-                operation = self.request_data["operation"]
-                
-                # Handle operations concurrently when possible
-                if operation == "execute_atom":
-                    result = await self.execute_atom_async(request_context)
-                elif operation == "query_memory":
-                    result = await self.query_memory_async(request_context)
-                elif operation == "batch_operations":
-                    # Execute multiple operations concurrently
-                    tasks = []
-                    for op in self.request_data.get("operations", []):
-                        sub_context = request_context.copy()
-                        sub_context["operation"] = op
-                        tasks.append(self.process_request_async(sub_context))
-                    
-                    # Wait for all operations to complete
-                    results = await asyncio.gather(*tasks, return_exceptions=True)
-                    result = {"status": "success", "results": results}
-                else:
-                    # Standard request processing
-                    result = await self.process_request_async(request_context)
-            else:
-                # Default processing
-                result = await self.process_request_async(request_context)
-                
-        except Exception as e:
-            result = {"status": "error", "message": str(e)}
-        
-        # Post-processing
-        await self.save_session_async()
-        await self.log_response_async(result)
+            # Apply the same transformation as was done on first input
+            result = self.apply_morphism(value)
         
         return result
     
-    async def is_authenticated_async(self) -> bool:
-        """Asynchronous authentication check."""
-        # Implementation with proper async IO
-        return True  # Placeholder
-    
-    async def log_request_async(self) -> None:
-        """Log request asynchronously."""
-        # Implement async logging
-        pass
-    
-    async def log_response_async(self, result: Any) -> None:
-        """Log response asynchronously."""
-        # Implement async logging
-        pass
-    
-    async def save_session_async(self) -> None:
-        """Save session data asynchronously."""
-        # Implement async session saving
-        pass
-    
-    async def execute_atom_async(self, request_context: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute another atom asynchronously."""
-        atom_name = self.request_data.get("atom_name")
-        if not atom_name:
-            return {"status": "error", "message": "No atom name provided"}
-            
-        atom = request_context["runtime_namespace"].get_child(atom_name)
-        if not atom:
-            return {"status": "error", "message": f"Atom '{atom_name}' not found"}
-        
-        # Security check before execution
-        if self.security_context:
-            validator = SecurityValidator(self.security_context)
-            try:
-                ast_node = ast.parse(atom._code)
-                await asyncio.to_thread(validator.visit, ast_node)
-            except PermissionError as e:
-                return {"status": "error", "message": str(e)}
-        
-        # Execute the atom asynchronously
-        try:
-            result = await atom()  # Execute
-            return {"status": "success", "result": result}
-        except Exception as e:
-            return {"status": "error", "message": f"Execution error: {str(e)}"}
-    
-    async def query_memory_async(self, request_context: Dict[str, Any]) -> Dict[str, Any]:
-        """Query memory asynchronously."""
-        memory = request_context["runtime_namespace"].get_child("memory")
-        if not memory:
-            return {"status": "error", "message": "Memory namespace not found"}
-        
-        page = request_context["request_data"].get("page")
-        try:
-            # Run memory measurement in a thread to avoid blocking
-            result = await asyncio.to_thread(
-                memory.measure_memory_state, 
-                page
-            )
-            return {"status": "success", "result": result}
-        except Exception as e:
-            return {"status": "error", "message": f"Memory query error: {str(e)}"}
-    
-    async def process_request_async(self, request_context: Dict[str, Any]) -> Dict[str, Any]:
-        """Process a generic request asynchronously."""
-        # Implementation of generic request processing
-        return {"status": "success", "message": "Request processed"}
-    
-    async def map_reduce(self, 
-                         data: List[Any], 
-                         map_func: Callable[[Any], Awaitable[Any]],
-                         reduce_func: Callable[[List[Any]], Awaitable[Any]],
-                         chunk_size: int = 10) -> Any:
-        """
-        Perform a map-reduce operation asynchronously with controlled concurrency.
-        
-        Args:
-            data: The data to process
-            map_func: The mapping function (must be async)
-            reduce_func: The reduction function (must be async)
-            chunk_size: Number of items to process concurrently
-            
-        Returns:
-            The reduced result
-        """
-        results = []
-        
-        # Process data in chunks to avoid creating too many tasks
-        for i in range(0, len(data), chunk_size):
-            chunk = data[i:i + chunk_size]
-            # Create and gather tasks for this chunk
-            chunk_tasks = [map_func(item) for item in chunk]
-            chunk_results = await asyncio.gather(*chunk_tasks)
-            results.extend(chunk_results)
-        
-        # Perform reduction
-        return await reduce_func(results)
-    
-    async def stream_process(self, 
-                             data_stream: AsyncIterator[Any],
-                             process_func: Callable[[Any], Awaitable[Any]]) -> AsyncIterator[Any]:
-        """
-        Process a stream of data asynchronously, yielding results as they complete.
-        
-        Args:
-            data_stream: An async iterator providing input data
-            process_func: The async function to apply to each item
-            
-        Yields:
-            Processed results as they become available
-        """
-        async for item in data_stream:
-            result = await process_func(item)
-            yield result
-    
-    def __repr__(self) -> str:
-        return f"AsyncAtom(code='{self._code[:50]}...', value={self._value})"
-    
-    def __str__(self) -> str:
-        return self.__repr__()
-    
-    @property
-    def __class__(self) -> type:
-        return AsyncAtom
-    
-    @property
-    def ob_refcnt(self) -> int:
-        return self._refcount
-    
-    @ob_refcnt.setter
-    def ob_refcnt(self, value: int) -> None:
-        self._refcount = value
-    
-    @property
-    def ob_ttl(self) -> Optional[int]:
-        return self._ttl
-    
-    @ob_ttl.setter
-    def ob_ttl(self, value: Optional[int]) -> None:
-        self._ttl = value
-    
-    def is_expired(self) -> bool:
-        """Check if the atom has expired based on its TTL."""
-        if self._ttl is None:
-            return False
-        return time.time() - self._created_at > self._ttl
-
-class HilbertSpace:
-    """
-    Represents a Hilbert space that uses MorphicComplex numbers for coordinates.
-    """
-    def __init__(self, dimension: int = 3):
-        self.dimension = dimension
-        self.basis_vectors = [self._create_basis_vector(i) for i in range(dimension)]
-    def _create_basis_vector(self, index: int) -> list[MorphicComplex]:
-        """Create a basis vector with a 1 at the specified index."""
-        vector = [MorphicComplex(0, 0) for _ in range(self.dimension)]
-        vector[index] = MorphicComplex(1, 0)
-        return vector
-    def inner_product(self, vec1: list[MorphicComplex], vec2: list[MorphicComplex]) -> MorphicComplex:
-        """
-        Compute the inner product of two vectors in the Hilbert space.
-        <u, v> = ∑ᵢ (u*ᵢ × vᵢ) where u*ᵢ is the complex conjugate
-        """
-        if len(vec1) != len(vec2) or len(vec1) != self.dimension:
-            raise ValueError("Vectors must have the same dimension as the space")
-        result = MorphicComplex(0, 0)
-        for i in range(self.dimension):
-            # For each component, compute u*ᵢ × vᵢ
-            conj_u = vec1[i].conjugate()
-            result = result + (conj_u * vec2[i])
-        return result
-    def norm(self, vector: list[MorphicComplex]) -> float:
-        """Compute the norm (magnitude) of a vector."""
-        inner = self.inner_product(vector, vector)
-        return (inner.real ** 2 + inner.imag ** 2) ** 0.5  # Inner product with self should be real
-    def is_orthogonal(self, vec1: list[MorphicComplex], vec2: list[MorphicComplex]) -> bool:
-        """Check if two vectors are orthogonal."""
-        inner = self.inner_product(vec1, vec2)
-        return abs(inner.real) < 1e-10 and abs(inner.imag) < 1e-10
-    def project(self, vector: list[MorphicComplex], subspace_basis: list[list[MorphicComplex]]) -> list[MorphicComplex]:
-        """Project a vector onto a subspace defined by a basis."""
-        projection = [MorphicComplex(0, 0) for _ in range(self.dimension)]
-        for basis_vec in subspace_basis:
-            # Compute <v, basis> / <basis, basis>
-            inner_v_basis = self.inner_product(vector, basis_vec)
-            inner_basis_basis = self.inner_product(basis_vec, basis_vec).real
-            # Compute the coefficient
-            coeff = inner_v_basis.real / inner_basis_basis
-            # Add the contribution of this basis vector to the projection
-            for i in range(self.dimension):
-                projection[i] = projection[i] + (basis_vec[i] * coeff)
-        return projection
-class KernelFunction(Generic[T, V]):
-    """
-    Represents a kernel function for measuring similarity in Hilbert space.
-    Kernels enable computation in high-dimensional spaces through inner products.
-    """
-    def __init__(self, fn: Callable[[V, V], float]):
-        self.fn = fn
-        self.cache: Dict[Tuple[int, int], float] = {}
-    def __call__(self, x: V, y: V) -> float:
-        """Compute the kernel value between two vectors."""
-        x_id, y_id = id(x), id(y)
-        cache_key = (min(x_id, y_id), max(x_id, y_id))
-        if cache_key not in self.cache:
-            self.cache[cache_key] = self.fn(x, y)
-        return self.cache[cache_key]
-    @staticmethod
-    def gaussian(sigma: float = 1.0) -> 'KernelFunction':
-        """Creates a Gaussian (RBF) kernel with given bandwidth."""
-        def rbf(x: V, y: V) -> float:
-            if isinstance(x, (list, tuple)) and isinstance(y, (list, tuple)):
-                squared_dist = sum((a - b) ** 2 for a, b in zip(x, y))
-            else:
-                squared_dist = (x - y) ** 2
-            return math.exp(-squared_dist / (2 * sigma ** 2))
-        return KernelFunction(rbf)
-    @staticmethod
-    def linear() -> 'KernelFunction':
-        """Creates a linear kernel."""
-        def linear_kernel(x: V, y: V) -> float:
-            if isinstance(x, (list, tuple)) and isinstance(y, (list, tuple)):
-                return sum(a * b for a, b in zip(x, y))
-            return x * y
-        return KernelFunction(linear_kernel)
-
-@dataclass
-class FilesystemState:
-    allowed_root: str = field(init=False)
-    def __post_init__(self):
-        try:
-            self.allowed_root = os.path.dirname(os.path.realpath(__file__))
-            if not any(os.listdir(self.allowed_root)):
-                raise FileNotFoundError(f"Allowed root directory empty: {self.allowed_root}")
-            logging.info(f"Allowed root directory found: {self.allowed_root}")
-        except Exception as e:
-            logging.error(f"Error initializing FilesystemState: {e}")
-            raise
-    def safe_remove(self, path: str):
-        """Safely remove a file or directory, handling platform-specific issues."""
-        try:
-            path = os.path.abspath(path)
-            if not os.path.commonpath([self.allowed_root, path]) == self.allowed_root:
-                logging.error(f"Attempt to delete outside allowed directory: {path}")
-                return
-            if os.path.isdir(path):
-                os.rmdir(path)
-                logging.info(f"Removed directory: {path}")
-            else:
-                os.remove(path)
-                logging.info(f"Removed file: {path}")
-        except (FileNotFoundError, PermissionError, OSError) as e:
-            logging.error(f"Error removing path {path}: {e}")
-    def _on_error(self, func, path, exc_info):
-        """Error handler for handling removal of read-only files on Windows."""
-        logging.error(f"Error deleting {path}, attempting to fix permissions.")
-        # Attempt to change the file's permissions and retry removal
-        os.chmod(path, 0o777)
-        func(path)
-    async def execute_runtime_tasks(self):
-        for task in self.tasks:
-            try:
-                await task()
-            except Exception as e:
-                logging.error(f"Error executing task: {e}")
-    async def run_command_async(self, command: str, shell: bool = False, timeout: int = 120):
-        logging.info(f"Running command: {command}")
-        split_command = shlex.split(command, posix=(os.name == 'posix'))
-        try:
-            process = await asyncio.create_subprocess_exec(
-                *split_command,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
-                shell=shell
-            )
-            stdout, stderr = await asyncio.wait_for(process.communicate(), timeout=timeout)
-            return {
-                "return_code": process.returncode,
-                "output": stdout.decode() if stdout else "",
-                "error": stderr.decode() if stderr else "",
-            }
-        except asyncio.TimeoutError:
-            logging.error(f"Command '{command}' timed out.")
-            return {"return_code": -1, "output": "", "error": "Command timed out"}
-        except Exception as e:
-            logging.error(f"Error running command '{command}': {str(e)}")
-            return {"return_code": -1, "output": "", "error": str(e)}
-# =========================================================================================
-# FrameModel - Delimited, measured 'reality' (motility, perception, cognition)
-# =========================================================================================
-class Frame(Generic[T, V, C], ABC):
-    """
-    A Frame is the quantum bridge between CPython's memory model and our associative space.
-    It represents a region of memory that can exist in multiple states and maintains
-    quantum-like properties while mapping directly to CPython's object system. 'Compilation'
-    is out of scope of {RUNTIME}; which, instead, interacts with externals like LLVM via FFI; 
-    or, for that matter, an LLM (with the elevated importance of asynchronous and cache-fluid
-    (motile, if you will?) 'IPC' from micro {RUNTIME} <-> to macro {INFERENCE}). And with-that,
-    a 'Black Box', dear reader, emerges dubiously from the [[Quantum Field Theory]] which possesses
-    [[Thermodynamic Character]] (Wave-function, Wigner's Friend's-account-thereof, etc..) and is a
-    [[Quine]]-singularity. The PRECISE 'point' in morphospace where past-participle phase-changes
-    to [[Future Participle Syntax]] (which I posit is, indeed, the quantum reality of the 'Classical'
-    Von Neumann/Turing model of computation; 'binary' and the bifurcation of this-morpho-state being
-    necessarilly infinite-harmonic in complexity and inso-integrating, however-arbitrarily, is the
-    computational and indeed perhaps cognitive equivilant of [[Computational Irreducibility]] (not-
-    just at-the [[Landauer's Limit]], I propose) and/or actual-physical multi-scale ontological-Rulial-
-    heirarchical (can I just say [[Morphogenetic]], yet?) competency-motility (Quine)"True Ontology" of
-    the wider, emergent and measurable reality (that you, me, and Wigner's friend all 'cohabitate').
-    """
-    def init(self, start_delimiter: str = "<<CONTENT>>", end_delimiter: str = "<<END_CONTENT>>"):
-        self.start_delimiter = start_delimiter
-        self.end_delimiter = end_delimiter
-        # Map to CPython's object structure
-        self._py_object = ctypes.py_object()
-        self._ref_count = ctypes.c_ssize_t()
-        self._type_ptr = ctypes.c_void_p()
-        # Quantum state management
-        self._state = QuantumState.SUPERPOSITION
-        self._observers: set[weakref.ref] = set()
-        # Type-Value-Computation spaces
-        self._type_space: Optional[T] = None
-        self._value_space: Optional[V] = None
-        self._compute_space: Optional[C] = None
-    @property
-    def state(self) -> QuantumState:
-        return self._state
-    def collapse(self) -> V:
-        """Forces materialization of the value space."""
-        if self._state == QuantumState.SUPERPOSITION:
-            self._materialize()
-        return self._value_space
-    def _materialize(self) -> None:
-        """Maps the quantum state to actual CPython objects."""
-        if self._value_space is not None:
-            self._py_object.value = self._value_space
-            # Get actual CPython object internals
-            obj_ptr = ctypes.cast(id(self._py_object.value), ctypes.c_void_p)
-            # Map to PyObject structure
-            self._ref_count.value = ctypes.pythonapi.Py_RefCnt(obj_ptr)
-            self._type_ptr.value = ctypes.pythonapi.Py_TYPE(obj_ptr)
-            self._state = QuantumState.COLLAPSED
     @abstractmethod
-    def to_bytes(self) -> bytes:
-        """Return the frame data as bytes, representing the extracted "measured reality"."""
+    def initialize_state(self, value: Any) -> Any:
+        """Initialize the oracle state with the first input."""
         pass
+    
     @abstractmethod
-    def parse_content(self, raw_content: str) -> str:
-        """Parse the raw content using custom delimiters, observing the "measured reality"."""
+    def apply_morphism(self, value: Any) -> Any:
+        """Apply the oracle's morphism to subsequent inputs."""
         pass
-    def validate_content(self, content: str) -> bool:
-        """Validate the content based on delimiters, ensuring the "measurement" is valid."""
-        if not content.startswith(self.start_delimiter) or not content.endswith(self.end_delimiter):
-            return False
-        return True
-class Field(Frame[T, V, C], ABC):
+    
+    def throw(self, typ, val=None, tb=None):
+        raise StopIteration("Oracle terminated")
+    
+    def close(self):
+        self.initialized = False
+        self.first_input = None
+        self.state = {}
+
+class OracleGenerator(Generic[T, V, C]):
     """
-    A Field represents a region of spacetime in our quantum memory model.
-    It extends Frame with composition and transformation capabilities.
+    A generator-based oracle that remembers its first input and produces 
+    transformations based on it.
     """
-    def __init__(self):
-        super().__init__()
-        self.entangled_fields: set[weakref.ref[Field]] = set()
-    def entangle(self, other: Field) -> None:
-        """Creates quantum entanglement between fields."""
-        self.entangled_fields.add(weakref.ref(other))
-        other.entangled_fields.add(weakref.ref(self))
-        self._state = QuantumState.ENTANGLED
-        other._state = QuantumState.ENTANGLED
-    @abstractmethod
-    def transform(self, operator: Callable[[V], V]) -> None:
-        """Applies a transformation operator to the value space."""
-        pass
+    def __init__(self, transform_func: callable):
+        self.transform_func = transform_func
+        self.first_input: Optional[T] = None
+        self.state: Dict[str, Any] = {}
+        
+    def __call__(self, input_value: T) -> Iterator[V]:
+        """Makes the oracle callable as a generator"""
+        if self.first_input is None:
+            self.first_input = input_value
+            self.state['initialized'] = True
+            
+        # The actual generator implementation using yield
+        yield from self._oracle_generator(input_value)
+    
+    def _oracle_generator(self, input_value: T) -> Iterator[V]:
+        """The actual generator implementation"""
+        # Always transform based on the first input that was received
+        reference = self.first_input
+        
+        # Initial yield of the transformation of the current input
+        yield self.transform_func(input_value, reference)
+        
+        # Subsequent yields will be transformations of the reference input
+        while True:
+            # This creates the quine-like behavior - self-replication of output
+            yield self.transform_func(reference, reference)
 
-@dataclass
-class CustomDelimiter(Field):
-    content: str
-
-    def __post_init__(self):
-        # Set default delimiters
-        self.init()
-
-    def to_bytes(self) -> bytes:
-        """Return the frame data as bytes."""
-        return self.content.encode()
-
-    def parse_content(self, raw_content: str) -> str:
-        """Parse the raw content using custom delimiters."""
-        # Extract content between delimiters
-        start_index = raw_content.find(self.start_delimiter)
-        end_index = raw_content.rfind(self.end_delimiter)
-        if start_index == -1 or end_index == -1 or start_index >= end_index:
-            raise ValueError(
-                "Invalid content format: Missing or mismatched delimiters.")
-        return raw_content[start_index + len(self.start_delimiter):end_index]
-
-    def validate_content(self, content: str) -> bool:
-        """Validate the content based on delimiters."""
-        try:
-            parsed_content = self.parse_content(content)
-            return self.start_delimiter + parsed_content + self.end_delimiter == content
-        except ValueError:
-            return False
-
-class Space(Field[T, V, C]):
+class MorphismOracle(OracleGenerator[T, V, C]):
     """
-    Space is the container for Fields and manages their interactions.
-    It provides the high-level interface for our quantum memory model.
+    Specialized oracle that applies category-theoretic morphisms as transformations.
     """
-    def __init__(self):
-        super().__init__()
-        self.fields: dict[str, Field] = {}
-    def create_field(self, handle: str) -> Field:
-        """Creates a new field in this space."""
-        field = Field()
-        self.fields[handle] = field
-        return field
-    def compose(self, other: Space) -> Space:
-        """Composes two spaces, maintaining quantum properties."""
-        new_space = Space()
-        # Compose fields while preserving quantum states
-        for handle, field in self.fields.items():
-            if handle in other.fields:
-                new_field = new_space.create_field(handle)
-                new_field.entangle(field)
-                new_field.entangle(other.fields[handle])
-        return new_space
+    def __init__(self, category: 'Category[T, V, C]'):
+        self.category = category
+        super().__init__(self._apply_morphism)
+        
+    def _apply_morphism(self, source: T, reference: T) -> V:
+        """Apply available morphisms from the category"""
+        morphisms = self.category.find_morphisms(reference, source)
+        if morphisms:
+            # Apply the first available morphism
+            return morphisms[0]  # Assuming morphism application is encoded in the morphism object
+        return None  # No applicable morphism found
 
-def atom(cls: Type[{T, V, C}]) -> Type[{T, V, C}]: # homoicon decorator
-    """Decorator to create a homoiconic atom."""
-    original_init = cls.__init__
-    def new_init(self, *args, **kwargs):
-        original_init(self, *args, **kwargs)
-        if not hasattr(self, 'id'):
-            self.id = hashlib.sha256(self.__class__.__name__.encode('utf-8')).hexdigest()
-
-    cls.__init__ = new_init
-    return cls
-def encode(atom: '__Atom__') -> bytes:
-    data = {
-        'tag': atom.tag,
-        'value': atom.value,
-        'children': [encode(child) for child in atom.children],
-        'metadata': atom.metadata
-    }
-    return pickle.dumps(data)
-
-def decode(data: bytes) -> '__Atom__':
-    data = pickle.loads(data)
-    atom = __Atom__(data['tag'], data['value'], [decode(child) for child in data['children']], data['metadata'])
-    return atom
-
-def validate(cls: Type[T]) -> Type[T]:
-    original_init = cls.__init__
-    sig = inspect.signature(original_init)
-    def new_init(self: T, *args: Any, **kwargs: Any) -> None:
-        bound_args = sig.bind(self, *args, **kwargs)
-        for key, value in bound_args.arguments.items():
-            if key in cls.__annotations__:
-                expected_type = cls.__annotations__.get(key)
-                if not isinstance(value, expected_type):
-                    raise TypeError(f"Expected {expected_type} for {key}, got {type(value)}")
-        original_init(self, *args, **kwargs)
-    cls.__init__ = new_init
-    return cls
-
-class AsyncAtom(Generic[T_co, V_co, C_co], PyObjABC):
+class QuineOracle(Oracle[T_co, V_co, C_co, T_anti, V_anti, C_anti]):
     """
-    An asynchronous version of the Atom class that supports coroutines and async operations.
-    This class maintains the homoiconic properties of Atom while adding asynchronous capabilities,
-    allowing efficient handling of IO-bound and concurrent operations.
+    A Quine Oracle is an oracle that produces itself (or a representation of itself)
+    as part of its output, creating a self-referential system.
     """
-    __slots__ = ('_code', '_value', '_local_env', '_refcount', '_ttl', '_created_at', 
-                 'request_data', 'session', 'runtime_namespace', 'security_context', 
-                 '_lock', '_async_cache', '_future_results')
+    def initialize_state(self, value: Any) -> Any:
+        # Store the input value's state hash
+        if hasattr(value, 'value'):
+            self.state['hash'] = hash_state(value.value)
+        else:
+            self.state['hash'] = hash_state(value)
+            
+        # For a quine, we return a representation that includes itself
+        return self.create_quine_output(value)
+    
+    def apply_morphism(self, value: Any) -> Any:
+        # For subsequent inputs, apply the same transformation
+        return self.create_quine_output(value)
+    
+    def create_quine_output(self, value: Any) -> Any:
+        """Create a self-referential output that contains a representation of itself."""
+        # Example implementation - this would be customized based on your specific needs
+        if isinstance(value, BYTE):
+            # Apply a specific transformation for BYTE objects
+            # that preserves the "quineness" - self-reference
+            transformed = BYTE(value.value ^ self.state['hash'] & 0xFF)
+            return (transformed, self)
+        else:
+            # Generic handling for other types
+            return (value, self)
+
+class HermitianMorphism(Generic[T, V, C, T_anti, V_anti, C_anti]):
+    """
+    Represents a morphism with a Hermitian adjoint relationship between
+    covariant and contravariant types.
+    """
     def __init__(self, 
-                 code: str, 
-                 value: Optional[Any] = None, 
-                 ttl: Optional[int] = None, 
-                 request_data: Optional[Dict[str, Any]] = None):
-        self._code = code
-        self._value = value
-        self._local_env: Dict[str, Any] = {}
-        self._refcount = 1
-        self._ttl = ttl
-        self._created_at = time.time()
-        self.request_data = request_data or {}
-        self.session: Dict[str, Any] = self.request_data.get("session", {})
-        # self.runtime_namespace: Optional[RuntimeNamespace] = None
-        # self.security_context: Optional[SecurityContext] = None
-        # Async-specific attributes
-        self._lock = asyncio.Lock()  # For thread-safe operations
-        self._async_cache: Dict[str, Any] = {}  # Cache for async operations
-        self._future_results: Dict[str, asyncio.Future] = {}  # Store futures
-    async def __aenter__(self):
-        """Async context manager entry."""
-        await self._lock.acquire()
-        return self
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        """Async context manager exit."""
-        self._lock.release()
-def main():
-    # Example usage of TemporalBridge
-    bridge = TemporalBridge()
-    @bridge.observe
-    def quantum_computation(x):
-        time.sleep(0.1)  # Simulate work
-        return x * math.pi
-    result = quantum_computation(1.0)
-    print(f"Observed Result: {result}")
-if __name__ == "__main__":
-    main()
-# Example Usage
-bridge = TemporalBridge()
-@bridge.observe
-def quantum_computation(x: float) -> float:
-    time.sleep(0.1)  # Simulate work
-    return x * math.pi
-def main():
-    result = quantum_computation(1.0)
-    print(f"Observed Result: {result}")
-    # Schedule batch operations
-    bridge.schedule(lambda: print("Delayed computation 1"), delay=1.0)
-    bridge.schedule(lambda: print("Delayed computation 2"), delay=2.0)
-    bridge.execute_batch()
-    # Print history
-    for timestamp, name, energy in bridge.history:
-        print(f"{timestamp}: {name} consumed {energy:.2e} Joules")
-if __name__ == "__main__":
-    main()
-
-
-
-
-#------------------------------------------------------------------------------
-# API Morphology
-#------------------------------------------------------------------------------
-# --- Request Object ---
-current_request: contextvars.ContextVar[Any] = contextvars.ContextVar("current_request")
-class Request:
-    """Represents an HTTP request"""
-    def __init__(self, scope: Dict[str, Any]) -> None:
-        self.scope: Dict[str, Any] = scope
-        self.method: str = scope["method"]
-        self.path_params: List[str] = []
-        self.query_params: Dict[str, List[str]] = {}
-        self.body_params: Dict[str, List[str]] = {}
-        self.session: Dict[str, Any] = {}
-        self.files: Dict[str, Any] = {}
-        self.quantum_memory: Optional[QuantumMemoryFS] = None # Add quantum memory
-class SerialObject(Generic[T, V, C], __Atom__, FrameModel[T, V, C]):
-    """SerialObject is an abstract class that defines the interface for serializable objects.
-    Generic[T,V,C]    
-        |           
-    SerialObject -----> FrameModel[T,V,C]
-        |
-    PyObjectLike
-        |
-    __Atom__(optional [T, V, C])"""
-    @abstractmethod
-    def dict(self) -> dict:
-        """Return a dictionary representation of the model."""
-        pass
-    @abstractmethod
-    def json(self) -> str:
-        """Return a JSON string representation of the model."""
-        pass
-    @abstractmethod
-    def get_properties(self) -> Dict[str, Any]:
-        """Method to get properties of the AtomicModel instance."""
-        pass
-    @abstractmethod
-    def update_state(self, state: Dict[str, Any]) -> None:
-        """Method to update the state of the AtomicModel."""
-        pass
-    @abstractmethod
-    def analyze(self) -> Dict[str, Any]:
-        """Method for performing analysis on the AtomicModel."""
-        pass
-    @abstractmethod
-    def validate(self) -> bool:
-        """Method for validating the AtomicModel state."""
-        pass
-    @abstractmethod
-    def __repr__(self) -> str:
-        """Return the string representation of the model."""
-        pass
-    @abstractmethod
-    def __eq__(self, other: Any) -> bool:
-        """Equality comparison between two models."""
-        pass
-@dataclass
-class AtomicModel(SerialObject[T, V, C]):
-    """Concrete implementation of SerialObject."""
-    name: str
-    age: int
-    timestamp: datetime = field(default_factory=datetime.now)
-    def to_bytes(self) -> bytes:
-        """Return the JSON representation as bytes."""
-        return self.json().encode()
-    def to_str(self) -> str:
-        """Return the JSON representation as a string."""
-        return self.json()
-    def dict(self) -> dict:
-        """Return a dictionary representation of the model."""
-        return {
-            "name": self.name,
-            "age": self.age,
-            "timestamp": self.timestamp.isoformat(),
-        }
-    def json(self) -> str:
-        """Return a JSON representation of the model as a string."""
-        return json.dumps(self.dict())
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary."""
-        return self.dict()
-    def atomic_method(self) -> None:
-        """An atomic method."""
-        pass
-class Condition(AtomicModel[T, V, C], ABC):
-    """Represents a state or condition in the system."""
-    attributes: Dict[str, Any]
-    @abstractmethod
-    def __repr__(self):
-        return f"Condition({self.attributes})"
-class Action(Condition[T, V, C], ABC):
-    """Abstract base class for an elementary action or reaction."""
-    @abstractmethod
-    def execute(self, input_condition: Condition) -> Condition:
-        """Transform an input condition into an output condition."""
-        pass
-class Reaction(Action[T, V, C], ABC):
-    """Concrete implementation of an elementary reaction."""
-    transformation: Callable[[Condition], Condition]
-    @abstractmethod
-    def execute(self, input_condition: Condition) -> Condition:
-        output_condition = self.transformation(input_condition)
-        print(f"Reaction: {input_condition} -> {output_condition}")
-        return output_condition
-@dataclass
-class Agency:
-    """Represents an invariant agency catalyzing actions."""
-    name: str
-    rules: Dict[str, Action[T, V, C]] = field(default_factory=dict)
-    def perform_action(self, action_key: str, input_condition: Condition[T, V, C]) -> Condition[T, V, C]:
-        if action_key not in self.rules:
-            raise ValueError(f"Action {action_key} is not defined for agency {self.name}.")
-        action = self.rules[action_key]
-        print(f"Agency '{self.name}' performing action '{action_key}'...")
-        return action.execute(input_condition)
-    def add_action(self, action_key: str, action: Action[T, V, C]):
-        self.rules[action_key] = action
-        print(f"Action '{action_key}' added to agency '{self.name}'.")
-
-#------------------------------------------------------------------------------
-# Virtual/Quantum Memory Ontology
-#------------------------------------------------------------------------------
-class MemoryState(StrEnum):
-    QUANTUM = auto()      # Superposition state, uncommitted changes
-    CLASSICAL = auto()    # Committed state (persisted to Git)
-    CACHED = auto()       # Loaded from disk; may be out-of-date
-    ALLOCATED = auto()    # Memory is allocated but not yet initialized
-    INITIALIZED = auto()  # Memory is initialized with data
-    PAGED = auto()        # Memory is paged to secondary storage
-    SHARED = auto()       # Memory is shared between multiple runtimes
-    DEALLOCATED = auto()  # Memory has been freed
-@dataclass
-class QuantumCell:
-    address: int
-    segment: int
-    value: bytes = b'\x00' * BYTE_WORD
-    state: Optional[str] = None
-    commit_hash: Optional[str] = None
-    data: Optional[array.array] = None
-    metadata: Optional[Dict] = None
-    __slots__ = ('address', 'segment', 'value', 'state', 'commit_hash', 'data', 'metadata')
-    
-    def __init__(self, 
-                 address: int, 
-                 segment: int,
-                 value: bytes = b'\x00' * BYTE_WORD, 
-                 state: Optional[str] = None,
-                 commit_hash: Optional[str] = None):
-        self.address = address
-        self.segment = segment
-        self.value = value
-        self.state = state
-        self.commit_hash = commit_hash
-        self.data = None  # Lazy-loaded
-        self.metadata = None  # Lazy-loaded
-    
-    async def load_data(self, data_source) -> None:
-        """Asynchronously load data from a source."""
-        self.data = array.array('B')
-        # Simulate async I/O
-        await asyncio.sleep(0.01)
-        # Populate data
-        self.data.frombytes(self.value)
-    
-    async def commit(self) -> str:
-        """Asynchronously commit changes and return commit hash."""
-        # Create hash from current state
-        hash_obj = hashlib.sha256()
-        hash_obj.update(self.value)
-        if self.data:
-            hash_obj.update(self.data.tobytes())
+                 forward: Callable[[T, V], C],
+                 adjoint: Callable[[T_anti, V_anti], C_anti]):
+        self.forward = forward
+        self.adjoint = adjoint
         
-        # Simulate async commit
-        await asyncio.sleep(0.01)
+    def apply(self, source: T, value: V) -> C:
+        """Apply the forward morphism"""
+        return self.forward(source, value)
         
-        self.commit_hash = hash_obj.hexdigest()
-        return self.commit_hash
-
-@dataclass
-class MemoryVector:
-    """Represents the quantum state of virtual memory regions"""
-    address_space: complex  # Complex number representing memory location probability
-    coherence: float      # Memory coherence across runtime boundaries
-    entanglement: float   # Degree of entanglement with other memory regions
-    state: MemoryState
-    size: int            # Size of memory region in bytes
-@runtime_checkable
-class Field(Protocol):
-    """
-    Defines a dynamic field space, leveraging symmetries and manifold mappings.
-    """
-
-    def interact(self, state: MemoryState) -> MemoryState:
-        pass
-class QuantumPage:
-    """Represents a page in virtual memory with quantum properties"""
-
-    def __init__(self, size: int):
-        self.vector = MemoryVector(
-            address_space=complex(1, 0),
-            coherence=1.0,
-            entanglement=0.0,
-            state=MemoryState.ALLOCATED,
-            size=size
-        )
-        # Track runtime references
-        self.references: Dict[int, weakref.ref] = {}
-
-    def entangle(self, other: 'QuantumPage') -> float:
-        """Entangle this page with another, returns entanglement strength"""
-        entanglement_strength = min(
-            1.0,
-            (self.vector.coherence + other.vector.coherence) / 2
-        )
-        self.vector.entanglement = entanglement_strength
-        other.vector.entanglement = entanglement_strength
-        return entanglement_strength
-    __slots__ = ('vector', 'cells', 'references', '_lock')
-    
-    def __init__(self, size: int):
-        self.vector = MemoryVector(
-            address_space=complex(1, 0),
-            coherence=1.0,
-            entanglement=0.0,
-            state=MemoryState.ALLOCATED,
-            size=size
-        )
-        self.cells: Dict[int, QuantumCell] = {}
-        self.references: Dict[int, weakref.ref] = {}
-        self._lock = asyncio.Lock()
-    
-    async def allocate_cell(self, address: int, segment: int) -> QuantumCell:
-        """Allocate a new quantum cell asynchronously."""
-        async with self._lock:
-            if address in self.cells:
-                return self.cells[address]
-            
-            cell = QuantumCell(address, segment)
-            self.cells[address] = cell
-            return cell
-    
-    async def entangle(self, other: 'QuantumPage') -> float:
-        """Entangle this page with another asynchronously, returns entanglement strength."""
-        async with self._lock, other._lock:  # Acquire both locks to prevent deadlocks
-            entanglement_strength = min(
-                1.0,
-                (self.vector.coherence + other.vector.coherence) / 2
-            )
-            self.vector.entanglement = entanglement_strength
-            other.vector.entanglement = entanglement_strength
-            
-            # Copy reference to create entanglement
-            self.references[id(other)] = weakref.ref(other)
-            other.references[id(self)] = weakref.ref(self)
-            
-            return entanglement_strength
-    
-    async def collapse(self) -> None:
-        """Collapse the quantum state of this page, resolving entanglements."""
-        async with self._lock:
-            # Resolve all entanglements
-            for ref_id, page_ref in list(self.references.items()):
-                page = page_ref()
-                if page is not None:
-                    # Release the entanglement
-                    page.vector.entanglement = 0.0
-                    if id(self) in page.references:
-                        del page.references[id(self)]
-                del self.references[ref_id]
-            
-            # Reset our state
-            self.vector.entanglement = 0.0
-            self.vector.coherence = 1.0
-            self.vector.state = MemoryState.CLASSICAL
-
-class AsyncMemoryPool:
-    """Memory pool for efficient AsyncQuantumPage allocation and recycling."""
-    __slots__ = ('available_pages', '_lock', 'allocated_pages', 'total_pages', 'page_size')
-    
-    def __init__(self, initial_size: int = 10, page_size: int = 4096):
-        self.available_pages: List[QuantumPage] = []
-        self._lock = asyncio.Lock()
-        self.allocated_pages: int = 0
-        self.total_pages: int = 0
-        self.page_size = page_size
+    def apply_adjoint(self, source: T_anti, value: V_anti) -> C_anti:
+        """Apply the adjoint (contravariant) morphism"""
+        return self.adjoint(source, value)
         
-        # Pre-allocate pages
-        for _ in range(initial_size):
-            self.available_pages.append(QuantumPage(page_size))
-            self.total_pages += 1
-    
-    async def get_page(self) -> QuantumPage:
-        """Get a page from the pool or create a new one if necessary."""
-        async with self._lock:
-            if not self.available_pages:
-                # Create a new page
-                page = QuantumPage(self.page_size)
-                self.total_pages += 1
+    @classmethod
+    def from_byte_operation(cls, operation: int) -> 'HermitianMorphism[BYTE, int, BYTE, BYTE, int, BYTE]':
+        """
+        Create a Hermitian morphism from a BYTE operation code.
+        Uses the C, _C_, VV, TTTT bit structure from your BYTE class.
+        """
+        def forward(byte: BYTE, value: int) -> BYTE:
+            # Extract the C bit to determine operation mode
+            c_bit = byte.get_bit(7)
+            if c_bit == 1:
+                # Active state: Use _C_ as MSB of 3-bit morphism
+                _c_ = byte.get_bit(6)
+                vv = (byte.get_bit(5) << 1) | byte.get_bit(4)
+                vvv = (_c_ << 2) | vv
+                # Apply the VVV operation to TTTT bits of value
+                return cls._apply_vvv_op(vvv, value)
             else:
-                # Reuse an existing page
-                page = self.available_pages.pop()
-            
-            self.allocated_pages += 1
-            return page
-    
-    async def release_page(self, page: QuantumPage) -> None:
-        """Return a page to the pool for reuse."""
-        # Reset the page state
-        await page.collapse()
+                # Settled state: Use only 2-bit VV for operations
+                vv = (byte.get_bit(5) << 1) | byte.get_bit(4)
+                return cls._apply_vv_op(vv, value)
         
-        async with self._lock:
-            self.available_pages.append(page)
-            self.allocated_pages -= 1
-    
-    async def stats(self) -> Dict[str, int]:
-        """Get current memory pool statistics."""
-        async with self._lock:
-            return {
-                "total_pages": self.total_pages,
-                "allocated_pages": self.allocated_pages,
-                "available_pages": len(self.available_pages),
-                "memory_usage_bytes": self.total_pages * self.page_size
-            }
+        def adjoint(byte: BYTE, value: int) -> BYTE:
+            # The adjoint is the reverse operation
+            # This is a simplified std lib version not full multiplication by the conjugate transpose
+            result = forward(byte, value)
+            result.flip_bit(7)  # Flip the C bit as part of adjoint
+            return result
+            
+        return cls(forward, adjoint)
 
-
-def morphological_update(byte_word: ByteWord, target: bytes, learning_rate: float = 0.1) -> ByteWord:
-    """
-    Simulate a quantum-like update rule by computing entropy and adjusting state bits.
-    """
-    current_state = byte_word.state
-    diff = sum(a != b for a, b in zip(current_state, target))
-    entropy = diff / len(current_state)
-
-    # Create mutation pattern based on entropy-weighted mask
-    mutated = bytes([
-        b ^ int(entropy * 255 * learning_rate) for b in current_state
-    ])
-
-    return ByteWord(mutated, word_size=byte_word.word_size)
-def quantum_xnor(t: int, v: int, c: int) -> int:
-    """
-    Quantum XNOR Morphogen that aligns T, V, and C into an 8-bit holographic state.
-    Args:
-        t: 4-bit object space encoding
-        v: 3-bit modulation of morphisms
-        c: 1-bit control to enable/disable morphisms
-    Returns:
-        8-bit quantum state aligned for coherence.
-    """
-    assert 0 <= t < 16, "T must be a 4-bit value (0-15)"
-    assert 0 <= v < 8, "V must be a 3-bit value (0-7)"
-    assert 0 <= c < 2, "C must be a 1-bit control (0 or 1)"
-    # XNOR Morphogen Calculation
-    m1 = ~(t & 0b1111) ^ (v & 0b111)  # XNOR Gate 1
-    m2 = ~(t >> 2) ^ (v >> 1)  # XNOR Gate 2
-    m3 = ~(m1 & m2) ^ c  # Final XNOR Gate with Control Bit
-    # Assemble the final quantum state in 8-bit format
-    quantum_state = (m1 & 0b1111) << 4 | (m2 & 0b11) << 1 | m3
-    return quantum_state & 0xFF  # Ensure 8-bit output
-class QuantumSegment:
-    data: Optional[array.array] = None
-    state_hash: Optional[str] = None
-    data_reference: Optional[str] = None
-    metadata: Optional[Dict] = None
-    embeddings_reference: Optional[str] = None
-    def superpose(self):
-        return QuantumSegment(self.data.copy(), None)
-    def commit(self, hash_val: str):
-        self.state_hash = hash_val
-    def manipulate_data(self, operation: str):
-        if operation == "invert":
-            self.data = array.array('B', [~byte & 0xFF for byte in self.data])
-        elif operation == "increment":
-            self.data = array.array(
-                'B', [(byte + 1) & 0xFF for byte in self.data])
-class QuantumMemoryFS(Generic[T]):
-    """
-    Quantum-aware virtual memory filesystem that combines git-based
-    state management with filesystem-based memory addressing.
-    """
-    def __init__(self, base_path: Optional[str] = None):
-        self.base_path = Path(base_path or os.path.join(os.getcwd(), 'qmem'))
-        self.word_max = 0xFFFF
-        self.memory_map: Dict[int, QuantumCell] = {}
-        self.repo_id = uuid.uuid4().hex
-        # Initialize the repository and directory structure
-        # self._init_quantum_repository()
-        # self._init_directory_structure()
-    def _run_git(self, args: list, cwd: Optional[str] = None) -> Optional[str]:
-        """Helper to run git commands and return output, logging errors if any."""
-        try:
-            result = subprocess.check_output(['git'] + args, cwd=cwd or str(self.base_path))
-            return result.decode().strip()
-        except subprocess.CalledProcessError as e:
-            logger.error(f"Git command error: {e} with args: {args}")
-            return None
-    def _init_quantum_repository(self):
-        """Initialize Git repository for state tracking."""
-        self.base_path.mkdir(parents=True, exist_ok=True)
-        subprocess.run(['git', 'init', '--quiet'], cwd=str(self.base_path))
-        subprocess.run(['git', 'config', 'user.name', 'Quantum Memory Manager'], cwd=str(self.base_path))
-        subprocess.run(['git', 'config', 'user.email', 'qmem@state.local'], cwd=str(self.base_path))
-        # Create initial commit with a README
-        readme = self.base_path / 'README.md'
-        readme.write_text(f'# Quantum Memory Repository\nID: {self.repo_id}\nInitialized: {datetime.now().isoformat()}')
-        subprocess.run(['git', 'add', 'README.md'], cwd=str(self.base_path))
-        subprocess.run(['git', 'commit', '-m', 'Initialize quantum memory', '--quiet'], cwd=str(self.base_path))
-    def _init_directory_structure(self):
-        """Create hierarchical memory structure with dynamic quantum segments."""
-        for high_byte in range(0x100):
-            dir_path = self.base_path / f"{high_byte:02x}"
-            dir_path.mkdir(exist_ok=True)
-            # Create quantum-aware __init__.py if not exists
-            init_file = dir_path / "__init__.py"
-            if not init_file.exists():
-                init_content = f"""\
-import importlib.util
-import json
-import array
-from dataclasses import dataclass
-from typing import Optional, List, Dict
-import http.client
-import asyncio
-
-@dataclass
-class QuantumSegment:
-    data: Optional[array.array] = None
-    state_hash: Optional[str] = None
-    data_reference: Optional[str] = None
-    metadata: Optional[Dict] = None
-    embeddings_reference: Optional[str] = None
-
-    def superpose(self):
-        return QuantumSegment(self.data.copy(), None)
-
-    def commit(self, hash_val: str):
-        self.state_hash = hash_val
-
-    def manipulate_data(self, operation: str):
-        if operation == "invert":
-            self.data = array.array('B', [~byte & 0xFF for byte in self.data])
-        elif operation == "increment":
-            self.data = array.array('B', [(byte + 1) & 0xFF for byte in self.data])
-
-class OllamaClient:
-    def __init__(self, host: str = "localhost", port: int = 11434):
-        self.host = host
-        self.port = port
-
-    async def _post_request(self, endpoint: str, payload: Dict) -> Optional[Dict]:
-        try:
-            conn = http.client.HTTPConnection(self.host, self.port)
-            headers = {{'Content-Type': 'application/json'}}
-            json_payload = json.dumps(payload)
-            conn.request("POST", endpoint, json_payload, headers)
-            response = conn.getresponse()
-            if response.status != 200:
-                print(f"API error: {{response.status}} - {{response.read().decode()}}")
-                return None
-            return json.loads(response.read().decode())
-        except Exception as e:
-            print(f"HTTP request error: {{e}}")
-            return None
-        finally:
-            conn.close()
-
-    async def generate_embedding(self, text: str, model: str = "nomic-embed-text") -> Optional[List[float]]:
-        result = await self._post_request("/api/embeddings", {{"model": model, "prompt": text}})
-        return result.get('embedding') if result else None
-"""
-                init_file.write_text(init_content)
-            # Create memory files for each low_byte in the range.
-            for low_byte in range(0x100):
-                file_path = dir_path / f"{low_byte:02x}.qmem"
-                if not file_path.exists():
-                    file_path.touch()
-    def _commit_state(self, address: int, value: bytes, metadata: Optional[Dict] = None) -> str:
-        """Commit memory state to Git and update segment metadata."""
-        path = self._address_to_path(address)
-        # Stage the file and commit
-        self._run_git(['add', str(path)])
-        commit_msg = f"Update memory at {address:04x}: {value.hex()}"
-        self._run_git(['commit', '-m', commit_msg, '--quiet'])
-        commit_hash = self._run_git(['rev-parse', 'HEAD'])
-        if commit_hash is None:
-            raise RuntimeError("Failed to retrieve commit hash.")
-        # Update segment state for the corresponding directory
-        high_byte = (address >> 8) & 0xFF
-        segment = self.get_directory_segment(high_byte)
-        # Update segment metadata with commit hash and cell metadata
-        if segment.metadata is None:
-            segment.metadata = {}  # Initialize if not present
-        segment.metadata[str(address)] = { # Store metadata per cell
-            "commit_hash": commit_hash,
-            "metadata": metadata
-        }
-        segment.commit(commit_hash) # Commit segment metadata
-        return commit_hash
-    def _address_to_path(self, address: int) -> Path:
-        """Convert a memory address to a quantum-aware file path."""
-        if not 0 <= address <= self.word_max:
-            raise ValueError(f"Address {address:04x} out of range")
-        high_byte = (address >> 8) & 0xFF
-        low_byte = address & 0xFF
-        return self.base_path / f"{high_byte:02x}" / f"{low_byte:02x}.qmem"
-    def read(self, address: int) -> QuantumCell:
-        """Read a quantum memory cell from a given address."""
-        # If already loaded, return from memory map.
-        if address in self.memory_map:
-            return self.memory_map[address]
-        path = self._address_to_path(address)
-        try:
-            with open(path, "rb") as f:
-                value = f.read(BYTE_WORD)
-                if not value: # added check for empty file
-                    value = b'\x00'*BYTE_WORD # initialize if empty
-                cell = QuantumCell(address, (address >> 8) & 0xFF, value) # missing segment
-                self.memory_map[address] = cell
-                return cell
-        except FileNotFoundError:
-            logger.error(f"Memory cell not found at {address:04x}")
-            return QuantumCell(address, (address >> 8) &
-0xFF, b'\x00'*BYTE_WORD) # Return an empty cell to avoid crashing.
-        except Exception as e: # catch other exceptions
-            logger.error(f"Error reading memory cell at {address:04x}: {e}")
-            return QuantumCell(address, (address >> 8) & 0xFF, b'\x00'*BYTE_WORD)
-        # Try to get the latest commit hash for this file.
-        try:
-            commit_hash = self._run_git(['log', '-n', '1', '--pretty=format:%H', '--', str(path)])
-        except Exception:
-            commit_hash = None
-        state = MemoryState.CLASSICAL if commit_hash else MemoryState.CACHED
-        cell = QuantumCell(value=data, state=state, commit_hash=commit_hash)
-        self.memory_map[address] = cell
-        return cell
-    def write(self, address: int, value: bytes, metadata: Optional[Dict] = None):
-        """Write a quantum memory cell to a given address."""
-        if not isinstance(value, bytes):
-            raise TypeError("Value must be bytes")
-        if len(value) != BYTE_WORD:
-            raise ValueError(f"Value must be {BYTE_WORD} bytes long")
-        path = self._address_to_path(address)
-        try:
-            with open(path, "wb") as f:
-                f.write(value)
-                commit_hash = self._commit_state(address, value, metadata)
-                if address in self.memory_map:
-                    self.memory_map[address].value = value
-                    self.memory_map[address].commit_hash = commit_hash # update commit hash
-                    self.memory_map[address].metadata = metadata # update metadata
-                else: # if it is not in the map, create a new cell and add it
-                    cell = QuantumCell(address, (address >> 8) & 0xFF, value, commit_hash=commit_hash, metadata=metadata)
-                    self.memory_map[address] = cell
-        except Exception as e:
-            logger.error(f"Error writing memory cell at {address:04x}: {e}")
-    def get_directory_segment(self, high_byte: int):
-        """Get the quantum memory segment (as a Python module) for a given directory."""
-        if not 0 <= high_byte <= 0xFF:
-            raise ValueError("Invalid directory address")
-        dir_path = self.base_path / f"{high_byte:02x}"
-        if not dir_path.exists():
-            raise ValueError("Directory does not exist")
-        module_name = f"qmem_{high_byte:02x}"
-        spec = importlib.util.spec_from_file_location(module_name, str(dir_path / "__init__.py"))
-        if spec is None or spec.loader is None:
-            raise ImportError(f"Could not load segment {high_byte:02x}")
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        return module.segment
-    def refresh(self, address: int):
-        """Force a refresh of a quantum cell from disk (e.g. if the file was externally updated)."""
-        if address in self.memory_map:
-            del self.memory_map[address]
-        return self.read(address)
-    def flush(self):
+    def adjoint(self) -> 'HermitianMorphism[V_anti, T_anti, C_anti, V_co, T_co, C_co]':
         """
-        Flush all quantum memory cells (if in QUANTUM state) to classical state,
-        committing them to Git.
+        Create the Hermitian adjoint (contravariant dual) of this morphism.
+        The adjoint reverses the morphism direction and applies the conjugate operation.
         """
-        for address, cell in self.memory_map.items():
-            if cell.state == MemoryState.QUANTUM:
-                self.write(address, cell.value, quantum=False)
-        logger.info("Flushed all quantum cells to classical state.")
-    """
-class QuineByteWord(ByteWord):
-    def __init__(self, Ψ, Φ, C="Reflective"):
-        super().__init__(type="Quine", T=Φ.topology(), V=Φ.runtime_delta(), C=C)
-        self.state = Ψ
+        # Create the adjoint transformation function
+        def adjoint_transform(target: V_anti) -> T_anti:
+            # This is where we implement the specific adjoint matrix math with potential extension to other libs
+            if hasattr(self.transform, 'conjugate'):
+                return self.transform.conjugate()(target)
+            else:
+                # Generic fallback for non-complex transformations
+                return target
+                
+        return HermitianMorphism(self.codomain, self.domain, adjoint_transform)
 
-    def project(self, π):
-        # Quineic projection: self-reference + mutation of Φ
-        return π(self), mutate(self.Φ)
-
-    Go: register calling conv (by sig); clone then call original.
+    @staticmethod
+    def _apply_vvv_op(vvv: int, value: int) -> BYTE:
+        """Apply the 3-bit VVV operation to a value"""
+        t = value & 0xF  # Extract TTTT bits
+        if vvv == 0:  # Identity
+            result = t
+        elif vvv == 1:  # Inc T
+            result = (t + 1) & 0xF
+        elif vvv == 2:  # Dec T
+            result = (t - 1) & 0xF
+        elif vvv == 3:  # Flip T (Pauli-X like)
+            result = t ^ 0xF
+        elif vvv == 4:  # Flip High Nibble (Pauli-Z like)
+            result = t ^ 0b1100
+        elif vvv == 5:  # Flip Low Nibble
+            result = t ^ 0b0011
+        elif vvv == 6:  # Set T to 0
+            result = 0
+        elif vvv == 7:  # Set T to 15
+            result = 0xF
+        return BYTE(result)
     
-    Rust: ownership, borrow/alias XOR mutability. Abelization.
-    
-    Erlang: immutable msg-passing; actor processes, hot-swap modules.
-    
-    Prolog: resolution by unification + backtracking (Markovian core, but rules can inject non-Markov via clause inference).
-    
-    Clean: uniqueness types = referential transparency *and* destructive updates. Pure, but tractable.
-    
-    Linear Lisp: resource-tracked cons cells. Eval mirrors proof search; linear time/env constraints.
-
-    Cilk: fork-join concurrency; spawn/sync model, work-stealing scheduler. Deterministic parallel semantics, epistemically structured. 
-
-    Smalltalk is a quine in superposition. Cilk is a quine in motion: Hence: we need **QUINE** — not just eval(self), but a
-    dynamical observer that mutates (measurement involves, at-least, a photon that perturbs therefore it is a mutation not an observation)
-    epistemic frames, to resolve bifurcation at the presemantic layer.
-    """
-    """
-    ByteWord("RustRef", T="Owned", V="Borrowable", C="Affine")
-    ByteWord("CilkTask", T="DAGNode", V="Forkable", C="Joinable")
-    ByteWord("PrologClause", T="PatternNet", V="Backtrackable", C="ResolutionInvariant")
-    ByteWord("ErlangMsg", T="ActorLocal", V="Async", C="MailboxConsistent")
-    ByteWord("SmalltalkObj", T="ClassRuntime", V="MutableSuperposition", C="MethodReflected")
-    """
-    pass
-def metahelp() -> None:
-    """
-    Print a symbolic/epistemic interpretation of the Cognosis shell.
-
-    Returns:
-        None
-    """
-    print("""
-META MAN PAGE: cognosis [Ψ/π/Φ/λ model overlay]
-
-NAME
-Ψ (Psi): State vector (epistemic configuration)
-π (Pi): Observation operator (projection / query action)
-Φ (Phi): Frame transformer / Feature kernel
-λ (Lambda): Transformation context / control flow operator
-
-TVC ONTOLOGY
-T (Topology): Memory scope and data flow locality
-V (Velocity): Runtime change or evolution of internal structures
-C (Consistency): Semantic coherence and syntactic alignment across time
-
-Each shell agent is a Ψ, a computational 'wavefunction' that collapses upon invocation.
-All action in the system arises from π (projection operators) applied to Ψ within the active Φ frame.
-
-Ψ := ⟨self, env, memory⟩
-π := ⟨prompt, command, validation⟩
-Φ := ⟨cwd, kb hooks, internal state transformers⟩
-λ := ⟨time delta, function decorators, IO context⟩
-
-TVC is enforced through the design:
-- T: `cd`, `ls`, `pwd` → manage knowledge *structure*
-- V: transient shell prompts, state deltas → define knowledge *motion*
-- C: kernel frame integrity, ephemerality, namespace integrity → ensures *coherence*
-
-Ψ	Agent cognitive state	whoami, memory, prompt	Quantum
-π	Projection (commands)	ls, cd, help, etc	Action
-Φ	Frame/context kernel	cwd, namespace, KB	Structure
-λ	Time, decorator ops	t=0+1, runtime cycle	Dynamics
-T	Knowledge topology	File system, namespaces	Topology
-V	State evolution	Frame cycling, delta ops	Flow
-C	Knowledge integrity	Commit boundaries, lint	Semantics
-
-===
-
-ENVIRONMENT MAPPING
-
-STDIN := π ∘ Φ → Ψ  (input projection defines state context)
-STDOUT := Φ(Ψ) → Observable Output (project Ψ onto stdout with context Φ)
-STDERR := Φ'(Ψ) → Diagnostic π (project Ψ onto a self-reflective subspace)
-
-FILE SYSTEM := Topological memory space (T), built from Φ contexts and Ψ persistence mappings
-
-TIME := λ: evolution operator advancing each discrete frame step
-[kernel_agent_id@cognosis cwd t=0+1]$ := collapse of λ ∘ Ψ at frame end
-
-COMMANDS
-
-ls: π on Φ → List topological neighbors (Ψ | cwd)
-cd: λ-twist on Φ → Shift active domain (Ψ :: Φ′)
-pwd: Observe topological fixpoint (π(pwd) → Φ_id)
-whoami: Echo unique Ψ kernel ID
-help: π₀ → classical interface docstring
-metahelp: π₁ → epistemic ontology overlay (this doc)
-
-STRUCTURED OUTPUT
-
-Output should preserve T/V/C principles:
-- T (structure): Avoid unordered flat knowledge unless necessary
-- V (evolution): Respect Ψ's history and ephemerality
-- C (coherence): Ensure Φ′(Ψ) is still semantically interpretable across time
-
-===
-
-FRAME CYCLING / SELF-REFERENTIALITY
-
-Your frame is not only temporal (λ) but epistemic (πΨ).
-Use `flash` to run an inverse projection across Φ-space and validate into a future-compatible memory mapping.
-
-flash: Validate ephemeral Φ′ against persistent namespace memory
-commit: Solidify and timestamp Φ' → Git graph (T/C memory synchronization)
-
-SEE ALSO
-[[decorators]], [[wavefunction collapse]], [[Phi frame memory kernel]],
-[[non-Markovian knowledge agents]], [[self-validating runtime shells]]
-
-NOTES
-Metahelp is not required for operation, but recommended for all episteme-aware kernel agents. This mapping is stable under transformation but subject to ongoing reflective updates.
-""")
+    @staticmethod
+    def _apply_vv_op(vv: int, value: int) -> BYTE:
+        """Apply the 2-bit VV operation to a value"""
+        t = value & 0xF  # Extract TTTT bits
+        if vv == 0:  # Identity
+            result = t
+        elif vv == 1:  # Flip T
+            result = t ^ 0xF
+        elif vv == 2:  # Set T based on C_internal
+            _c_ = (value >> 6) & 1  # Extract _C_ bit
+            result = _c_
+        elif vv == 3:  # Rotate T Left
+            result = ((t << 1) | (t >> 3)) & 0xF
+        return BYTE(result)
