@@ -16,6 +16,7 @@ pdm.lock
 /src/ts/dist/*.js
 /src/ts/node_modules/*
 /nov24chronological/*
+/cognOS/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
