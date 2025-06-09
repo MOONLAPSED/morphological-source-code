@@ -2138,6 +2138,12 @@ class QuineByteWord(ByteWord):
     """
     pass
 
+# xenocode
+"""
+ByteWord("RustRef", T="Owned", V="Borrowable", C="Affine")
+ByteWord("PrologClause", T="PatternNet", V="Backtrackable", C="ResolutionInvariant")
+ByteWord("SmalltalkObj", T="ClassRuntime", V="MutableSuperposition", C="MethodReflected")
+"""
 
 def metahelp() -> None:
     """
