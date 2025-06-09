@@ -7,6 +7,7 @@ class ByteWord:
     - V (3 bits): Morphism selector or transformation rule
     - C (1 bit): Floor morphic state (pointability)
     """
+
     def __init__(self, raw: int):
         """
         Initialize a ByteWord from its raw 8-bit representation.
@@ -24,6 +25,7 @@ class ByteWord:
         self.floor_morphic = Morphology(raw & 0x01)  # Least significant bit
         self._refcount = 1
         self._state = QuantumState.SUPERPOSITION
+
     @property
     def _pointable(self) -> bool:
         """
@@ -32,6 +34,7 @@ class ByteWord:
             bool: True if the holoicon is in a dynamic (pointable) state
         """
         return self.floor_morphic == Morphology.DYNAMIC
+
     def __repr__(self):
         return f"BYTE_WORD({bin(self.value)})"
     """
@@ -41,7 +44,8 @@ class ByteWord:
     """
     @staticmethod
     def xnor(a: int, b: int, width: int = 4) -> int:
-        return ~(a ^ b) & ((1 << width) - 1) # Mask to 4-bit output
+        return ~(a ^ b) & ((1 << width) - 1)  # Mask to 4-bit output
+
     @staticmethod
     def abelian_transform(t: int, v: int, c: int) -> int:
         """Perform the XNOR-based Abelian transformation."""
@@ -75,12 +79,15 @@ class ByteWord:
     conservation: str
     lhs: str
     rhs: List[Union[str, 'Morphology', 'ByteWord']]
+
     def apply(self, input_seq: List[str]) -> List[str]:
         """Applies the morphological transformation to an input sequence."""
         if self.lhs in input_seq:
             idx = input_seq.index(self.lhs)
             return input_seq[:idx] + [elem for elem in self.rhs] + input_seq[idx + 1:]
         return input_seq
+
+
 class MorphologicPyOb(CPythonFrame, PyObjABC):  # Ensure correct MRO
 
     """
@@ -88,6 +95,7 @@ class MorphologicPyOb(CPythonFrame, PyObjABC):  # Ensure correct MRO
     This is the grandparent class for all runtime polymorphs.
     It encapsulates stateful, structural, and computational potential.
     """
+
     def __init__(
         self,
         symmetry: str,
@@ -99,6 +107,7 @@ class MorphologicPyOb(CPythonFrame, PyObjABC):  # Ensure correct MRO
     ):
         PyObjABC.__init__(self, value, type(value), ttl)
         Morphology.__init__(self, symmetry, conservation, lhs, rhs)
+
     def apply_transformation(self, input_seq: List[str]) -> List[str]:
         """
         Applies morphological transformation while preserving object state.
@@ -106,12 +115,14 @@ class MorphologicPyOb(CPythonFrame, PyObjABC):  # Ensure correct MRO
         transformed_seq = self.apply(input_seq)
         self._state = QuantumState.ENTANGLED
         return transformed_seq
+
     def collapse_and_transform(self) -> V:
         """Collapse to resolved state and apply morphological transformation to value."""
         collapsed_value = self.collapse()
         if isinstance(collapsed_value, list):
             return self.apply_transformation(collapsed_value)
         return collapsed_value
+
     def entangle_with(self, other: 'MorphologicPyOb') -> None:
         """Entangle with another MorphologicPyOb to preserve state & entanglement symmetry in Morphologic terms."""
         self.entangle(other)
@@ -143,11 +154,14 @@ class MorphologicPyOb(CPythonFrame, PyObjABC):  # Ensure correct MRO
     print(polymorph.state)  # QuantumState.ENTANGLED
     print(polymorph2.state)  # QuantumState.ENTANGLED
     """
-class QuantumFrame(Generic[T, V, C]): # type: ignore
+
+
+class QuantumFrame(Generic[T, V, C]):  # type: ignore
     """
     Bridge between CPython's memory model and quantum state space.
     Acts as a superposition of type, value, and computation spaces.
     """
+
     def __init__(self, type_structure: T, value_space: V, computation_space: C):
         self._type = type_structure
         self._value = value_space
@@ -155,6 +169,7 @@ class QuantumFrame(Generic[T, V, C]): # type: ignore
         self._state = QuantumState.SUPERPOSITION
         self._cpython_frame: Optional[CPythonFrame] = None
         self._observers: set[weakref.ref] = set()
+
     @property
     def cpython_frame(self) -> CPythonFrame:
         """Get or create the CPython frame representation"""
@@ -162,6 +177,7 @@ class QuantumFrame(Generic[T, V, C]): # type: ignore
             # Create frame on first access
             self._cpython_frame = CPythonFrame.from_object(self._value)
         return self._cpython_frame
+
     def entangle(self, other: 'QuantumFrame') -> None:
         """Create quantum entanglement between frames"""
         if self._state == QuantumState.SUPERPOSITION:
@@ -170,6 +186,7 @@ class QuantumFrame(Generic[T, V, C]): # type: ignore
             # Store weak reference to avoid circular references
             self._observers.add(weakref.ref(other))
             other._observers.add(weakref.ref(self))
+
     def collapse(self) -> V:
         """Collapse quantum state into concrete value"""
         if self._state == QuantumState.SUPERPOSITION:
@@ -180,6 +197,7 @@ class QuantumFrame(Generic[T, V, C]): # type: ignore
                 if obs is not None:
                     obs._state = QuantumState.COLLAPSED
         return self._value
+
     def transform(self, transformation: Callable[[V], V]) -> 'QuantumFrame[T, V, C]':
         """Apply transformation while preserving quantum state"""
         if self._state == QuantumState.COLLAPSED:
@@ -187,34 +205,42 @@ class QuantumFrame(Generic[T, V, C]): # type: ignore
         else:
             # Create transformation composition without collapsing
             old_compute = self._compute
-            new_compute = lambda x: transformation(old_compute(x))
+            def new_compute(x): return transformation(old_compute(x))
             return QuantumFrame(self._type, self._value, new_compute)
         return QuantumFrame(self._type, new_value, self._compute)
+
+
 class QuantumOperator:
     def __init__(self, hilbert_space, matrix=None):
         self.hilbert_space = hilbert_space
         dim = hilbert_space.dimension
         if matrix:
             if len(matrix) != dim or any(len(row) != dim for row in matrix):
-                raise ValueError("Operator matrix must match Hilbert space dimension")
+                raise ValueError(
+                    "Operator matrix must match Hilbert space dimension")
             self.matrix = matrix
         else:
             self.matrix = [[complex(0, 0)] * dim for _ in range(dim)]
+
     def apply_to(self, state):
         if state.hilbert_space.dimension != self.hilbert_space.dimension:
             raise ValueError("Hilbert space dimensions don't match")
-        result = [sum(self.matrix[i][j] * state.amplitudes[j] 
-                 for j in range(self.hilbert_space.dimension))
-                 for i in range(self.hilbert_space.dimension)]
+        result = [sum(self.matrix[i][j] * state.amplitudes[j]
+                      for j in range(self.hilbert_space.dimension))
+                  for i in range(self.hilbert_space.dimension)]
         state.amplitudes = result
         state.normalize()
+
+
 class TemporalBridge:
     """Manages quantum state observations and temporal sorting of computations."""
+
     def __init__(self):
         self.states = {}
         self.history = []
         self.kT = 1.380649e-23 * 298  # Boltzmann * Room temp
         self.execution_queue = []
+
     def observe(self, func):
         """Decorator to observe function execution, enforcing causal ordering."""
         @wraps(func)
@@ -230,9 +256,11 @@ class TemporalBridge:
             self.states[state_key] = result  # Store result in state
             return result
         return wrapper
+
     def schedule(self, func: Callable, delay: float = 0.0):
         """Schedules a function call with a given delay, ensuring temporal sorting."""
         heapq.heappush(self.execution_queue, (time.time() + delay, func))
+
     def execute_batch(self):
         """Executes scheduled computations in causal order."""
         while self.execution_queue:
@@ -241,6 +269,8 @@ class TemporalBridge:
             if now < execute_time:
                 time.sleep(execute_time - now)
             func()
+
+
 class RuntimeNamespace:
     """Manages hierarchical runtime namespaces with security controls, module loading, and content embedding. Similar to a ContextManager."""
 
@@ -251,7 +281,8 @@ class RuntimeNamespace:
         self._content = SimpleNamespace()
         self._security_context: Optional[SecurityContext] = None
         self.available_modules: Dict[str, ModuleType] = {}
-        self.frame_model: Optional[FrameModel] = None  # Reference a FrameModel to 'atomize'
+        # Reference a FrameModel to 'atomize'
+        self.frame_model: Optional[FrameModel] = None
 
     @property
     def full_path(self) -> str:
@@ -284,7 +315,8 @@ class RuntimeNamespace:
                 module = module_from_spec(spec)
                 sys.modules[module_name] = module
                 spec.loader.exec_module(module)
-                self.available_modules[module_name] = module  # Store in the namespace
+                # Store in the namespace
+                self.available_modules[module_name] = module
             logging.info("Modules loaded successfully.")
         except Exception as e:
             logging.error(f"Error importing internal modules: {e}")
@@ -303,7 +335,8 @@ class RuntimeNamespace:
         if not self.frame_model:
             raise ValueError("No FrameModel set for this namespace.")
         if not self.frame_model.validate_content(raw_content):
-            raise ValueError("Content validation failed. Invalid delimiters or format.")
+            raise ValueError(
+                "Content validation failed. Invalid delimiters or format.")
         parsed_content = self.frame_model.parse_content(raw_content)
         setattr(self._content, "embedded_data", parsed_content)
 
@@ -318,12 +351,17 @@ class RuntimeNamespace:
     # namespace.load_modules()
     # namespace.set_frame_model(some_frame_model)
     # namespace.embed_content("raw content")
+
+
 class RuntimeManager:
     def __init__(self):
         self.root = RuntimeNamespace("root")
         self._security_contexts: Dict[str, SecurityContext] = {}
+
     def register_user(self, user_id: str, access_policy: AccessPolicy):
-        self._security_contexts[user_id] = SecurityContext(user_id, access_policy)
+        self._security_contexts[user_id] = SecurityContext(
+            user_id, access_policy)
+
     async def execute_query(self, user_id: str, query: str) -> Any:
         security_context = self._security_contexts.get(user_id)
         if not security_context:
@@ -350,6 +388,7 @@ class RuntimeManager:
             )
             logging.error(f"Error executing query: {e}")
             raise
+
     def _create_restricted_namespace(self, security_context: SecurityContext) -> dict:
         # Create a restricted namespace based on security context
         return {
@@ -357,11 +396,13 @@ class RuntimeManager:
             "print": print if security_context.access_policy.level >= AccessLevel.READ else None,
             # Add other safe functions as needed
         }
+
     def isModule(rawClsOrFn: Union[Type, Callable]) -> Optional[str]:
         pyModule = inspect.getmodule(rawClsOrFn)
         if hasattr(pyModule, "__file__"):
             return str(Path(pyModule.__file__).resolve())
         return None
+
     def getModuleImportInfo(rawClsOrFn: Union[Type, Callable]) -> Tuple[Optional[str], str, str]:
         """
         Given a class or function in Python, get all the information needed to import it in another Python process.
@@ -384,13 +425,18 @@ class RuntimeManager:
                 if Path(packagePath) in Path(modulePath).parents:
                     rootPath = str(Path(packagePath).parent)
                 else:
-                    print(f"Warning: Module is not in the expected package structure. Using file parent as root path.")
+                    print(
+                        f"Warning: Module is not in the expected package structure. Using file parent as root path.")
             except Exception as e:
-                print(f"Warning: Error processing package structure: {e}. Using file parent as root path.")
+                print(
+                    f"Warning: Error processing package structure: {e}. Using file parent as root path.")
         return rootPath, moduleName, clsOrFnName
+
+
 class QueryValidator(ast.NodeVisitor):
     def __init__(self, security_context: SecurityContext):
         self.security_context = security_context
+
     def visit_Name(self, node):
         # Validate access to variables
         if not self.security_context.access_policy.can_access(
@@ -398,20 +444,26 @@ class QueryValidator(ast.NodeVisitor):
         ):
             raise PermissionError(f"Access denied to name: {node.id}")
         self.generic_visit(node)
+
     def visit_Call(self, node):
         # Validate function calls
         if isinstance(node.func, ast.Name):
             if not self.security_context.access_policy.can_access(
                 node.func.id, "execute"
             ):
-                raise PermissionError(f"Access denied to function: {node.func.id}")
+                raise PermissionError(
+                    f"Access denied to function: {node.func.id}")
         self.generic_visit(node)
+
+
 def load_modules():
     """Function to load modules into the global runtime manager."""
     manager = RuntimeManager()
     manager.root.load_modules()
     return manager.root.available_modules  # Return available modules for access
-mixins = load_modules() # Import the internal modules and literal stdlibs
+
+
+mixins = load_modules()  # Import the internal modules and literal stdlibs
 if mixins:
     __all__ = [mixin.__name__ for mixin in mixins]
 else:
@@ -419,6 +471,8 @@ else:
 """ hacked namespace uses `__all__` as a whitelist of symbols which are executable source code.
 Non-whitelisted modules or runtime SimpleNameSpace()(s) are treated as 'data' which we call associative 
 'articles' within the knowledge base, loaded at runtime. They are, however, logic and state."""
+
+
 def reload_module(module):
     try:
         importlib.reload(module)
@@ -426,6 +480,8 @@ def reload_module(module):
     except Exception as e:
         logger.error(f"Error reloading module {module.__name__}: {e}")
         return False
+
+
 # Truncated "Space ontology" -- think Hilbert Space Kernel
 """
 class HilbertSpace(Generic[T, V, C]):
@@ -458,42 +514,49 @@ class HilbertSpace(Generic[T, V, C]):
         return projections
 """
 
+
 class RuntimeMemory(Generic[T, V, C]):
     """Integrates quantum memory management with runtime behavior"""
+
     def __init__(self, memory_size: int):
         self.memory_manager = __Atom__(memory_size)
         self.page_size = 4096  # Standard page size
         self.runtime_id = id(self)
         self.allocated_pages: Dict[int, QuantumPage] = {}
+
     def allocate_memory(self, size: int) -> Optional[QuantumPage]:
         """Allocate memory for this runtime"""
         page = self.memory_manager.allocate(size)
         if page:
             self.allocated_pages[id(page)] = page
         return page
-    def share_with_runtime(self, 
-                          other_runtime: 'RuntimeMemory[T, V, C]',
-                          page: QuantumPage) -> bool:
+
+    def share_with_runtime(self,
+                           other_runtime: 'RuntimeMemory[T, V, C]',
+                           page: QuantumPage) -> bool:
         """Share memory with another runtime"""
         return self.memory_manager.share_memory(
             self.runtime_id,
             other_runtime.runtime_id,
             page
         )
+
     def __post_init__(self,
-                     total_memory: int,
-                     source_runtime_id: int,
-                     target_runtime_id: int,
-                     memory_size: int,
-                     page_size: int,
-                     page: QuantumPage) -> bool:
+                      total_memory: int,
+                      source_runtime_id: int,
+                      target_runtime_id: int,
+                      memory_size: int,
+                      page_size: int,
+                      page: QuantumPage) -> bool:
         self.total_memory = total_memory
         self.allocated_memory = 0
         self.pages: Dict[int, QuantumPage] = {}
+
     def allocate(self, size: int) -> Optional[QuantumPage]:
         """Allocate a quantum page of specified size"""
         if self.allocated_memory + size > self.total_memory:
-            logger.error(f"Memory allocation failed: Not enough space for {size} bytes.")
+            logger.error(
+                f"Memory allocation failed: Not enough space for {size} bytes.")
             return None
         # Round up to nearest page size
         pages_needed = (size + self.page_size - 1) // self.page_size
@@ -503,7 +566,8 @@ class RuntimeMemory(Generic[T, V, C]):
         self.pages[page_id] = page
         self.allocated_memory += total_size
         return page
-    def share_memory(self, 
+
+    def share_memory(self,
                      source_runtime_id: int,
                      target_runtime_id: int,
                      page: QuantumPage) -> bool:
@@ -519,6 +583,7 @@ class RuntimeMemory(Generic[T, V, C]):
         # Reduce coherence due to sharing
         page.vector.coherence *= 0.9
         return True
+
     def measure_memory_state(self, page: QuantumPage) -> MemoryVector:
         """Measure the quantum state of a memory page"""
         page.vector.coherence *= 0.8
@@ -527,6 +592,7 @@ class RuntimeMemory(Generic[T, V, C]):
             page.vector.state = MemoryState.PAGED
             logger.info(f"Page {id(page)} paged due to low coherence.")
         return page.vector
+
     def deallocate(self, page: QuantumPage):
         """Deallocate a quantum page, handling entanglement"""
         page_id = id(page)
@@ -540,41 +606,43 @@ class RuntimeMemory(Generic[T, V, C]):
                 if runtime_id is not None:
                     runtime_page = self.pages.get(runtime_id)
                     if runtime_page:
-                        runtime_page.vector.coherence *= (1 - page.vector.entanglement)
+                        runtime_page.vector.coherence *= (
+                            1 - page.vector.entanglement)
         page.vector.state = MemoryState.DEALLOCATED
         self.allocated_memory -= page.vector.size
         del self.pages[page_id]
         logger.info(f"Page {page_id} deallocated.")
+
     def __enter__(self):
         """Initialize runtime memory context"""
         return self
-    
+
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         """Async context manager exit."""
         self._lock.release()
         return False  # Re-raise exceptions
-    
+
     def __getattribute__(self, name: str) -> Any:
         """
         Get attribute with support for async properties.
         Internal attributes are accessed directly, otherwise delegates to code execution.
         """
         # Direct access to internal attributes
-        if name in ('_code', '_value', '_local_env', '_refcount', '_ttl', '_created_at', 
-                    '_lock', '_async_cache', '_future_results', 'request_data', 'session', 
+        if name in ('_code', '_value', '_local_env', '_refcount', '_ttl', '_created_at',
+                    '_lock', '_async_cache', '_future_results', 'request_data', 'session',
                     'runtime_namespace', 'security_context'):
             return super().__getattribute__(name)
-            
+
         # Check for cached async results
         _async_cache = super().__getattribute__('_async_cache')
         if name in _async_cache:
             return _async_cache[name]
-            
+
         # Attribute lookup in local environment
         _local_env = super().__getattribute__('_local_env')
         if name in _local_env:
             return _local_env[name]
-            
+
         # Execute code to generate attribute
         try:
             _code = super().__getattribute__('_code')
@@ -583,7 +651,7 @@ class RuntimeMemory(Generic[T, V, C]):
                 return _local_env[name]
         except Exception as e:
             raise AttributeError(f"Attribute '{name}' not found: {e}")
-    
+
     def __setattr__(self, name: str, value: Any) -> None:
         """Set attribute with support for invalidating async cache entries."""
         if name in ('_code', '_value', '_local_env', '_refcount', '_ttl', '_created_at',
@@ -595,47 +663,47 @@ class RuntimeMemory(Generic[T, V, C]):
             if hasattr(self, '_async_cache') and name in self._async_cache:
                 del self._async_cache[name]
             self._local_env[name] = value
-    
+
     async def __call__(self, *args: Any, **kwargs: Any) -> Any:
         """
         Asynchronously execute the code with given arguments.
-        
+
         If the code defines an async function or returns a coroutine, awaits it.
         Otherwise, executes synchronously in a thread pool to avoid blocking.
         """
         async with self._lock:
             local_env = self._local_env.copy()
-            
+
             # Create a hash of the arguments for caching purposes
             cache_key = hashlib.md5(
                 str((args, frozenset(kwargs.items()))).encode()
             ).hexdigest()
-            
+
             # Return cached result if available
             if cache_key in self._async_cache:
                 return self._async_cache[cache_key]
-            
+
             # Prepare arguments for execution
             try:
                 # Parse the code to detect if it's an async function
                 ast_obj = ast.parse(self._code)
                 is_async = any(
-                    isinstance(node, ast.AsyncFunctionDef) 
+                    isinstance(node, ast.AsyncFunctionDef)
                     for node in ast.walk(ast_obj)
                 )
-                
+
                 # Bind arguments
                 try:
                     code_obj = compile(self._code, '<string>', 'exec')
                     exec(code_obj, globals(), local_env)
-                    
+
                     # Find the main function in the code
                     main_func = None
                     for item_name, item in local_env.items():
                         if callable(item) and not item_name.startswith('_'):
                             main_func = item
                             break
-                    
+
                     if main_func:
                         sig = inspect.signature(main_func)
                         bound_args = sig.bind(*args, **kwargs)
@@ -645,10 +713,10 @@ class RuntimeMemory(Generic[T, V, C]):
                         for i, arg in enumerate(args):
                             local_env[f'arg{i}'] = arg
                         local_env.update(kwargs)
-                        
+
                 except Exception as e:
                     raise RuntimeError(f"Error binding arguments: {e}")
-                
+
                 # Execute the code
                 if is_async:
                     # If it's an async function, await it
@@ -657,9 +725,10 @@ class RuntimeMemory(Generic[T, V, C]):
                     else:
                         # Execute as async code block
                         async_code = f"async def __async_exec():\n" + \
-                                    "\n".join(f"    {line}" for line in self._code.split("\n"))
+                            "\n".join(
+                                f"    {line}" for line in self._code.split("\n"))
                         async_code += "\n__async_result = await __async_exec()"
-                        
+
                         exec(async_code, globals(), local_env)
                         result = local_env.get('__async_result')
                 else:
@@ -669,45 +738,45 @@ class RuntimeMemory(Generic[T, V, C]):
                         None,
                         lambda: self._execute_sync(args, kwargs, local_env)
                     )
-                
+
                 # Cache the result
                 self._async_cache[cache_key] = result
                 return result
-                
+
             except Exception as e:
                 raise RuntimeError(f"Error executing AsyncAtom code: {e}")
-    
+
     def _execute_sync(self, args, kwargs, local_env):
         """Execute code synchronously for non-async code."""
         # Create a copy of the environment for this execution
         exec_env = local_env.copy()
-        
+
         # Add arguments to the environment
         for i, arg in enumerate(args):
             exec_env[f'arg{i}'] = arg
         exec_env.update(kwargs)
-        
+
         # Execute the code
         exec(self._code, globals(), exec_env)
-        
+
         # Look for return value (by convention)
         for k, v in exec_env.items():
             if k.startswith('__return__'):
                 return v
-        
+
         # No explicit return, check for changes to the environment
-        result = {k: v for k, v in exec_env.items() 
-                 if k not in local_env or local_env[k] != v}
+        result = {k: v for k, v in exec_env.items()
+                  if k not in local_env or local_env[k] != v}
         return result if result else None
-    
+
     async def handle_request(self, *args: Any, **kwargs: Any) -> Any:
         """Handles a request asynchronously with proper error handling and logging."""
         # Pre-processing
         if not await self.is_authenticated_async():
             return {"status": "error", "message": "Authentication failed"}
-        
+
         await self.log_request_async()
-        
+
         # Context creation
         request_context = {
             "session": self.session,
@@ -715,12 +784,12 @@ class RuntimeMemory(Generic[T, V, C]):
             "runtime_namespace": self.runtime_namespace,
             "security_context": self.security_context
         }
-        
+
         # Core logic with concurrency control
         try:
             if "operation" in self.request_data:
                 operation = self.request_data["operation"]
-                
+
                 # Handle operations concurrently when possible
                 if operation == "execute_atom":
                     result = await self.execute_atom_async(request_context)
@@ -733,7 +802,7 @@ class RuntimeMemory(Generic[T, V, C]):
                         sub_context = request_context.copy()
                         sub_context["operation"] = op
                         tasks.append(self.process_request_async(sub_context))
-                    
+
                     # Wait for all operations to complete
                     results = await asyncio.gather(*tasks, return_exceptions=True)
                     result = {"status": "success", "results": results}
@@ -743,46 +812,46 @@ class RuntimeMemory(Generic[T, V, C]):
             else:
                 # Default processing
                 result = await self.process_request_async(request_context)
-                
+
         except Exception as e:
             result = {"status": "error", "message": str(e)}
-        
+
         # Post-processing
         await self.save_session_async()
         await self.log_response_async(result)
-        
+
         return result
-    
+
     async def is_authenticated_async(self) -> bool:
         """Asynchronous authentication check."""
         # Implementation with proper async IO
         return True  # Placeholder
-    
+
     async def log_request_async(self) -> None:
         """Log request asynchronously."""
         # Implement async logging
         pass
-    
+
     async def log_response_async(self, result: Any) -> None:
         """Log response asynchronously."""
         # Implement async logging
         pass
-    
+
     async def save_session_async(self) -> None:
         """Save session data asynchronously."""
         # Implement async session saving
         pass
-    
+
     async def execute_atom_async(self, request_context: Dict[str, Any]) -> Dict[str, Any]:
         """Execute another atom asynchronously."""
         atom_name = self.request_data.get("atom_name")
         if not atom_name:
             return {"status": "error", "message": "No atom name provided"}
-            
+
         atom = request_context["runtime_namespace"].get_child(atom_name)
         if not atom:
             return {"status": "error", "message": f"Atom '{atom_name}' not found"}
-        
+
         # Security check before execution
         if self.security_context:
             validator = SecurityValidator(self.security_context)
@@ -791,55 +860,55 @@ class RuntimeMemory(Generic[T, V, C]):
                 await asyncio.to_thread(validator.visit, ast_node)
             except PermissionError as e:
                 return {"status": "error", "message": str(e)}
-        
+
         # Execute the atom asynchronously
         try:
             result = await atom()  # Execute
             return {"status": "success", "result": result}
         except Exception as e:
             return {"status": "error", "message": f"Execution error: {str(e)}"}
-    
+
     async def query_memory_async(self, request_context: Dict[str, Any]) -> Dict[str, Any]:
         """Query memory asynchronously."""
         memory = request_context["runtime_namespace"].get_child("memory")
         if not memory:
             return {"status": "error", "message": "Memory namespace not found"}
-        
+
         page = request_context["request_data"].get("page")
         try:
             # Run memory measurement in a thread to avoid blocking
             result = await asyncio.to_thread(
-                memory.measure_memory_state, 
+                memory.measure_memory_state,
                 page
             )
             return {"status": "success", "result": result}
         except Exception as e:
             return {"status": "error", "message": f"Memory query error: {str(e)}"}
-    
+
     async def process_request_async(self, request_context: Dict[str, Any]) -> Dict[str, Any]:
         """Process a generic request asynchronously."""
         # Implementation of generic request processing
         return {"status": "success", "message": "Request processed"}
-    
-    async def map_reduce(self, 
-                         data: List[Any], 
+
+    async def map_reduce(self,
+                         data: List[Any],
                          map_func: Callable[[Any], Awaitable[Any]],
                          reduce_func: Callable[[List[Any]], Awaitable[Any]],
                          chunk_size: int = 10) -> Any:
         """
         Perform a map-reduce operation asynchronously with controlled concurrency.
-        
+
         Args:
             data: The data to process
             map_func: The mapping function (must be async)
             reduce_func: The reduction function (must be async)
             chunk_size: Number of items to process concurrently
-            
+
         Returns:
             The reduced result
         """
         results = []
-        
+
         # Process data in chunks to avoid creating too many tasks
         for i in range(0, len(data), chunk_size):
             chunk = data[i:i + chunk_size]
@@ -847,92 +916,102 @@ class RuntimeMemory(Generic[T, V, C]):
             chunk_tasks = [map_func(item) for item in chunk]
             chunk_results = await asyncio.gather(*chunk_tasks)
             results.extend(chunk_results)
-        
+
         # Perform reduction
         return await reduce_func(results)
-    
-    async def stream_process(self, 
+
+    async def stream_process(self,
                              data_stream: AsyncIterator[Any],
                              process_func: Callable[[Any], Awaitable[Any]]) -> AsyncIterator[Any]:
         """
         Process a stream of data asynchronously, yielding results as they complete.
-        
+
         Args:
             data_stream: An async iterator providing input data
             process_func: The async function to apply to each item
-            
+
         Yields:
             Processed results as they become available
         """
         async for item in data_stream:
             result = await process_func(item)
             yield result
-    
+
     def __repr__(self) -> str:
         return f"AsyncAtom(code='{self._code[:50]}...', value={self._value})"
-    
+
     def __str__(self) -> str:
         return self.__repr__()
-    
+
     @property
     def __class__(self) -> type:
         return AsyncAtom
-    
+
     @property
     def ob_refcnt(self) -> int:
         return self._refcount
-    
+
     @ob_refcnt.setter
     def ob_refcnt(self, value: int) -> None:
         self._refcount = value
-    
+
     @property
     def ob_ttl(self) -> Optional[int]:
         return self._ttl
-    
+
     @ob_ttl.setter
     def ob_ttl(self, value: Optional[int]) -> None:
         self._ttl = value
-    
+
     def is_expired(self) -> bool:
         """Check if the atom has expired based on its TTL."""
         if self._ttl is None:
             return False
         return time.time() - self._created_at > self._ttl
 
+
 class HilbertSpace:
     """
     Represents a Hilbert space that uses MorphicComplex numbers for coordinates.
     """
+
     def __init__(self, dimension: int = 3):
         self.dimension = dimension
-        self.basis_vectors = [self._create_basis_vector(i) for i in range(dimension)]
+        self.basis_vectors = [self._create_basis_vector(
+            i) for i in range(dimension)]
+
     def _create_basis_vector(self, index: int) -> list[MorphicComplex]:
         """Create a basis vector with a 1 at the specified index."""
         vector = [MorphicComplex(0, 0) for _ in range(self.dimension)]
         vector[index] = MorphicComplex(1, 0)
         return vector
+
     def inner_product(self, vec1: list[MorphicComplex], vec2: list[MorphicComplex]) -> MorphicComplex:
         """
         Compute the inner product of two vectors in the Hilbert space.
         <u, v> = ∑ᵢ (u*ᵢ × vᵢ) where u*ᵢ is the complex conjugate
         """
         if len(vec1) != len(vec2) or len(vec1) != self.dimension:
-            raise ValueError("Vectors must have the same dimension as the space")
+            raise ValueError(
+                "Vectors must have the same dimension as the space")
         result = MorphicComplex(0, 0)
         for i in range(self.dimension):
             # For each component, compute u*ᵢ × vᵢ
             conj_u = vec1[i].conjugate()
             result = result + (conj_u * vec2[i])
         return result
+
     def norm(self, vector: list[MorphicComplex]) -> float:
         """Compute the norm (magnitude) of a vector."""
         inner = self.inner_product(vector, vector)
-        return (inner.real ** 2 + inner.imag ** 2) ** 0.5  # Inner product with self should be real
+        # Inner product with self should be real
+        return (inner.real ** 2 + inner.imag ** 2) ** 0.5
+
     def is_orthogonal(self, vec1: list[MorphicComplex], vec2: list[MorphicComplex]) -> bool:
         """Check if two vectors are orthogonal."""
         inner = self.inner_product(vec1, vec2)
         return abs(inner.real) < 1e-10 and abs(inner.imag) < 1e-10
+
     def project(self, vector: list[MorphicComplex], subspace_basis: list[list[MorphicComplex]]) -> list[MorphicComplex]:
         """Project a vector onto a subspace defined by a basis."""
         projection = [MorphicComplex(0, 0) for _ in range(self.dimension)]
@@ -946,14 +1025,18 @@ class HilbertSpace:
             for i in range(self.dimension):
                 projection[i] = projection[i] + (basis_vec[i] * coeff)
         return projection
+
+
 class KernelFunction(Generic[T, V]):
     """
     Represents a kernel function for measuring similarity in Hilbert space.
     Kernels enable computation in high-dimensional spaces through inner products.
     """
+
     def __init__(self, fn: Callable[[V, V], float]):
         self.fn = fn
         self.cache: Dict[Tuple[int, int], float] = {}
+
     def __call__(self, x: V, y: V) -> float:
         """Compute the kernel value between two vectors."""
         x_id, y_id = id(x), id(y)
@@ -961,6 +1044,7 @@ class KernelFunction(Generic[T, V]):
         if cache_key not in self.cache:
             self.cache[cache_key] = self.fn(x, y)
         return self.cache[cache_key]
+
     @staticmethod
     def gaussian(sigma: float = 1.0) -> 'KernelFunction':
         """Creates a Gaussian (RBF) kernel with given bandwidth."""
@@ -971,6 +1055,7 @@ class KernelFunction(Generic[T, V]):
                 squared_dist = (x - y) ** 2
             return math.exp(-squared_dist / (2 * sigma ** 2))
         return KernelFunction(rbf)
+
     @staticmethod
     def linear() -> 'KernelFunction':
         """Creates a linear kernel."""
@@ -980,24 +1065,29 @@ class KernelFunction(Generic[T, V]):
             return x * y
         return KernelFunction(linear_kernel)
 
+
 @dataclass
 class FilesystemState:
     allowed_root: str = field(init=False)
+
     def __post_init__(self):
         try:
             self.allowed_root = os.path.dirname(os.path.realpath(__file__))
             if not any(os.listdir(self.allowed_root)):
-                raise FileNotFoundError(f"Allowed root directory empty: {self.allowed_root}")
+                raise FileNotFoundError(
+                    f"Allowed root directory empty: {self.allowed_root}")
             logging.info(f"Allowed root directory found: {self.allowed_root}")
         except Exception as e:
             logging.error(f"Error initializing FilesystemState: {e}")
             raise
+
     def safe_remove(self, path: str):
         """Safely remove a file or directory, handling platform-specific issues."""
         try:
             path = os.path.abspath(path)
             if not os.path.commonpath([self.allowed_root, path]) == self.allowed_root:
-                logging.error(f"Attempt to delete outside allowed directory: {path}")
+                logging.error(
+                    f"Attempt to delete outside allowed directory: {path}")
                 return
             if os.path.isdir(path):
                 os.rmdir(path)
@@ -1007,18 +1097,21 @@ class FilesystemState:
                 logging.info(f"Removed file: {path}")
         except (FileNotFoundError, PermissionError, OSError) as e:
             logging.error(f"Error removing path {path}: {e}")
+
     def _on_error(self, func, path, exc_info):
         """Error handler for handling removal of read-only files on Windows."""
         logging.error(f"Error deleting {path}, attempting to fix permissions.")
         # Attempt to change the file's permissions and retry removal
         os.chmod(path, 0o777)
         func(path)
+
     async def execute_runtime_tasks(self):
         for task in self.tasks:
             try:
                 await task()
             except Exception as e:
                 logging.error(f"Error executing task: {e}")
+
     async def run_command_async(self, command: str, shell: bool = False, timeout: int = 120):
         logging.info(f"Running command: {command}")
         split_command = shlex.split(command, posix=(os.name == 'posix'))
@@ -1044,6 +1137,8 @@ class FilesystemState:
 # =========================================================================================
 # FrameModel - Delimited, measured 'reality' (motility, perception, cognition)
 # =========================================================================================
+
+
 class Frame(Generic[T, V, C], ABC):
     """
     A Frame is the quantum bridge between CPython's memory model and our associative space.
@@ -1063,6 +1158,7 @@ class Frame(Generic[T, V, C], ABC):
     heirarchical (can I just say [[Morphogenetic]], yet?) competency-motility (Quine)"True Ontology" of
     the wider, emergent and measurable reality (that you, me, and Wigner's friend all 'cohabitate').
     """
+
     def init(self, start_delimiter: str = "<<CONTENT>>", end_delimiter: str = "<<END_CONTENT>>"):
         self.start_delimiter = start_delimiter
         self.end_delimiter = end_delimiter
@@ -1077,14 +1173,17 @@ class Frame(Generic[T, V, C], ABC):
         self._type_space: Optional[T] = None
         self._value_space: Optional[V] = None
         self._compute_space: Optional[C] = None
+
     @property
     def state(self) -> QuantumState:
         return self._state
+
     def collapse(self) -> V:
         """Forces materialization of the value space."""
         if self._state == QuantumState.SUPERPOSITION:
             self._materialize()
         return self._value_space
+
     def _materialize(self) -> None:
         """Maps the quantum state to actual CPython objects."""
         if self._value_space is not None:
@@ -1095,37 +1194,46 @@ class Frame(Generic[T, V, C], ABC):
             self._ref_count.value = ctypes.pythonapi.Py_RefCnt(obj_ptr)
             self._type_ptr.value = ctypes.pythonapi.Py_TYPE(obj_ptr)
             self._state = QuantumState.COLLAPSED
+
     @abstractmethod
     def to_bytes(self) -> bytes:
         """Return the frame data as bytes, representing the extracted "measured reality"."""
         pass
+
     @abstractmethod
     def parse_content(self, raw_content: str) -> str:
         """Parse the raw content using custom delimiters, observing the "measured reality"."""
         pass
+
     def validate_content(self, content: str) -> bool:
         """Validate the content based on delimiters, ensuring the "measurement" is valid."""
         if not content.startswith(self.start_delimiter) or not content.endswith(self.end_delimiter):
             return False
         return True
+
+
 class Field(Frame[T, V, C], ABC):
     """
     A Field represents a region of spacetime in our quantum memory model.
     It extends Frame with composition and transformation capabilities.
     """
+
     def __init__(self):
         super().__init__()
         self.entangled_fields: set[weakref.ref[Field]] = set()
+
     def entangle(self, other: Field) -> None:
         """Creates quantum entanglement between fields."""
         self.entangled_fields.add(weakref.ref(other))
         other.entangled_fields.add(weakref.ref(self))
         self._state = QuantumState.ENTANGLED
         other._state = QuantumState.ENTANGLED
+
     @abstractmethod
     def transform(self, operator: Callable[[V], V]) -> None:
         """Applies a transformation operator to the value space."""
         pass
+
 
 @dataclass
 class CustomDelimiter(Field):
@@ -1157,19 +1265,23 @@ class CustomDelimiter(Field):
         except ValueError:
             return False
 
+
 class Space(Field[T, V, C]):
     """
     Space is the container for Fields and manages their interactions.
     It provides the high-level interface for our quantum memory model.
     """
+
     def __init__(self):
         super().__init__()
         self.fields: dict[str, Field] = {}
+
     def create_field(self, handle: str) -> Field:
         """Creates a new field in this space."""
         field = Field()
         self.fields[handle] = field
         return field
+
     def compose(self, other: Space) -> Space:
         """Composes two spaces, maintaining quantum properties."""
         new_space = Space()
@@ -1181,16 +1293,21 @@ class Space(Field[T, V, C]):
                 new_field.entangle(other.fields[handle])
         return new_space
 
-def atom(cls: Type[{T, V, C}]) -> Type[{T, V, C}]: # homoicon decorator
+
+def atom(cls: Type[{T, V, C}]) -> Type[{T, V, C}]:  # homoicon decorator
     """Decorator to create a homoiconic atom."""
     original_init = cls.__init__
+
     def new_init(self, *args, **kwargs):
         original_init(self, *args, **kwargs)
         if not hasattr(self, 'id'):
-            self.id = hashlib.sha256(self.__class__.__name__.encode('utf-8')).hexdigest()
+            self.id = hashlib.sha256(
+                self.__class__.__name__.encode('utf-8')).hexdigest()
 
     cls.__init__ = new_init
     return cls
+
+
 def encode(atom: '__Atom__') -> bytes:
     data = {
         'tag': atom.tag,
@@ -1200,24 +1317,30 @@ def encode(atom: '__Atom__') -> bytes:
     }
     return pickle.dumps(data)
 
+
 def decode(data: bytes) -> '__Atom__':
     data = pickle.loads(data)
-    atom = __Atom__(data['tag'], data['value'], [decode(child) for child in data['children']], data['metadata'])
+    atom = __Atom__(data['tag'], data['value'], [decode(child)
+                    for child in data['children']], data['metadata'])
     return atom
+
 
 def validate(cls: Type[T]) -> Type[T]:
     original_init = cls.__init__
     sig = inspect.signature(original_init)
+
     def new_init(self: T, *args: Any, **kwargs: Any) -> None:
         bound_args = sig.bind(self, *args, **kwargs)
         for key, value in bound_args.arguments.items():
             if key in cls.__annotations__:
                 expected_type = cls.__annotations__.get(key)
                 if not isinstance(value, expected_type):
-                    raise TypeError(f"Expected {expected_type} for {key}, got {type(value)}")
+                    raise TypeError(
+                        f"Expected {expected_type} for {key}, got {type(value)}")
         original_init(self, *args, **kwargs)
     cls.__init__ = new_init
     return cls
+
 
 class AsyncAtom(Generic[T_co, V_co, C_co], PyObjABC):
     """
@@ -1225,13 +1348,14 @@ class AsyncAtom(Generic[T_co, V_co, C_co], PyObjABC):
     This class maintains the homoiconic properties of Atom while adding asynchronous capabilities,
     allowing efficient handling of IO-bound and concurrent operations.
     """
-    __slots__ = ('_code', '_value', '_local_env', '_refcount', '_ttl', '_created_at', 
-                 'request_data', 'session', 'runtime_namespace', 'security_context', 
+    __slots__ = ('_code', '_value', '_local_env', '_refcount', '_ttl', '_created_at',
+                 'request_data', 'session', 'runtime_namespace', 'security_context',
                  '_lock', '_async_cache', '_future_results')
-    def __init__(self, 
-                 code: str, 
-                 value: Optional[Any] = None, 
-                 ttl: Optional[int] = None, 
+
+    def __init__(self,
+                 code: str,
+                 value: Optional[Any] = None,
+                 ttl: Optional[int] = None,
                  request_data: Optional[Dict[str, Any]] = None):
         self._code = code
         self._value = value
@@ -1247,30 +1371,41 @@ class AsyncAtom(Generic[T_co, V_co, C_co], PyObjABC):
         self._lock = asyncio.Lock()  # For thread-safe operations
         self._async_cache: Dict[str, Any] = {}  # Cache for async operations
         self._future_results: Dict[str, asyncio.Future] = {}  # Store futures
+
     async def __aenter__(self):
         """Async context manager entry."""
         await self._lock.acquire()
         return self
+
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         """Async context manager exit."""
         self._lock.release()
+
+
 def main():
     # Example usage of TemporalBridge
     bridge = TemporalBridge()
+
     @bridge.observe
     def quantum_computation(x):
         time.sleep(0.1)  # Simulate work
         return x * math.pi
     result = quantum_computation(1.0)
     print(f"Observed Result: {result}")
+
+
 if __name__ == "__main__":
     main()
 # Example Usage
 bridge = TemporalBridge()
+
+
 @bridge.observe
 def quantum_computation(x: float) -> float:
     time.sleep(0.1)  # Simulate work
     return x * math.pi
+
+
 def main():
     result = quantum_computation(1.0)
     print(f"Observed Result: {result}")
@@ -1281,19 +1416,23 @@ def main():
     # Print history
     for timestamp, name, energy in bridge.history:
         print(f"{timestamp}: {name} consumed {energy:.2e} Joules")
+
+
 if __name__ == "__main__":
     main()
 
 
-
-
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # API Morphology
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # --- Request Object ---
-current_request: contextvars.ContextVar[Any] = contextvars.ContextVar("current_request")
+current_request: contextvars.ContextVar[Any] = contextvars.ContextVar(
+    "current_request")
+
+
 class Request:
     """Represents an HTTP request"""
+
     def __init__(self, scope: Dict[str, Any]) -> None:
         self.scope: Dict[str, Any] = scope
         self.method: str = scope["method"]
@@ -1302,7 +1441,10 @@ class Request:
         self.body_params: Dict[str, List[str]] = {}
         self.session: Dict[str, Any] = {}
         self.files: Dict[str, Any] = {}
-        self.quantum_memory: Optional[QuantumMemoryFS] = None # Add quantum memory
+        # Add quantum memory
+        self.quantum_memory: Optional[QuantumMemoryFS] = None
+
+
 class SerialObject(Generic[T, V, C], __Atom__, FrameModel[T, V, C]):
     """SerialObject is an abstract class that defines the interface for serializable objects.
     Generic[T,V,C]    
@@ -1316,46 +1458,58 @@ class SerialObject(Generic[T, V, C], __Atom__, FrameModel[T, V, C]):
     def dict(self) -> dict:
         """Return a dictionary representation of the model."""
         pass
+
     @abstractmethod
     def json(self) -> str:
         """Return a JSON string representation of the model."""
         pass
+
     @abstractmethod
     def get_properties(self) -> Dict[str, Any]:
         """Method to get properties of the AtomicModel instance."""
         pass
+
     @abstractmethod
     def update_state(self, state: Dict[str, Any]) -> None:
         """Method to update the state of the AtomicModel."""
         pass
+
     @abstractmethod
     def analyze(self) -> Dict[str, Any]:
         """Method for performing analysis on the AtomicModel."""
         pass
+
     @abstractmethod
     def validate(self) -> bool:
         """Method for validating the AtomicModel state."""
         pass
+
     @abstractmethod
     def __repr__(self) -> str:
         """Return the string representation of the model."""
         pass
+
     @abstractmethod
     def __eq__(self, other: Any) -> bool:
         """Equality comparison between two models."""
         pass
+
+
 @dataclass
 class AtomicModel(SerialObject[T, V, C]):
     """Concrete implementation of SerialObject."""
     name: str
     age: int
     timestamp: datetime = field(default_factory=datetime.now)
+
     def to_bytes(self) -> bytes:
         """Return the JSON representation as bytes."""
         return self.json().encode()
+
     def to_str(self) -> str:
         """Return the JSON representation as a string."""
         return self.json()
+
     def dict(self) -> dict:
         """Return a dictionary representation of the model."""
         return {
@@ -1363,53 +1517,71 @@ class AtomicModel(SerialObject[T, V, C]):
             "age": self.age,
             "timestamp": self.timestamp.isoformat(),
         }
+
     def json(self) -> str:
         """Return a JSON representation of the model as a string."""
         return json.dumps(self.dict())
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return self.dict()
+
     def atomic_method(self) -> None:
         """An atomic method."""
         pass
+
+
 class Condition(AtomicModel[T, V, C], ABC):
     """Represents a state or condition in the system."""
     attributes: Dict[str, Any]
+
     @abstractmethod
     def __repr__(self):
         return f"Condition({self.attributes})"
+
+
 class Action(Condition[T, V, C], ABC):
     """Abstract base class for an elementary action or reaction."""
     @abstractmethod
     def execute(self, input_condition: Condition) -> Condition:
         """Transform an input condition into an output condition."""
         pass
+
+
 class Reaction(Action[T, V, C], ABC):
     """Concrete implementation of an elementary reaction."""
     transformation: Callable[[Condition], Condition]
+
     @abstractmethod
     def execute(self, input_condition: Condition) -> Condition:
         output_condition = self.transformation(input_condition)
         print(f"Reaction: {input_condition} -> {output_condition}")
         return output_condition
+
+
 @dataclass
 class Agency:
     """Represents an invariant agency catalyzing actions."""
     name: str
     rules: Dict[str, Action[T, V, C]] = field(default_factory=dict)
+
     def perform_action(self, action_key: str, input_condition: Condition[T, V, C]) -> Condition[T, V, C]:
         if action_key not in self.rules:
-            raise ValueError(f"Action {action_key} is not defined for agency {self.name}.")
+            raise ValueError(
+                f"Action {action_key} is not defined for agency {self.name}.")
         action = self.rules[action_key]
         print(f"Agency '{self.name}' performing action '{action_key}'...")
         return action.execute(input_condition)
+
     def add_action(self, action_key: str, action: Action[T, V, C]):
         self.rules[action_key] = action
         print(f"Action '{action_key}' added to agency '{self.name}'.")
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Virtual/Quantum Memory Ontology
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+
+
 class MemoryState(StrEnum):
     QUANTUM = auto()      # Superposition state, uncommitted changes
     CLASSICAL = auto()    # Committed state (persisted to Git)
@@ -1419,6 +1591,8 @@ class MemoryState(StrEnum):
     PAGED = auto()        # Memory is paged to secondary storage
     SHARED = auto()       # Memory is shared between multiple runtimes
     DEALLOCATED = auto()  # Memory has been freed
+
+
 @dataclass
 class QuantumCell:
     address: int
@@ -1428,12 +1602,13 @@ class QuantumCell:
     commit_hash: Optional[str] = None
     data: Optional[array.array] = None
     metadata: Optional[Dict] = None
-    __slots__ = ('address', 'segment', 'value', 'state', 'commit_hash', 'data', 'metadata')
-    
-    def __init__(self, 
-                 address: int, 
+    __slots__ = ('address', 'segment', 'value', 'state',
+                 'commit_hash', 'data', 'metadata')
+
+    def __init__(self,
+                 address: int,
                  segment: int,
-                 value: bytes = b'\x00' * BYTE_WORD, 
+                 value: bytes = b'\x00' * BYTE_WORD,
                  state: Optional[str] = None,
                  commit_hash: Optional[str] = None):
         self.address = address
@@ -1443,7 +1618,7 @@ class QuantumCell:
         self.commit_hash = commit_hash
         self.data = None  # Lazy-loaded
         self.metadata = None  # Lazy-loaded
-    
+
     async def load_data(self, data_source) -> None:
         """Asynchronously load data from a source."""
         self.data = array.array('B')
@@ -1451,7 +1626,7 @@ class QuantumCell:
         await asyncio.sleep(0.01)
         # Populate data
         self.data.frombytes(self.value)
-    
+
     async def commit(self) -> str:
         """Asynchronously commit changes and return commit hash."""
         # Create hash from current state
@@ -1459,12 +1634,13 @@ class QuantumCell:
         hash_obj.update(self.value)
         if self.data:
             hash_obj.update(self.data.tobytes())
-        
+
         # Simulate async commit
         await asyncio.sleep(0.01)
-        
+
         self.commit_hash = hash_obj.hexdigest()
         return self.commit_hash
+
 
 @dataclass
 class MemoryVector:
@@ -1474,6 +1650,8 @@ class MemoryVector:
     entanglement: float   # Degree of entanglement with other memory regions
     state: MemoryState
     size: int            # Size of memory region in bytes
+
+
 @runtime_checkable
 class Field(Protocol):
     """
@@ -1482,6 +1660,8 @@ class Field(Protocol):
 
     def interact(self, state: MemoryState) -> MemoryState:
         pass
+
+
 class QuantumPage:
     """Represents a page in virtual memory with quantum properties"""
 
@@ -1506,7 +1686,7 @@ class QuantumPage:
         other.vector.entanglement = entanglement_strength
         return entanglement_strength
     __slots__ = ('vector', 'cells', 'references', '_lock')
-    
+
     def __init__(self, size: int):
         self.vector = MemoryVector(
             address_space=complex(1, 0),
@@ -1518,17 +1698,17 @@ class QuantumPage:
         self.cells: Dict[int, QuantumCell] = {}
         self.references: Dict[int, weakref.ref] = {}
         self._lock = asyncio.Lock()
-    
+
     async def allocate_cell(self, address: int, segment: int) -> QuantumCell:
         """Allocate a new quantum cell asynchronously."""
         async with self._lock:
             if address in self.cells:
                 return self.cells[address]
-            
+
             cell = QuantumCell(address, segment)
             self.cells[address] = cell
             return cell
-    
+
     async def entangle(self, other: 'QuantumPage') -> float:
         """Entangle this page with another asynchronously, returns entanglement strength."""
         async with self._lock, other._lock:  # Acquire both locks to prevent deadlocks
@@ -1538,13 +1718,13 @@ class QuantumPage:
             )
             self.vector.entanglement = entanglement_strength
             other.vector.entanglement = entanglement_strength
-            
+
             # Copy reference to create entanglement
             self.references[id(other)] = weakref.ref(other)
             other.references[id(self)] = weakref.ref(self)
-            
+
             return entanglement_strength
-    
+
     async def collapse(self) -> None:
         """Collapse the quantum state of this page, resolving entanglements."""
         async with self._lock:
@@ -1557,28 +1737,30 @@ class QuantumPage:
                     if id(self) in page.references:
                         del page.references[id(self)]
                 del self.references[ref_id]
-            
+
             # Reset our state
             self.vector.entanglement = 0.0
             self.vector.coherence = 1.0
             self.vector.state = MemoryState.CLASSICAL
 
+
 class AsyncMemoryPool:
     """Memory pool for efficient AsyncQuantumPage allocation and recycling."""
-    __slots__ = ('available_pages', '_lock', 'allocated_pages', 'total_pages', 'page_size')
-    
+    __slots__ = ('available_pages', '_lock',
+                 'allocated_pages', 'total_pages', 'page_size')
+
     def __init__(self, initial_size: int = 10, page_size: int = 4096):
         self.available_pages: List[QuantumPage] = []
         self._lock = asyncio.Lock()
         self.allocated_pages: int = 0
         self.total_pages: int = 0
         self.page_size = page_size
-        
+
         # Pre-allocate pages
         for _ in range(initial_size):
             self.available_pages.append(QuantumPage(page_size))
             self.total_pages += 1
-    
+
     async def get_page(self) -> QuantumPage:
         """Get a page from the pool or create a new one if necessary."""
         async with self._lock:
@@ -1589,19 +1771,19 @@ class AsyncMemoryPool:
             else:
                 # Reuse an existing page
                 page = self.available_pages.pop()
-            
+
             self.allocated_pages += 1
             return page
-    
+
     async def release_page(self, page: QuantumPage) -> None:
         """Return a page to the pool for reuse."""
         # Reset the page state
         await page.collapse()
-        
+
         async with self._lock:
             self.available_pages.append(page)
             self.allocated_pages -= 1
-    
+
     async def stats(self) -> Dict[str, int]:
         """Get current memory pool statistics."""
         async with self._lock:
@@ -1621,12 +1803,31 @@ def morphological_update(byte_word: ByteWord, target: bytes, learning_rate: floa
     diff = sum(a != b for a, b in zip(current_state, target))
     entropy = diff / len(current_state)
 
-    # Create mutation pattern based on entropy-weighted mask
     mutated = bytes([
         b ^ int(entropy * 255 * learning_rate) for b in current_state
     ])
 
     return ByteWord(mutated, word_size=byte_word.word_size)
+
+
+class MemoryState:
+    CLASSICAL = "classical"
+    QUANTUM = "quantum"
+    CACHED = "cached"
+
+
+class QuantumCell:
+    def __init__(self, address: int, segment_id: int, value: bytes,
+                 commit_hash: Optional[str] = None, metadata: Optional[Dict] = None,
+                 state: str = MemoryState.CLASSICAL):
+        self.address = address
+        self.segment_id = segment_id
+        self.value = value
+        self.commit_hash = commit_hash
+        self.metadata = metadata or {}
+        self.state = state
+
+
 def quantum_xnor(t: int, v: int, c: int) -> int:
     """
     Quantum XNOR Morphogen that aligns T, V, and C into an 8-bit holographic state.
@@ -1637,37 +1838,49 @@ def quantum_xnor(t: int, v: int, c: int) -> int:
     Returns:
         8-bit quantum state aligned for coherence.
     """
-    assert 0 <= t < 16, "T must be a 4-bit value (0-15)"
-    assert 0 <= v < 8, "V must be a 3-bit value (0-7)"
-    assert 0 <= c < 2, "C must be a 1-bit control (0 or 1)"
-    # XNOR Morphogen Calculation
-    m1 = ~(t & 0b1111) ^ (v & 0b111)  # XNOR Gate 1
-    m2 = ~(t >> 2) ^ (v >> 1)  # XNOR Gate 2
-    m3 = ~(m1 & m2) ^ c  # Final XNOR Gate with Control Bit
+    assert 0 <= t < 16, "T must be 4-bit"
+    assert 0 <= v < 8, "V must be 3-bit"
+    assert 0 <= c < 2, "C must be 1-bit"
+    # Mask NOT to keep bits within range
+    m1 = (~(t & 0b1111) & 0b1111) ^ (v & 0b111)
+    m2 = (~(t >> 2) & 0b11) ^ (v >> 1)
+    m3 = (~(m1 & m2) & 0b1) ^ c
     # Assemble the final quantum state in 8-bit format
-    quantum_state = (m1 & 0b1111) << 4 | (m2 & 0b11) << 1 | m3
-    return quantum_state & 0xFF  # Ensure 8-bit output
+    quantum_state = (m1 << 4) | (m2 << 1) | m3
+    return quantum_state & 0xFF
+
+
+@dataclass
 class QuantumSegment:
-    data: Optional[array.array] = None
+    data: Optional[array.array] = field(
+        default_factory=lambda: array.array('B'))
     state_hash: Optional[str] = None
     data_reference: Optional[str] = None
-    metadata: Optional[Dict] = None
+    metadata: Optional[Dict] = field(default_factory=dict)
     embeddings_reference: Optional[str] = None
+
     def superpose(self):
-        return QuantumSegment(self.data.copy(), None)
+        return QuantumSegment(data=self.data.copy() if self.data else array.array('B'))
+
     def commit(self, hash_val: str):
         self.state_hash = hash_val
+
     def manipulate_data(self, operation: str):
+        if self.data is None:
+            return
         if operation == "invert":
             self.data = array.array('B', [~byte & 0xFF for byte in self.data])
         elif operation == "increment":
             self.data = array.array(
                 'B', [(byte + 1) & 0xFF for byte in self.data])
+
+
 class QuantumMemoryFS(Generic[T]):
     """
     Quantum-aware virtual memory filesystem that combines git-based
     state management with filesystem-based memory addressing.
     """
+
     def __init__(self, base_path: Optional[str] = None):
         self.base_path = Path(base_path or os.path.join(os.getcwd(), 'qmem'))
         self.word_max = 0xFFFF
@@ -1676,25 +1889,33 @@ class QuantumMemoryFS(Generic[T]):
         # Initialize the repository and directory structure
         # self._init_quantum_repository()
         # self._init_directory_structure()
+
     def _run_git(self, args: list, cwd: Optional[str] = None) -> Optional[str]:
         """Helper to run git commands and return output, logging errors if any."""
         try:
-            result = subprocess.check_output(['git'] + args, cwd=cwd or str(self.base_path))
+            result = subprocess.check_output(
+                ['git'] + args, cwd=cwd or str(self.base_path))
             return result.decode().strip()
         except subprocess.CalledProcessError as e:
             logger.error(f"Git command error: {e} with args: {args}")
             return None
+
     def _init_quantum_repository(self):
         """Initialize Git repository for state tracking."""
         self.base_path.mkdir(parents=True, exist_ok=True)
         subprocess.run(['git', 'init', '--quiet'], cwd=str(self.base_path))
-        subprocess.run(['git', 'config', 'user.name', 'Quantum Memory Manager'], cwd=str(self.base_path))
-        subprocess.run(['git', 'config', 'user.email', 'qmem@state.local'], cwd=str(self.base_path))
+        subprocess.run(['git', 'config', 'user.name',
+                       'Quantum Memory Manager'], cwd=str(self.base_path))
+        subprocess.run(['git', 'config', 'user.email',
+                       'qmem@state.local'], cwd=str(self.base_path))
         # Create initial commit with a README
         readme = self.base_path / 'README.md'
-        readme.write_text(f'# Quantum Memory Repository\nID: {self.repo_id}\nInitialized: {datetime.now().isoformat()}')
+        readme.write_text(
+            f'# Quantum Memory Repository\nID: {self.repo_id}\nInitialized: {datetime.now().isoformat()}')
         subprocess.run(['git', 'add', 'README.md'], cwd=str(self.base_path))
-        subprocess.run(['git', 'commit', '-m', 'Initialize quantum memory', '--quiet'], cwd=str(self.base_path))
+        subprocess.run(['git', 'commit', '-m', 'Initialize quantum memory',
+                       '--quiet'], cwd=str(self.base_path))
+
     def _init_directory_structure(self):
         """Create hierarchical memory structure with dynamic quantum segments."""
         for high_byte in range(0x100):
@@ -1764,6 +1985,7 @@ class OllamaClient:
                 file_path = dir_path / f"{low_byte:02x}.qmem"
                 if not file_path.exists():
                     file_path.touch()
+
     def _commit_state(self, address: int, value: bytes, metadata: Optional[Dict] = None) -> str:
         """Commit memory state to Git and update segment metadata."""
         path = self._address_to_path(address)
@@ -1780,12 +2002,13 @@ class OllamaClient:
         # Update segment metadata with commit hash and cell metadata
         if segment.metadata is None:
             segment.metadata = {}  # Initialize if not present
-        segment.metadata[str(address)] = { # Store metadata per cell
+        segment.metadata[str(address)] = {  # Store metadata per cell
             "commit_hash": commit_hash,
             "metadata": metadata
         }
-        segment.commit(commit_hash) # Commit segment metadata
+        segment.commit(commit_hash)  # Commit segment metadata
         return commit_hash
+
     def _address_to_path(self, address: int) -> Path:
         """Convert a memory address to a quantum-aware file path."""
         if not 0 <= address <= self.word_max:
@@ -1793,36 +2016,36 @@ class OllamaClient:
         high_byte = (address >> 8) & 0xFF
         low_byte = address & 0xFF
         return self.base_path / f"{high_byte:02x}" / f"{low_byte:02x}.qmem"
+
     def read(self, address: int) -> QuantumCell:
-        """Read a quantum memory cell from a given address."""
-        # If already loaded, return from memory map.
         if address in self.memory_map:
             return self.memory_map[address]
         path = self._address_to_path(address)
         try:
             with open(path, "rb") as f:
                 value = f.read(BYTE_WORD)
-                if not value: # added check for empty file
-                    value = b'\x00'*BYTE_WORD # initialize if empty
-                cell = QuantumCell(address, (address >> 8) & 0xFF, value) # missing segment
+                if not value:
+                    value = b'\x00' * BYTE_WORD
+                cell = QuantumCell(address, (address >> 8) & 0xFF, value)
                 self.memory_map[address] = cell
                 return cell
         except FileNotFoundError:
             logger.error(f"Memory cell not found at {address:04x}")
-            return QuantumCell(address, (address >> 8) &
-0xFF, b'\x00'*BYTE_WORD) # Return an empty cell to avoid crashing.
-        except Exception as e: # catch other exceptions
+            return QuantumCell(address, (address >> 8) & 0xFF, b'\x00' * BYTE_WORD)
+        except Exception as e:
             logger.error(f"Error reading memory cell at {address:04x}: {e}")
-            return QuantumCell(address, (address >> 8) & 0xFF, b'\x00'*BYTE_WORD)
+            return QuantumCell(address, (address >> 8) & 0xFF, b'\x00' * BYTE_WORD)
         # Try to get the latest commit hash for this file.
         try:
-            commit_hash = self._run_git(['log', '-n', '1', '--pretty=format:%H', '--', str(path)])
+            commit_hash = self._run_git(
+                ['log', '-n', '1', '--pretty=format:%H', '--', str(path)])
         except Exception:
             commit_hash = None
         state = MemoryState.CLASSICAL if commit_hash else MemoryState.CACHED
         cell = QuantumCell(value=data, state=state, commit_hash=commit_hash)
         self.memory_map[address] = cell
         return cell
+
     def write(self, address: int, value: bytes, metadata: Optional[Dict] = None):
         """Write a quantum memory cell to a given address."""
         if not isinstance(value, bytes):
@@ -1836,13 +2059,17 @@ class OllamaClient:
                 commit_hash = self._commit_state(address, value, metadata)
                 if address in self.memory_map:
                     self.memory_map[address].value = value
-                    self.memory_map[address].commit_hash = commit_hash # update commit hash
-                    self.memory_map[address].metadata = metadata # update metadata
-                else: # if it is not in the map, create a new cell and add it
-                    cell = QuantumCell(address, (address >> 8) & 0xFF, value, commit_hash=commit_hash, metadata=metadata)
+                    # update commit hash
+                    self.memory_map[address].commit_hash = commit_hash
+                    # update metadata
+                    self.memory_map[address].metadata = metadata
+                else:  # if it is not in the map, create a new cell and add it
+                    cell = QuantumCell(
+                        address, (address >> 8) & 0xFF, value, commit_hash=commit_hash, metadata=metadata)
                     self.memory_map[address] = cell
         except Exception as e:
             logger.error(f"Error writing memory cell at {address:04x}: {e}")
+
     def get_directory_segment(self, high_byte: int):
         """Get the quantum memory segment (as a Python module) for a given directory."""
         if not 0 <= high_byte <= 0xFF:
@@ -1851,17 +2078,20 @@ class OllamaClient:
         if not dir_path.exists():
             raise ValueError("Directory does not exist")
         module_name = f"qmem_{high_byte:02x}"
-        spec = importlib.util.spec_from_file_location(module_name, str(dir_path / "__init__.py"))
+        spec = importlib.util.spec_from_file_location(
+            module_name, str(dir_path / "__init__.py"))
         if spec is None or spec.loader is None:
             raise ImportError(f"Could not load segment {high_byte:02x}")
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         return module.segment
+
     def refresh(self, address: int):
         """Force a refresh of a quantum cell from disk (e.g. if the file was externally updated)."""
         if address in self.memory_map:
             del self.memory_map[address]
         return self.read(address)
+
     def flush(self):
         """
         Flush all quantum memory cells (if in QUANTUM state) to classical state,
@@ -1907,6 +2137,8 @@ class QuineByteWord(ByteWord):
     ByteWord("SmalltalkObj", T="ClassRuntime", V="MutableSuperposition", C="MethodReflected")
     """
     pass
+
+
 def metahelp() -> None:
     """
     Print a symbolic/epistemic interpretation of the Cognosis shell.
