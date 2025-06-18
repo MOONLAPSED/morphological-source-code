@@ -15,11 +15,8 @@ logs/*
 pdm.lock
 /src/ts/dist/*.js
 /src/ts/node_modules/*
-/nov24chronological/*
-/cognOS/*
 /.request_cache.json
 /states/*
-
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
