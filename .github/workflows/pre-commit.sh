@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# hook for 'kb' (knowledge base) directories which must accept multi-media to-be valid.
 shopt -s globstar
 for file in **/*.md; do
     dir=$(dirname "$file")
@@ -9,3 +9,17 @@ for file in **/*.md; do
         exit 1
     fi
 done
+
+HOOKS_DIR=".git/hooks"
+REPO_HOOKS=".github/
+
+echo "Installing Git hooks from $REPO_HOOKS..."
+
+for hook in $REPO_HOOKS/*; do
+  hook_name=$(basename $hook)
+  cp "$hook" "$HOOKS_DIR/$hook_name"
+  chmod +x "$HOOKS_DIR/$hook_name"
+  echo "Installed $hook_name"
+done
+
+echo "All hooks installed successfully!"
