@@ -1,48 +1,9 @@
-# cognosis candidate release 0.4.20
+# Cognosis
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-blue.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![Python 3.12+](https://img.shields.io/badge/Python-3.12+-3776AB.svg?logo=python)](https://www.python.org)
+[![Status: Experimental](https://img.shields.io/badge/Status-Experimental-red.svg)](https://github.com/Phovos/MSC)
 
-```filesystem
-~/: 3.13 python std libs
-~/src/: UV
-~/src/app/: UV + NOX - libs expand from here, like:
-~/src/app/*lib/
-~/src/llambda/: ollama + model dependent source
-```
-
-```filesystem
-pyproject.toml         # Project-wide tool + build config
-.env                   # Local secrets (ignored by Git)
-.env.example           # Template for local environment vars
-docker-compose.yml     # Base compose file (used in all environments)
-dockerfile             # Dockerfile for external dependencies
-
-/config/               # Canonical environment config for all lifecycles
-  ├── dev.env
-  ├── staging.env
-  └── production.env
-
-/.devcontainer/        # For Dev and Staging lifecycles only (VS Code dev environment)
-  └── docker-compose-override.yml
-  └── docker-compose-devcontainer.yml
-  └── setup.sh
-  └── devcontainer.json
-
-/.github/              # GitHub-specific config (CI/CD + lifecycle management)
-  └── install_hooks.sh
-  ├── workflows/
-  │   └── cicd.yml     # CI/CD pipeline
-  └── hooks/           # Git hooks (local dev + CI hooks)
-      ├── pre-commit
-      ├── post-merge
-      └── post-release
-```
-___
-
-### how: ollama
-go get ollama and run it
-1) ollama pull gemma2
-2) ollama pull nomic-embed-text
-3) ollama serve
-
+© 2025 by [Moonlapsed](https://github.com/MOONLAPSED). Licensed under [Creative Commons Attribution 4.0 International](http://creativecommons.org/licenses/by/4.0/).
 ____
 
 # Morphological Source Code: The Quantum Bridge to Data-Oriented Design
