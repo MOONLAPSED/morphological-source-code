@@ -70,28 +70,28 @@ gunadd() {
 }
 gitdoc() {
     cat <<'GIT_DOC'
-    ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-    ┃ ⚡ Git Staging & Reset Cheat Sheet ⚡ ┃
-    ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
-    ┃ Command ┃ Effect ┃
-    ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
-    ┃ git add <file> ┃ Stage changes for commit ┃
-    ┃ gunadd <file> ┃ Unstage, keep changes ┃
-    ┃ git reset HEAD <file> ┃ (Same as gunadd) ┃
-    ┃ git checkout -- <file> ┃ Discard local changes ┃
-    ┃ git restore --staged <file> ┃ Unstage, keep changes ┃
-    ┃ git restore <file> ┃ Discard local changes ┃
-    ┃ git reset --soft HEAD~1 ┃ Undo commit, keep staged ┃
-    ┃ git reset --mixed HEAD~1 ┃ Undo commit, unstage files ┃
-    ┃ git reset --hard HEAD~1 ┃ Undo commit & changes! ⚠ ┃
-    ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+    ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━=┓
+    ┃                  Git Staging & Reset Cheat Sheet               ┃
+    ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━=┫
+    ┃ Command                         ┃ Effect                       ┃
+    ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━=┫
+    ┃ git add <file>                    ┃ Stage changes for commit   ┃
+    ┃ gunadd <file>                     ┃ Unstage, keep changes      ┃
+    ┃ git reset HEAD <file>             ┃ (Same as gunadd)           ┃
+    ┃ git checkout -- <file>            ┃ Discard local changes      ┃
+    ┃ git restore --staged <file>       ┃ Unstage, keep changes      ┃
+    ┃ git restore <file>                ┃ Discard local changes      ┃
+    ┃ git reset --soft HEAD~1           ┃ Undo commit, keep staged   ┃
+    ┃ git reset --mixed HEAD~1          ┃ Undo commit, unstage files ┃
+    ┃ git reset --hard HEAD~1           ┃ Undo commit & changes!     ┃
+    ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━=━━┛
 
     🔥 `gunadd` is an alias for:
-    git reset HEAD <file> # Unstages, but keeps file changes
+       git reset HEAD <file>    # Unstages, but keeps file changes
 
-    ⚠ Use `git reset --hard` with caution—it nukes all changes!
+    ⚠  Use `git reset --hard` with caution—it nukes all changes!
+
 GIT_DOC
-}
 # ==========================================================
 # Shell Behavior Enhancements
 # ==========================================================
@@ -402,4 +402,16 @@ bp() {
     echo "Files moved, current directory not empty, changed to parent."
   fi
 }
+fi
+
+# Initialize uv
+export UV_ROOT="$HOME/.uv"
+[ -f "$UV_ROOT/uv.sh" ] && source "$UV_ROOT/uv.sh"
+
+# Auto-activate or create uv venv
+if [ -f ".venv/bin/activate" ]; then
+  uv use .venv >/dev/null 2>&1
+elif [ -d "$HOME/workspaces/${PWD##*/}/.venv" ]; then
+  uv venv .venv >/dev/null 2>&1
+  uv use .venv >/dev/null 2>&1
 fi
