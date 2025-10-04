@@ -1,29 +1,9 @@
 from __future__ import annotations
 #!/usr/bin/env -S uv run
 # -*- coding: utf-8 -*-
-"""
-A monolithic __init__.py that provides:
-  - A cross-platform project management system (with UV integration, dependency handling, etc.)
-  - Platform-integrated process execution, benchmarking, and profiling utilities
-
-Usage examples:
-  - Project management:
-      $ python __init__.py project --root . DEV
-      $ python __init__.py project --root . --create-module mymodule DEV
-  - Benchmarking:
-      $ python __init__.py benchmark -n 5 -- python -c "print('hello')"
-
-This file uses only standard libraries.
-"""
-
-import os
-import sys
-import platform
 import subprocess
 import tempfile
 import traceback
-import logging
-import json
 import cProfile
 import time
 import socket
@@ -32,20 +12,267 @@ import argparse
 import asyncio
 import tomllib
 import pstats
+import os
+import re
+import sys
+import platform
+import ctypes
+import decimal
+import json
+import array
+import enum
+import gzip
+import random
 from io import StringIO
 from dataclasses import dataclass, field
 from pathlib import Path, PureWindowsPath
 from typing import List, Dict, Any, Optional, Union, Tuple
+from dataclasses import dataclass, field, asdict
+from pathlib import Path
+from enum import IntFlag, IntEnum, auto, Enum
+from typing import Tuple, TypeVar, Callable, Any, List, Generic, Union, Set, FrozenSet, cast
+from functools import lru_cache, wraps
+import logging
+from logging.handlers import RotatingFileHandler
+"""
+A monolithic __init__.py that provides:
+  - The cross-platform integrated process execution, benchmarking, and profiling 'import-time' script
 
-# --- Global Constants & Logging Setup ---
+Usage examples:
+  - Project management:
+      $ python __init__.py project --root . DEV
+      $ python __init__.py project --root . --create-module mymodule DEV
+  - Benchmarking:
+      $ python __init__.py benchmark -n 5 -- python -c "print('hello')"
+"""
+logger = logging.getLogger(__name__)
+if not logger.handlers:  # Avoid duplicate handlers on reload
+    logger.setLevel(logging.INFO)
+    formatter = logging.Formatter(
+        '[%(levelname)s]%(asctime)s||%(name)s: %(message)s', 
+        datefmt='%Y-%m-%d~%H:%M:%S%z')
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+    logs_dir = Path(__file__).resolve().parent / 'logs'
+    logs_dir.mkdir(exist_ok=True)
+    file_handler = RotatingFileHandler(
+        logs_dir / 'app.log', maxBytes=10485760, backupCount=10)
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+logger.info('Logging initialized from %s', __file__)
+
+decimal.getcontext().prec = 28
+logger.info(decimal.getcontext())
+
 IS_WINDOWS = os.name == 'nt'
 IS_POSIX = os.name == 'posix'
-
-# Global profiler instance (for module-level use if desired)
 profiler = cProfile.Profile()
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# --- Platform ------------------------------------------------------
+@dataclass
+class RegisterSet:
+    gp_registers: int
+    vector_registers: int
+    register_width: int
+    vector_width: int
+
+    @classmethod
+    def detect_current(cls) -> 'RegisterSet':
+        machine = platform.machine().lower()
+        if machine in ('x86_64', 'amd64'):
+            return cls(gp_registers=16, vector_registers=32, register_width=64, vector_width=512)
+        elif machine.startswith('arm64') or (machine.startswith('arm') and sys.maxsize > 2**32):
+            return cls(gp_registers=31, vector_registers=32, register_width=64, vector_width=128)
+        elif machine.startswith('arm'):
+            return cls(gp_registers=16, vector_registers=16, register_width=32, vector_width=128)
+        elif machine.startswith('riscv'):
+            return cls(gp_registers=32, vector_registers=32, register_width=64 if sys.maxsize > 2**32 else 32, vector_width=256)
+        else:
+            return cls(gp_registers=8, vector_registers=8, register_width=32, vector_width=128)
+
+class ProcessorFeatures(IntFlag):
+    BASIC = auto()
+    SSE = auto()
+    AVX = auto()
+    AVX2 = auto()
+    AVX512 = auto()
+    NEON = auto()
+    SVE = auto()
+    RVV = auto()
+    AMX = auto()
+
+    @classmethod
+    def detect_features(cls) -> 'ProcessorFeatures':
+        features = cls.BASIC
+        system = sys.platform
+        machine = platform.machine().lower()
+
+        try:
+            # Linux: read /proc/cpuinfo flags
+            if system == "linux":
+                with open("/proc/cpuinfo", "r") as f:
+                    content = f.read().lower()
+                flags = set()
+                for line in content.splitlines():
+                    if line.startswith("flags") or line.startswith("features"):
+                        # Example: flags : fpu vme de pse tsc msr pae mce cx8
+                        parts = line.split(":", 1)
+                        if len(parts) == 2:
+                            flags.update(parts[1].strip().split())
+                # x86/x86_64
+                if machine in ("x86_64", "amd64", "i386", "i686"):
+                    if "sse" in flags:
+                        features |= cls.SSE
+                    if "avx" in flags:
+                        features |= cls.AVX
+                    if "avx2" in flags:
+                        features |= cls.AVX2
+                    if any(f in flags for f in ("avx512f", "avx512dq", "avx512cd")):
+                        features |= cls.AVX512
+                    if "amx-bf16" in flags or "amx-tile" in flags:
+                        features |= cls.AMX
+                # ARM
+                elif machine.startswith("arm") or machine.startswith("aarch64"):
+                    if "neon" in flags or "asimd" in flags:  # ASIMD = NEON on AArch64
+                        features |= cls.NEON
+                    if "sve" in flags:
+                        features |= cls.SVE
+                # RISC-V
+                elif machine.startswith("riscv"):
+                    if "rvv" in flags or "vector" in flags:
+                        features |= cls.RVV
+
+            # Windows: use kernel32!IsProcessorFeaturePresent
+            elif system == "win32":
+                # Define Windows processor feature constants
+                PF_XMMI_INSTRUCTIONS_AVAILABLE = 6    # SSE
+                PF_XMMI64_INSTRUCTIONS_AVAILABLE = 10 # SSE2 (implies SSE)
+                PF_AVX_INSTRUCTIONS_AVAILABLE = 28
+                PF_AVX2_INSTRUCTIONS_AVAILABLE = 30
+                PF_AVX512_INSTRUCTIONS_AVAILABLE = 34 # Not official
+
+                kernel32 = ctypes.windll.kernel32
+                IsProcessorFeaturePresent = kernel32.IsProcessorFeaturePresent
+                IsProcessorFeaturePresent.argtypes = [ctypes.c_uint]
+                IsProcessorFeaturePresent.restype = ctypes.c_bool
+
+                # SSE (via SSE2 check — all SSE2 CPUs have SSE)
+                if IsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE):
+                    features |= cls.SSE
+                if IsProcessorFeaturePresent(PF_AVX_INSTRUCTIONS_AVAILABLE):
+                    features |= cls.AVX
+                if IsProcessorFeaturePresent(PF_AVX2_INSTRUCTIONS_AVAILABLE):
+                    features |= cls.AVX2
+
+            # macOS: Apple Silicon or Intel
+            elif system == "darwin":
+                if machine.startswith("arm64") or machine == "arm64":
+                    features |= cls.NEON
+                elif machine in ("x86_64", "i386"):
+                    features |= cls.SSE | cls.AVX
+        except Exception as e:
+            # Log if you have logger, else silently degrade
+            pass
+
+        return features
+
+class ProcessorArchitecture(IntEnum):
+    X86 = auto()
+    X86_64 = auto()
+    ARM32 = auto()
+    ARM64 = auto()
+    RISCV32 = auto()
+    RISCV64 = auto()
+
+    @classmethod
+    def current(cls) -> 'ProcessorArchitecture':
+        machine = platform.machine().lower()
+        if machine in ('x86_64', 'amd64'):
+            return cls.X86_64
+        elif machine in ('x86', 'i386', 'i686'):
+            return cls.X86
+        elif machine.startswith('arm') or machine.startswith('aarch64'):
+            return cls.ARM64 if sys.maxsize > 2**32 else cls.ARM32
+        elif machine.startswith('riscv'):
+            return cls.RISCV64 if sys.maxsize > 2**32 else cls.RISCV32
+        else:
+            raise ValueError(f"Unsupported architecture: {machine}")
+
+
+@dataclass
+class MemoryModel:
+    ptr_size: int = ctypes.sizeof(ctypes.c_void_p)
+    word_size: int = ctypes.sizeof(ctypes.c_size_t)
+    cache_line_size: int = 64
+    page_size: int = 4096
+
+    @classmethod
+    def get_system_info(cls) -> 'MemoryModel':
+        cache_line_size = 64
+        try:
+            if sys.platform == 'linux':
+                with open('/sys/devices/system/cpu/cpu0/cache/index0/coherency_line_size') as f:
+                    cache_line_size = int(f.read().strip())
+        except (FileNotFoundError, ValueError, OSError) as e:
+            logger.debug("Could not read cache line size: %s", e)
+        return cls(
+            ptr_size=ctypes.sizeof(ctypes.c_void_p),
+            word_size=ctypes.sizeof(ctypes.c_size_t),
+            cache_line_size=cache_line_size,
+            page_size=4096
+        )
+
+# --- HardwareInfo Singleton ---------------------------------------------------
+class HardwareInfo:
+    """Cached, unified hardware information."""
+
+    @property
+    @lru_cache(maxsize=1)
+    def features(self) -> ProcessorFeatures:
+        return ProcessorFeatures.detect_features()
+
+    @property
+    @lru_cache(maxsize=1)
+    def architecture(self) -> ProcessorArchitecture:
+        return ProcessorArchitecture.current()
+
+    @property
+    @lru_cache(maxsize=1)
+    def registers(self) -> RegisterSet:
+        return RegisterSet.detect_current()
+
+    @property
+    @lru_cache(maxsize=1)
+    def memory(self) -> MemoryModel:
+        return MemoryModel.get_system_info()
+
+    def refresh(self):
+        """Clear cached hardware data."""
+        type(self).features.fget.cache_clear()
+        type(self).architecture.fget.cache_clear()
+        type(self).registers.fget.cache_clear()
+        type(self).memory.fget.cache_clear()
+
+hardware = HardwareInfo()
+
+class HardwareValidator:
+    """Base class for hardware-aware objects. Enables runtime feature checks."""
+    
+    _required_features: ProcessorFeatures = ProcessorFeatures.BASIC
+
+    def __init__(self, *args, **kwargs):
+        if not (hardware.features & self._required_features):
+            raise RuntimeError(
+                f"{self.__class__.__name__} requires {self._required_features}, "
+                f"but only {hardware.features} available."
+            )
+        super().__init__(*args, **kwargs)
+
+    @classmethod
+    def supports(cls) -> bool:
+        """Check if this class can be instantiated on current hardware."""
+        return bool(hardware.features & cls._required_features)
 
 # --- Platform-Specific Process Priority Setting ---
 
@@ -150,6 +377,13 @@ class SystemProfiler:
         return s.getvalue()
 
 
+
+
+
+
+
+
+# update with ProcessorFeatures
 class ProcessExecutor:
     """[[ProcessExecutor]] – Platform-independent process execution."""
 
