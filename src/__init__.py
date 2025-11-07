@@ -540,6 +540,482 @@ class ExecutionResult:
         output += f"{color_return}RETURN CODE:{reset_color} {self.returncode}\n"
         return output
 
+
+
+
+
+# /main.py
+# this repo, `lager`, is part of "cognosis - cognitive coherence coroutines" project, which amongst other things, is a pythonic implementation of a model cognitive system:
+# This script is part of "cognosis - cognitive coherence coroutines" project,
+# which is a pythonic implementation of a model cognitive system, 
+# utilizing concepts from signal processing, cognitive theories, 
+# and machine learning to create adaptive systems.
+# main.py
+
+
+
+ml = None
+ml = logging.getLogger(__name__)
+if ml is None:
+    """Initializes logging for the module.
+    
+    Creates a logger named after the module, sets the log level, adds handlers for 
+    console and file output, and propagates logs to the parent logger if defined.
+    
+    Logging will be initialized only once, subsequent calls will just retrieve the
+    existing initialized logger.
+    """
+    ml = logging.getLogger(__name__)
+    ml.setLevel(logging.INFO)
+    formatter = logging.Formatter('[%(levelname)s]%(asctime)s||(%(filename)s:%(lineno)d):%(name)s: %(message)s', datefmt='%Y-%m-%d~%H:%M:%S%z')
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    ml.addHandler(console_handler)
+    logs_dir = Path(__file__).resolve().parent / 'logs'
+    logs_dir.mkdir(exist_ok=True)
+    file_handler = logging.handlers.RotatingFileHandler(logs_dir / 'app.log', maxBytes=10485760, backupCount=10)
+    file_handler.setFormatter(formatter)
+    ml.addHandler(file_handler)
+    ml.propagate = False
+    ml.setLevel(logging.INFO)
+    ml.info('Logging initialized src: %s', __file__)
+else:
+    ml.setLevel(logging.INFO)
+    ml.info('Logging already initialized')
+
+if ml.__dict__.get('parent') is None or ml.__dict__.get('parent') != 'app':
+    ml.__dict__['parent'] = Path(__file__).resolve().parent
+
+'ml' in globals() or globals().__setitem__('ml', ml)
+
+class Node:
+    def __init__(self, size: int):
+        self.data = bytearray(size)
+        self.next: Optional['Node'] = None
+        self.size = size
+        self.used = 0
+
+class ScratchArena:
+    def __init__(self, chunk_size: int):
+        self.chunk_size = chunk_size
+        self.head = Node(chunk_size)
+        self.current = self.head
+
+    def allocate(self, size: int) -> memoryview:
+        if size > self.chunk_size:
+            raise ValueError("Allocation size exceeds chunk size")
+
+        # If there's not enough space in the current chunk, create a new one
+        if self.current.used + size > self.current.size:
+            new_node = Node(self.chunk_size)
+            self.current.next = new_node
+            self.current = new_node
+
+        # Allocate memory from the current chunk
+        start = self.current.used
+        self.current.used += size
+        return memoryview(self.current.data)[start:start + size]
+
+    def reset(self):
+        # Reset all chunks for reuse
+        node = self.head
+        while node:
+            node.used = 0
+            node = node.next
+        self.current = self.head
+
+
+class ThreadLocalScratchArena(ScratchArena):
+    def __init__(self, chunk_size: int):
+        super().__init__(chunk_size)
+        self.thread_local = threading.local()
+
+def log(level=logging.INFO): # asyncio.iscoroutinefunction(func)
+    def decorator(func): # decorator(func) -> async_wrapper or sync_wrapper
+        @wraps(func)
+        async def async_wrapper(*args, **kwargs):
+            Logger.log(level, f"Executing {func.__name__} with args: {args}, kwargs: {kwargs}")
+            try:
+                result = await func(*args, **kwargs)
+                Logger.log(level, f"Completed {func.__name__} with result: {result}")
+                return result
+            except Exception as e:
+                Logger.exception(f"Error in {func.__name__}: {str(e)}")
+                raise
+
+        @wraps(func)
+        def sync_wrapper(*args, **kwargs):
+            Logger.log(level, f"Executing {func.__name__} with args: {args}, kwargs: {kwargs}")
+            try:
+                result = func(*args, **kwargs)
+                Logger.log(level, f"Completed {func.__name__} with result: {result}")
+                return result
+            except Exception as e:
+                Logger.exception(f"Error in {func.__name__}: {str(e)}")
+                raise
+
+        return async_wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper
+    return decorator
+
+def benchmark(func):
+    if not asyncio.iscoroutinefunction(func):
+        Logger.error(f"Function {func.__name__} is not an asyncio.iscoroutinefunction object")
+        return ValueError("Function is not a coroutine")
+    @wraps(func)
+    async def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = await func(*args, **kwargs)
+        end_time = time.time()
+        Logger.info(f"Function {func.__name__} executed in {end_time - start_time:.2f} seconds")
+        return result
+    return wrapper
+
+# advanced runtime parameter types
+T = TypeVar('T', bound=Type)  # type is synonymous for class: T = type(class()) or vice-versa
+V = TypeVar('V', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, Enum, Type[Any]])
+C = TypeVar('C', bound=Callable[..., Any])  # callable 'T' class/type variable
+
+datum = Union[int, float, str, bool, None, List[Any], Tuple[Any, ...]]
+
+class DataType(Enum):
+    INTEGER = auto()
+    FLOAT = auto()
+    STRING = auto()
+    BOOLEAN = auto()
+    NONE = auto()
+    LIST = auto()
+    TUPLE = auto()
+
+class AtomType(Enum):
+    CLASS = auto() # classes, aka types+classes, variables, and/or (callable) functions: ['T', 'V', 'C']
+    MODULE = auto() # modules are SimpleNamespace objects and/or actual modules
+    ATOM = auto() # atoms are the basic building blocks of the system
+
+def _validation(cls: Type[T]) -> Type[T]: # dataclass.field() would be less round-about and faster
+    original_init = cls.__init__
+    sig = inspect.signature(original_init)
+
+    def new_init(self: T, *args: Any, **kwargs: Any) -> None:
+        bound_args = sig.bind(self, *args, **kwargs)
+        for key, value in bound_args.arguments.items():
+            if key in cls.__annotations__:
+                expected_type = cls.__annotations__.get(key)
+                if not isinstance(value, expected_type):
+                    raise TypeError(f"Expected {expected_type} for {key}, got {type(value)}")
+        original_init(self, *args, **kwargs)
+
+    cls.__init__ = new_init
+    return cls
+
+def _validate(field_name: str, validator_fn: Callable[[Any], None]) -> Callable[[Type[T]], Type[T]]:
+    def decorator(cls: Type[T]) -> Type[T]:
+        original_init = cls.__init__
+
+        @wraps(original_init)
+        def new_init(self: T, *args: Any, **kwargs: Any) -> None:
+            original_init(self, *args, **kwargs)
+            value = getattr(self, field_name)
+            validator_fn(value)
+
+        cls.__init__ = new_init
+        return cls
+
+    return decorator
+
+
+# Abstract base class
+class Atom(ABC):
+    @abstractmethod
+    def encode(self) -> bytes:
+        pass
+
+    @abstractmethod
+    def decode(self, data: bytes) -> None:
+        pass
+
+    @abstractmethod
+    def execute(self, *args, **kwargs) -> Any:
+        pass
+
+    @abstractmethod
+    def __repr__(self) -> str:
+        pass
+
+    @abstractmethod
+    def parse_expression(self, expression: str) -> Union['AtomicData', 'FormalTheory']:
+        pass
+
+    @abstractmethod
+    def tautology(self, expression: Callable[..., bool]) -> bool:
+        pass
+
+
+# Example global functions to replace lambdas
+def reflexivity(x):
+    return x == x
+
+def symmetry(x, y):
+    return x == y
+
+def transitivity(x, y, z):
+    return x == y and y == z and x == z
+
+def transparency(f, x, y):
+    return f(x, y) if x == y else None
+
+def top(x, _):
+    return x
+
+def bottom(_, y):
+    return y
+
+def if_else_a(a, b):
+    return a if a else b
+
+def negation(a):
+    return not a
+
+def conjunction(a, b):
+    return a and b
+
+def disjunction(a, b):
+    return a or b
+
+def implication(a, b):
+    return (not a) or b
+
+def biconditional(a, b):
+    return (a and b) or (not a and not b)
+
+def nor(a, b):
+    return not (a or b)
+
+def nand(a, b):
+    return not (a and b)
+
+def contrapositive(a, b):
+    return (not b) or (not a)
+
+
+# An example to serialize callable objects using identifiers
+def encode_callable(func: Callable) -> int:
+    lookup = {
+        'reflexivity': 1,
+        'symmetry': 2,
+        'transitivity': 3,
+        'transparency': 4,
+        'top': 5,
+        'bottom': 6,
+        'if_else_a': 7,
+        'negation': 8,
+        'conjunction': 9,
+        'disjunction': 10,
+        'implication': 11,
+        'biconditional': 12,
+        'nor': 13,
+        'nand': 14,
+        'contrapositive': 15,
+    }
+    return lookup[func.__name__]
+
+
+def decode_callable(value: int) -> Callable:
+    reverse_lookup = {
+        1: reflexivity,
+        2: symmetry,
+        3: transitivity,
+        4: transparency,
+        5: top,
+        6: bottom,
+        7: if_else_a,
+        8: negation,
+        9: conjunction,
+        10: disjunction,
+        11: implication,
+        12: biconditional,
+        13: nor,
+        14: nand,
+        15: contrapositive,
+    }
+    return reverse_lookup[value]
+
+
+@dataclass
+class AtomicData(Atom):
+    data: Any
+    scratch_arena: ScratchArena = field(default_factory=lambda: ScratchArena(1024))
+
+    def encode(self) -> bytes:
+        # Basic example of using struct to encode basic data
+        if isinstance(self.data, int):
+            return struct.pack('!i', self.data)
+        elif isinstance(self.data, float):
+            return struct.pack('!f', self.data)
+        elif isinstance(self.data, str):
+            data_bytes = self.data.encode('utf-8')
+            return struct.pack(f'!I{len(data_bytes)}s', len(data_bytes), data_bytes)
+        elif isinstance(self.data, dict):
+            data_bytes = json.dumps(self.data).encode('utf-8')
+            return struct.pack(f'!I{len(data_bytes)}s', len(data_bytes), data_bytes)
+        else:
+            raise ValueError("Unsupported data type for struct serialization")
+
+    def decode(self, data: bytes) -> None:
+        try:
+            self.data = struct.unpack('!i', data)[0]
+        except struct.error:
+            try:
+                self.data = struct.unpack('!f', data)[0]
+            except struct.error:
+                data_len = struct.unpack('!I', data[:4])[0]
+                try:
+                    self.data = struct.unpack(f'!{data_len}s', data[4:4 + data_len])[0].decode('utf-8')
+                except UnicodeDecodeError:
+                    self.data = json.loads(struct.unpack(f'!{data_len}s', data[4:4 + data_len])[0])
+
+    def execute(self, *args, **kwargs) -> Any:
+        return self.data
+
+    def __repr__(self) -> str:
+        return f"AtomicData(data={self.data})"
+
+    def parse_expression(self, expression: str) -> Union['AtomicData', 'FormalTheory']:
+        return AtomicData(data=expression)
+
+    def tautology(self, expression: Callable[..., bool]) -> bool:
+        return expression()
+
+
+class ThreadSafeContextManager:
+    def __init__(self):
+        self.lock = threading.Lock()
+
+    def __enter__(self):
+        self.lock.acquire()
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.lock.release()
+
+
+class ScopeLifetimeGarden:  # rename of ThreadLocalScratchArena for higher scoped purpose
+    def __init__(self):
+        self.local_data = threading.local()
+
+    def get(self) -> AtomicData:
+        if not hasattr(self.local_data, 'scratch'):
+            self.local_data.scratch = AtomicData(data={})
+        return self.local_data.scratch
+
+    def set(self, value: AtomicData):
+        self.local_data.scratch = value
+
+
+@dataclass
+class FormalTheory(Atom, Generic[T]):
+    reflexivity: Callable[[T], bool] = reflexivity
+    symmetry: Callable[[T, T], bool] = symmetry
+    transitivity: Callable[[T, T, T], bool] = transitivity
+    transparency: Callable[[Callable[..., T], T, T], T] = transparency
+    case_base: Dict[str, Callable[..., bool]] = field(default_factory=dict)
+
+    def __post_init__(self):
+        self.case_base.update({
+            '⊤': top,
+            '⊥': bottom,
+            'a': if_else_a,
+            '¬': negation,
+            '∧': conjunction,
+            '∨': disjunction,
+            '→': implication,
+            '↔': biconditional,
+            '¬∨': nor,  # NOR operation
+            '¬∧': nand,  # NAND operation
+            'contrapositive': contrapositive
+        })
+
+    def encode(self) -> bytes:
+        # Encode attributes using struct
+        attribute_values = [
+            encode_callable(self.reflexivity),
+            encode_callable(self.symmetry),
+            encode_callable(self.transitivity),
+            encode_callable(self.transparency),
+        ]
+        attribute_bytes = struct.pack(f'!4I', *attribute_values)
+
+        # Encode case_base
+        case_base_keys = sorted(self.case_base.keys())
+        case_base_values = [encode_callable(self.case_base[k]) for k in case_base_keys]
+        case_base_bytes = json.dumps(case_base_keys).encode('utf-8')
+        packed_case_base = struct.pack(f"!I{len(case_base_bytes)}s{len(case_base_values)}I", len(case_base_bytes), case_base_bytes, *case_base_values)
+
+        # Combine everything
+        return attribute_bytes + packed_case_base
+
+
+    def decode(self, data: bytes) -> None:
+        # Extract attribute values
+        attribute_values = struct.unpack('!4I', data[:16])
+        self.reflexivity = decode_callable(attribute_values[0])
+        self.symmetry = decode_callable(attribute_values[1])
+        self.transitivity = decode_callable(attribute_values[2])
+        self.transparency = decode_callable(attribute_values[3])
+
+        # Decode the case_base
+        rest = data[16:]
+        case_base_len = struct.unpack('!I', rest[:4])[0]
+        case_base_keys = json.loads(rest[4:4 + case_base_len])
+        case_base_values = struct.unpack(f"!{len(case_base_keys)}I", rest[4 + case_base_len:])
+        self.case_base = {case_base_keys[i]: decode_callable(case_base_values[i]) for i in range(len(case_base_keys))}
+
+    def execute(self, *args, **kwargs) -> Any:
+        return self.transparency(*args, **kwargs)
+
+    def __repr__(self) -> str:
+        return f"FormalTheory(reflexivity={self.reflexivity}, symmetry={self.symmetry}, transitivity={self.transitivity}, transparency={self.transparency})"
+
+    def parse_expression(self, expression: str) -> Union['AtomicData', 'FormalTheory']:
+        return self.case_base.get(expression, None)
+
+    def tautology(self, expression: Callable[..., bool]) -> bool:
+        return expression()
+
+
+def benchmark():
+    # ScratchArena benchmark
+    print("Benchmarking ScratchArena...")
+    arena = ScratchArena(1024)
+    start_time = time.time()
+    for _ in range(10000):
+        arena.allocate(256)
+        arena.reset()
+    print(f"ScratchArena: {time.time() - start_time} seconds.")
+
+    # AtomicData benchmark
+    print("Benchmarking AtomicData...")
+    data = AtomicData(data={"key": "value"})
+    start_time = time.time()
+    for _ in range(10000):
+        encoded = data.encode()
+        data.decode(encoded)
+    print(f"AtomicData: {time.time() - start_time} seconds.")
+
+    # FormalTheory benchmark
+    print("Benchmarking FormalTheory...")
+    theory = FormalTheory()
+    start_time = time.time()
+    for _ in range(10000):
+        encoded = theory.encode()
+        theory.decode(encoded)
+    print(f"FormalTheory: {time.time() - start_time} seconds.")
+
+
+if __name__ == "__main__":
+    benchmark()
+
+
+
+
 # --- Project Management Code ---
 
 
