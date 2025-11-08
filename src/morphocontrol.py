@@ -1,25 +1,32 @@
-from typing import Dict, Optional, List, Union, Tuple
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# 3.14 std libs **ONLY** | Platform(s): Win11 (production), Ubuntu-22.04 (dev, staging);
+# © 2025 Moonlapsed https://github.com/MOONLAPSED/Cognosis | CC ND && BSD-3 | SEE LICENCE
+from typing import Dict, Optional, List
 from enum import Enum
-import struct
 
 
 class ByteWordError(Exception):
     """Base exception for BYTE_WORD operations."""
+
     pass
 
 
 class AddressError(ByteWordError):
     """Raised when addressing operations fail."""
+
     pass
 
 
 class MorphismError(ByteWordError):
     """Raised when morphism operations fail."""
+
     pass
 
 
 class State(Enum):
     """Represents possible states of a BYTE_WORD."""
+
     ACTIVE = 1
     INERT = 0
     TRANSITIONAL = 2
@@ -118,8 +125,7 @@ class ByteWord:
 
         rule = morphism_rules.get(self.morphism_bits)
         if not rule:
-            raise MorphismError(
-                f"Invalid morphism selector: {self.morphism_bits}")
+            raise MorphismError(f"Invalid morphism selector: {self.morphism_bits}")
 
         return ByteWord(rule(self._value))
 
@@ -127,7 +133,9 @@ class ByteWord:
         return f"ByteWord(0b{self._value:08b})"
 
     def __str__(self) -> str:
-        return f"T:{self.state_bits:04b} V:{self.morphism_bits:03b} C:{self.control_bit}"
+        return (
+            f"T:{self.state_bits:04b} V:{self.morphism_bits:03b} C:{self.control_bit}"
+        )
 
 
 class ByteWordMemory:

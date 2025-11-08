@@ -157,3 +157,13 @@ Maternal-Quineic bootstrapping compilation and computation:
 女 = lambda(女)
 子 = lambda(⋅子)
 Quine = λx. x(x) == 女⋅子 == 好
+
+
+CanonTM: Tuple(Q,T,B,ε,𝛿.q0,F)
+Q: finite set of states
+T: tape alphabet (symbols)
+B: blank symbol (all cells are B, except input alphabet, initially)
+ε: the input alphabet (symbols)
+𝛿: transition function which maps 'Q x T -> Q x T x {L,R}'
+q0: the initial state
+F: the set of final states; if any state of F is reached: input string accepted

@@ -56,17 +56,17 @@ git config --global core.fsmonitor 'true'
 # Git configuration
 git config --global rerere.enabled true
 # Reverse git add (takes off git add <file> from staging area)
-function unstage() {
+function restage() {
     if [ $# -eq 0 ]; then
         git restore --staged .
     else
         git restore --staged "$@"
     fi
-    echo "✅ Unstaged: $@"
+    echo "Unstaged: $@"
 }
 gunadd() {
     git reset HEAD -- "$@"
-    echo "✅ Unstaged: $@"
+    echo "Unstaged: $@"
 }
 gitdoc() {
     cat <<'GIT_DOC'
@@ -86,7 +86,7 @@ gitdoc() {
     ┃ git reset --hard HEAD~1           ┃ Undo commit & changes!     ┃
     ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━=━━┛
 
-    🔥 `gunadd` is an alias for:
+    `gunadd` is an alias for:
        git reset HEAD <file>    # Unstages, but keeps file changes
 
     ⚠  Use `git reset --hard` with caution—it nukes all changes!
@@ -123,6 +123,7 @@ fi
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     export LS_COLORS="$LS_COLORS:ow=30;44:" # fix ls color for folders with 777 permissions
+fi
 # ==========================================================
 # Colorized Output Functions
 # ==========================================================
@@ -301,7 +302,7 @@ function gunadd() {
     else
         git reset HEAD "$@"
     fi
-    echo "✅ Unstaged: $*"
+    echo "Unstaged: $*"
 }
 # ----------------------------------------------------
 # popx - Pop multiple directories from the directory stack
@@ -410,8 +411,8 @@ export UV_ROOT="$HOME/.uv"
 
 # Auto-activate or create uv venv
 if [ -f ".venv/bin/activate" ]; then
-  uv use .venv >/dev/null 2>&1
+  source .venv/bin/activate >/dev/null 2>&1
 elif [ -d "$HOME/workspaces/${PWD##*/}/.venv" ]; then
   uv venv .venv >/dev/null 2>&1
-  uv use .venv >/dev/null 2>&1
+  source .venv/bin/activate >/dev/null 2>&1
 fi

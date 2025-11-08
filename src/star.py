@@ -5,79 +5,32 @@
 #     "uv==*.*",
 # ]
 # */
-# Copyright: MIT; 'MOONLAPSED@gmail.com'; Moonlapsed @ github; 2023-2025
+# © 2025 Moonlapsed https://github.com/MOONLAPSED/Cognosis | CC ND && BSD-3 | SEE LICENCE
 # Import standard library components
 from __future__ import annotations
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 # Standard Library Imports - 3.13 std libs **ONLY**
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 import re
-import gc
 import os
-import dis
 import sys
-import ast
 import time
-import site
-import mmap
-import json
-import uuid
 import math
 import enum
-import cmath
-import shlex
 import array
-import socket
-import struct
 import random
-import shutil
-import pickle
 import ctypes
-import pstats
 import decimal
-import weakref
 import logging
-import tomllib
-import pathlib
-import asyncio
-import inspect
-import hashlib
-import cProfile
-import argparse
-import tempfile
 import platform
-import traceback
-import functools
-import linecache
 import importlib
 import threading
 import subprocess
-import tracemalloc
-import collections
-import http.client
-import http.server
-import socketserver
 from array import array
-from io import StringIO
-from pathlib import Path
-from math import sqrt, pi
-from datetime import datetime
-from queue import Queue, Empty
-from abc import ABC, abstractmethod, ABCMeta
-from dataclasses import dataclass, field, asdict
-from importlib.machinery import ModuleSpec
-from collections.abc import Iterable, Mapping
-from concurrent.futures import ThreadPoolExecutor
-from enum import Enum, auto, IntEnum, StrEnum, Flag, IntFlag
-from collections import defaultdict, deque, namedtuple
-from functools import reduce, lru_cache, partial, wraps
-from contextlib import contextmanager, asynccontextmanager
-from importlib.util import spec_from_file_location, module_from_spec
-from types import SimpleNamespace, ModuleType,  MethodType, FunctionType, CodeType, TracebackType, FrameType
-from typing import (
-    Any, Dict, List, Optional, Union, Callable, TypeVar, Tuple, Generic, Set, OrderedDict,
-    Coroutine, Type, NamedTuple, ClassVar, Protocol, runtime_checkable, AsyncIterator, Iterator
-)
+from dataclasses import dataclass
+from enum import Enum, auto, IntEnum, IntFlag
+from typing import Any, Dict, List, Union, Callable, TypeVar, Generic
 
 # Optional dependency handling (also add to '/* script..' comment, on top)
 try:
