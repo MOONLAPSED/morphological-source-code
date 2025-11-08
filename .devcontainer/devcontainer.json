@@ -1,10 +1,7 @@
 {
-  "name": "Py 3.13 with Jupyter, pylsp, uv (Python + Theme), and dev tools",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "name": "Py 3.14.0 with Jupyter, nox and uv.",
+  "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
   "features": {
-    "ghcr.io/devcontainers/features/common-utils:2": {
-      "username": "vscode"
-    },
     "ghcr.io/devcontainers/features/git:1": {},
     "ghcr.io/devcontainers/features/git-lfs:1": {},
     "ghcr.io/devcontainers/features/github-cli:1": {},
@@ -13,9 +10,10 @@
     "ghcr.io/devcontainers-extra/features/pre-commit:2": {},
     "ghcr.io/stuartleeks/dev-container-features/shell-history:0": {},
     "ghcr.io/devcontainers/features/python:1": {
-      "version": "3.13.5"
+      "version": "3.14.0"
     },
     "ghcr.io/va-h/devcontainers-features/uv:1": {},
+    "ghcr.io/devcontainers-extra/features/mypy:2": {},
     "ghcr.io/devcontainers-extra/features/ruff:1": {},
     "ghcr.io/warrenbuckley/codespace-features/sqlite:1": {}
   },
@@ -24,46 +22,37 @@
       "settings": {
         "terminal.integrated.defaultProfile.linux": "bash",
         "editor.formatOnSave": true,
+        "python.pythonPath": "~/.pyenv/versions/3.14.0/bin/python",
+        "python.linting.enabled": true,
+        "python.linting.ruffEnabled": true,
+        "editor.defaultFormatter": "ms-python.vscode-pylance",
         "[python]": {
           "editor.defaultFormatter": "charliermarsh.ruff",
           "editor.codeActionsOnSave": {
             "source.fixAll": "explicit"
           }
-        },
-        "workbench.colorTheme": "uv"
+        }
       },
       "extensions": [
         "ms-python.python",
+        "ms-python.debugpy",
         "ms-python.vscode-pylance",
         "charliermarsh.ruff",
-        "perras.UV", // colorTheme
+        "matangover.mypy",
+        "perras.UV",
         "ms-toolsai.jupyter",
         "eamodio.gitlens"
       ]
     }
   },
   "onCreateCommand": "if [ \"$CODESPACES\" = \"true\" ]; then echo 'In Codespaces: Running minimal setup'; else bash .devcontainer/provisioning.sh; fi || true",
-  "postCreateCommand": "echo 'source /workspaces/${localWorkspaceFolderBasename}/.devcontainer/.bashrc' >> ~/.bashrc && UV_VENV_CLEAR=1 uv venv .venv && uv pip install -U jupyterlab nox 'python-lsp-server[all]'",
-  "postStartCommand": ".venv/bin/pylsp --tcp --host 0.0.0.0 --port 2087 &",
+  "postCreateCommand": "uv venv .venv && uv pip install -U jupyterlab nox",
+  "postStartCommand": "bash .devcontainer/provisioning.sh",
   "forwardPorts": [
     8000,
     8888,
-    2087
+    8341
   ],
-  "portsAttributes": {
-    "8000": {
-      "label": "App Server",
-      "onAutoForward": "openBrowser"
-    },
-    "8888": {
-      "label": "Jupyter",
-      "onAutoForward": "notify"
-    },
-    "2087": {
-      "label": "pylsp",
-      "onAutoForward": "notify"
-    }
-  },
   "runArgs": [
     "--network=host"
   ],
