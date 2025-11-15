@@ -1,4 +1,5 @@
 # Spinor - Dual-Valued Representation in Holographic Runtime Systems
+
 ## Classically Non-Determinable 2-Valuedness in Phase Space Topology
 
 In a dual-representational phase/state space—trivially a Hilbert Space—the AdS/CFT correspondence manifests as the 'special conformal twist' operator: the 'spinor' in boundary-bulk correspondence.
@@ -6,6 +7,7 @@ In a dual-representational phase/state space—trivially a Hilbert Space—the A
 > © 2025 Moonlapsed https://github.com/MOONLAPSED/Cognosis | CC ND && BSD-3 | SEE LICENSE
 
 ## SDK-Main Algorithm Scaling Goals
+
 ```
 O(n)     - C (Ontology, bulk geometry)
 O(n²)    - Python (Phenomenology, observable correlates)  
@@ -392,6 +394,16 @@ This allows you to:
 - Git commits are **quantum observations**
 - Forks create **parallel universes**
 
+### URI Schema
+```
+qu://<ipv6>/<version>?state=<state>&perms=<perms>
+```
+
+Example:
+```
+qu://fd00:cafe:0000:0001::1/v0.1.0?state=new&perms=rwx
+```
+
 ---
 
 ## Runtime Quanta as Autonomous Network Entities
@@ -406,33 +418,6 @@ Each runtime quantum should have:
 This turns your system into a **distributed computational field**, where:
 
 > Every quantum has its own **spacetime address**, **causal history**, and **interaction protocol**.
-
-### URI Schema
-```
-qu://<ipv6>/<version>?state=<state>&perms=<perms>
-```
-
-Example:
-```
-qu://fd00:cafe:0000:0001::1/v0.1.0?state=new&perms=rwx
-```
-
----
-
-## Ontological Mapping of TCP/IP to QSD
-
-| TCP/IP Layer          | QSD Interpretation                                                  |
-|-----------------------|---------------------------------------------------------------------|
-| **Physical**          | Machine hardware, sandboxed environments (e.g., Windows Sandbox)    |
-| **Link Layer**        | `QSD Packets`—quantized runtime quanta with entanglement metadata   |
-| **Network Layer**     | `IPv6-style addressing` for unique runtime quanta identities        |
-| **Transport Layer**   | `CRDTs`, `eventual consistency`, `temporal flow` logic              |
-| **Application Layer** | `Morphological SDK`, Python bridge, git orchestration               |
-
-This mapping gives us a **computational spacetime model** where each runtime quantum has:
-- An **identity (IPv6-ish address)**
-- A **version number (timestamp/spacetime coordinate)**
-- A **causal history (git commit chain)**
 
 ### Network Concept Translations
 
@@ -563,42 +548,6 @@ $$U_M(t) = e^{-iHt}$$
 $$U_{NM}(t) = \mathcal{T} \exp\left(-i\int_0^t H(s)K(t,s)ds\right)$$
 
 where $\mathcal{T}$ is the time-ordering operator and $K(t,s)$ is the memory kernel.
-
----
-
-## Morphological Operators and Transformations
-
-### Core Operator Algebra
-
-| Operator | Symbol | Action | Unitarity |
-|----------|--------|--------|-----------|
-| **Quineing** | $\hat{Q}$ | Self-replication with mutation | Unitary |
-| **Branching** | $\hat{B}$ | Create superposition of variants | Non-unitary |
-| **Merging** | $\hat{M}$ | Collapse superposition to single state | Non-unitary (measurement) |
-| **Entanglement** | $\hat{E}_{ij}$ | Create correlation between runtimes $i,j$ | Unitary |
-| **Decoherence** | $\hat{D}$ | Environment-induced collapse | Non-unitary |
-
-### Quineing Operator
-
-The quineing operator $\hat{Q}$ acts as:
-$$\hat{Q}|\psi\rangle = |\psi\rangle \otimes |\psi'\rangle$$
-
-where $|\psi'\rangle$ is a mutated copy with fidelity:
-$$F = |\langle\psi|\psi'\rangle|^2 \in [0,1]$$
-
-**Perfect quine**: $F = 1$ (impossible in practice due to quantum no-cloning)
-**Noisy quine**: $F < 1$ (realistic, enables evolution)
-
-### Branching Operator
-
-Creates computational superposition:
-$$\hat{B}|\psi\rangle = \frac{1}{\sqrt{N}}\sum_{i=1}^N |\psi_i\rangle$$
-
-Each branch $|\psi_i\rangle$ represents a distinct execution path.
-
-**Decoherence time**: $\tau_D = \frac{\hbar}{\Delta E \cdot \gamma}$
-
-where $\gamma$ is the environment coupling strength.
 
 ---
 
