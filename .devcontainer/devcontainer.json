@@ -1,5 +1,5 @@
 {
-  "name": "Py 3.14.0 with Jupyter, nox and uv.",
+  "name": "Py 3.14.0 with Jupyter, ruff and uv.",
   "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
@@ -46,16 +46,16 @@
     }
   },
   "onCreateCommand": "if [ \"$CODESPACES\" = \"true\" ]; then echo 'In Codespaces: Running minimal setup'; else bash .devcontainer/provisioning.sh; fi || true",
-  "postCreateCommand": "uv venv .venv && uv pip install -U jupyterlab nox",
-  "postStartCommand": "bash .devcontainer/provisioning.sh",
-  "forwardPorts": [
-    8000,
-    8888,
-    8341
-  ],
-  "runArgs": [
-    "--network=host"
-  ],
+  "postCreateCommand": "export UV_LINK_MODE=copy && uv venv .venv --clear --python 3.14.0 && uv pip install --no-cache -U jupyterlab ipykernel",
+  "postStartCommand": "nohup bash -c 'source .venv/bin/activate && jupyter lab --ip=0.0.0.0 --port=8888 --allow-root --no-browser --ServerApp.token=\"\" --ServerApp.password=\"\" > .jupyter.log 2>&1 &'",
+  "forwardPorts": [8888],
+  "portsAttributes": {
+    "8888": {
+      "label": "JupyterLab",
+      "onAutoForward": "notify"
+    }
+  },
+  "runArgs": ["--network=host"],
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "remoteUser": "vscode"
