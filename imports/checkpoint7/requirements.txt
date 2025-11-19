@@ -1,0 +1,9 @@
+pandas
+requests
+litellm
+pydantic
+python-dotenv
+httpx
+spacy
+python-frontmatter
+pyYAML
