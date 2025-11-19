@@ -1,0 +1,11 @@
+pydantic
+python-dotenv
+httpx
+python-frontmatter
+pyYAML
+matplotlib[notebook]
+numpy
+ipywidgets
+jupyterlab
+ipykernel
+mkdocs
