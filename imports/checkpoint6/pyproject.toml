@@ -1,0 +1,37 @@
+[build-system]
+requires = ["pdm-pep517>=0.8.5"]
+build-backend = "pdm.pep517.api"
+
+[project]
+name = "cognosis"
+description = "A namespace and filesystem interface for Obsidian knowledge bases."
+authors = [{ name = "MOONLAPSED", email = "MOONLAPSED@gmail.com" }]
+version = "0.1.0"
+requires-python = ">=3.11"
+readme = "README.md"
+dependencies = [
+    "jax",
+    "jupyter",
+    "ipykernel",
+    "numpy",
+    "pandas",
+    "typing-extensions",
+    "xonsh",
+    "litellm",
+    "pydantic",
+    "pytest",
+    "httpx",
+    "docker",
+    "requests",
+    "python-dotenv",
+    "spacy"
+]
+
+[tool.pdm.build-system.backends]
+go = { name = "go", requires = ["go>=1.16"] }
+npm = { name = "npm", requires = ["npm>=10.4.0"] }
+pdm = { requires = ["pdm-pep517>=0.8.5"], build-backend = "pdm.pep517.api" }
+rust = { requires = ["rust>=1.0"] }
+
+[project.scripts]
+main = "main.py:main"
