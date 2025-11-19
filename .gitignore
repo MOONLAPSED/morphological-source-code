@@ -17,6 +17,7 @@ pdm.lock
 /src/ts/node_modules/*
 /.request_cache.json
 /states/*
+nohup.out
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
