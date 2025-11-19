@@ -1,0 +1,10 @@
+{
+    "OBSIDIAN_PATH": "C:\\Users\\DEV\\scoop\\apps\\obsidian\\current",
+    "WINDOWS_SANDBOX_DEFAULT_DESKTOP": "C:\\Users\\WDAGUtilityAccount\\Desktop",
+    "RUNTIME_NAME": "HomoiconicInstance",
+    "WORD_SIZE": 32,
+    "DEFAULT_MORPHOLOGY": "DYNAMIC",
+    "ENABLE_QUINE": "True",
+    "SERIALIZATION_FORMAT": "pickle",
+    "FFI_BOUNDARY_PROTOCOL": "pipe" 
+}
