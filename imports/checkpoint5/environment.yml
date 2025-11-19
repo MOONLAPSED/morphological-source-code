@@ -1,0 +1,19 @@
+name: jupyterjax
+channels:
+- conda-forge
+dependencies:
+- python=3.11
+- nodejs
+- golang
+- jax
+- numpy
+- xonsh
+- ipykernel
+- jupyterlab
+- cudatoolkit
+- jupyterlab_myst
+- chromium
+- chromedriver
+- jupyterlab_widgets
+- pip:
+  - -r file:requirements.txt
