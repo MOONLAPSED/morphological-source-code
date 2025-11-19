@@ -1,0 +1,10 @@
+numpy
+pandas
+requests
+openai
+ipykernel
+jupyterlab
+websockets
+asyncio
+typer
+litellm
