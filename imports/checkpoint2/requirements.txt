@@ -1,0 +1,11 @@
+asyncio
+jupyterlab
+ipykernel
+litellm
+numpy
+pandas
+pydantic
+requests
+sqlite3
+typer
+websockets
