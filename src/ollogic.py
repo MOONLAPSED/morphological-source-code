@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import annotations
+# © 2025 Moonlapsed https://github.com/MOONLAPSED/Cognosis | CC ND && BSD-3 | SEE LICENCE
 import asyncio
 import json
 import http.client
@@ -14,7 +18,6 @@ import time
 import importlib.util
 import sys
 import os
-
 @dataclass
 class MemoryCell:
     """Represents a single addressable memory location"""
