@@ -1,6 +1,8 @@
-from __future__ import annotations
-#!/usr/bin/env -S uv run
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# 3.14 std libs **ONLY** | Platform(s): Win11 (production), Ubuntu-22.04 (dev, staging);
+# © 2025 Moonlapsed https://github.com/MOONLAPSED/Cognosis | CC ND && BSD-3 | SEE LICENCE
+from __future__ import annotations
 import subprocess
 import tempfile
 import traceback
@@ -27,13 +29,13 @@ from io import StringIO
 from dataclasses import dataclass, field
 from pathlib import Path, PureWindowsPath
 from typing import List, Dict, Any, Optional, Union, Tuple
-from dataclasses import dataclass, field, asdict
-from pathlib import Path
+from dataclasses import asdict
 from enum import IntFlag, IntEnum, auto, Enum
-from typing import Tuple, TypeVar, Callable, Any, List, Generic, Union, Set, FrozenSet, cast
+from typing import TypeVar, Callable, Generic, Set, FrozenSet, cast
 from functools import lru_cache, wraps
 import logging
 from logging.handlers import RotatingFileHandler
+
 """
 A monolithic __init__.py that provides:
   - The cross-platform integrated process execution, benchmarking, and profiling 'import-time' script
@@ -49,15 +51,17 @@ logger = logging.getLogger(__name__)
 if not logger.handlers:  # Avoid duplicate handlers on reload
     logger.setLevel(logging.INFO)
     formatter = logging.Formatter(
-        '[%(levelname)s]%(asctime)s||%(name)s: %(message)s', 
-        datefmt='%Y-%m-%d~%H:%M:%S%z')
+        '[%(levelname)s]%(asctime)s||%(name)s: %(message)s',
+        datefmt='%Y-%m-%d~%H:%M:%S%z',
+    )
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
     logs_dir = Path(__file__).resolve().parent / 'logs'
     logs_dir.mkdir(exist_ok=True)
     file_handler = RotatingFileHandler(
-        logs_dir / 'app.log', maxBytes=10485760, backupCount=10)
+        logs_dir / 'app.log', maxBytes=10485760, backupCount=10
+    )
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 logger.info('Logging initialized from %s', __file__)
@@ -68,6 +72,7 @@ logger.info(decimal.getcontext())
 IS_WINDOWS = os.name == 'nt'
 IS_POSIX = os.name == 'posix'
 profiler = cProfile.Profile()
+
 
 # --- Platform ------------------------------------------------------
 @dataclass
@@ -81,15 +86,40 @@ class RegisterSet:
     def detect_current(cls) -> 'RegisterSet':
         machine = platform.machine().lower()
         if machine in ('x86_64', 'amd64'):
-            return cls(gp_registers=16, vector_registers=32, register_width=64, vector_width=512)
-        elif machine.startswith('arm64') or (machine.startswith('arm') and sys.maxsize > 2**32):
-            return cls(gp_registers=31, vector_registers=32, register_width=64, vector_width=128)
+            return cls(
+                gp_registers=16,
+                vector_registers=32,
+                register_width=64,
+                vector_width=512,
+            )
+        elif machine.startswith('arm64') or (
+            machine.startswith('arm') and sys.maxsize > 2**32
+        ):
+            return cls(
+                gp_registers=31,
+                vector_registers=32,
+                register_width=64,
+                vector_width=128,
+            )
         elif machine.startswith('arm'):
-            return cls(gp_registers=16, vector_registers=16, register_width=32, vector_width=128)
+            return cls(
+                gp_registers=16,
+                vector_registers=16,
+                register_width=32,
+                vector_width=128,
+            )
         elif machine.startswith('riscv'):
-            return cls(gp_registers=32, vector_registers=32, register_width=64 if sys.maxsize > 2**32 else 32, vector_width=256)
+            return cls(
+                gp_registers=32,
+                vector_registers=32,
+                register_width=64 if sys.maxsize > 2**32 else 32,
+                vector_width=256,
+            )
         else:
-            return cls(gp_registers=8, vector_registers=8, register_width=32, vector_width=128)
+            return cls(
+                gp_registers=8, vector_registers=8, register_width=32, vector_width=128
+            )
+
 
 class ProcessorFeatures(IntFlag):
     BASIC = auto()
@@ -146,11 +176,11 @@ class ProcessorFeatures(IntFlag):
             # Windows: use kernel32!IsProcessorFeaturePresent
             elif system == "win32":
                 # Define Windows processor feature constants
-                PF_XMMI_INSTRUCTIONS_AVAILABLE = 6    # SSE
-                PF_XMMI64_INSTRUCTIONS_AVAILABLE = 10 # SSE2 (implies SSE)
+                PF_XMMI_INSTRUCTIONS_AVAILABLE = 6  # SSE
+                PF_XMMI64_INSTRUCTIONS_AVAILABLE = 10  # SSE2 (implies SSE)
                 PF_AVX_INSTRUCTIONS_AVAILABLE = 28
                 PF_AVX2_INSTRUCTIONS_AVAILABLE = 30
-                PF_AVX512_INSTRUCTIONS_AVAILABLE = 34 # Not official
+                PF_AVX512_INSTRUCTIONS_AVAILABLE = 34  # Not official
 
                 kernel32 = ctypes.windll.kernel32
                 IsProcessorFeaturePresent = kernel32.IsProcessorFeaturePresent
@@ -171,11 +201,12 @@ class ProcessorFeatures(IntFlag):
                     features |= cls.NEON
                 elif machine in ("x86_64", "i386"):
                     features |= cls.SSE | cls.AVX
-        except Exception as e:
+        except Exception:
             # Log if you have logger, else silently degrade
             pass
 
         return features
+
 
 class ProcessorArchitecture(IntEnum):
     X86 = auto()
@@ -212,7 +243,9 @@ class MemoryModel:
         cache_line_size = 64
         try:
             if sys.platform == 'linux':
-                with open('/sys/devices/system/cpu/cpu0/cache/index0/coherency_line_size') as f:
+                with open(
+                    '/sys/devices/system/cpu/cpu0/cache/index0/coherency_line_size'
+                ) as f:
                     cache_line_size = int(f.read().strip())
         except (FileNotFoundError, ValueError, OSError) as e:
             logger.debug("Could not read cache line size: %s", e)
@@ -220,8 +253,9 @@ class MemoryModel:
             ptr_size=ctypes.sizeof(ctypes.c_void_p),
             word_size=ctypes.sizeof(ctypes.c_size_t),
             cache_line_size=cache_line_size,
-            page_size=4096
+            page_size=4096,
         )
+
 
 # --- HardwareInfo Singleton ---------------------------------------------------
 class HardwareInfo:
@@ -254,11 +288,13 @@ class HardwareInfo:
         type(self).registers.fget.cache_clear()
         type(self).memory.fget.cache_clear()
 
+
 hardware = HardwareInfo()
+
 
 class HardwareValidator:
     """Base class for hardware-aware objects. Enables runtime feature checks."""
-    
+
     _required_features: ProcessorFeatures = ProcessorFeatures.BASIC
 
     def __init__(self, *args, **kwargs):
@@ -274,6 +310,7 @@ class HardwareValidator:
         """Check if this class can be instantiated on current hardware."""
         return bool(hardware.features & cls._required_features)
 
+
 # --- Platform-Specific Process Priority Setting ---
 
 if IS_WINDOWS:
@@ -282,15 +319,19 @@ if IS_WINDOWS:
 
     def set_process_priority(priority: int) -> None:
         windll.kernel32.SetPriorityClass(HANDLE(-1), priority)
+
     if __name__ == '__main__':
         set_process_priority(1)
 elif IS_POSIX:
+
     def set_process_priority(priority: int) -> None:
         try:
             os.nice(priority)
         except PermissionError:
             print(
-                "Warning: Unable to set process priority. Running with default priority.")
+                "Warning: Unable to set process priority. Running with default priority."
+            )
+
     if __name__ == '__main__':
         set_process_priority(1)
         import resource
@@ -324,9 +365,10 @@ def generate_ansi_color(c: str) -> str:
         'yellow': '\033[33m',
         'blue': '\033[34m',
         'magenta': '\033[35m',
-        'cyan': '\033[36m'
+        'cyan': '\033[36m',
     }
     return colors.get(c.lower(), colors['reset'])
+
 
 # --- Fire-Immediately Function (executes on import) ---
 
@@ -347,11 +389,13 @@ def FireFirst() -> None:
     finally:
         return True
 
+
 # --- System Profiling and Benchmarking Classes ---
 
 
 class SystemProfiler:
     """Handles system profiling and performance measurements."""
+
     _instance = None
     _lock = threading.Lock()
 
@@ -377,25 +421,24 @@ class SystemProfiler:
         return s.getvalue()
 
 
-
-
-
-
-
-
 # update with ProcessorFeatures
 class ProcessExecutor:
     """[[ProcessExecutor]] – Platform-independent process execution."""
 
     @staticmethod
-    def _windows_run_command(command: List[str], timeout: Optional[float], env: Optional[Dict[str, str]]):
+    def _windows_run_command(
+        command: List[str], timeout: Optional[float], env: Optional[Dict[str, str]]
+    ):
         from ctypes import windll, wintypes
 
         def set_priority():
             windll.kernel32.SetPriorityClass(
-                wintypes.HANDLE(-1), 0x00008000)  # ABOVE_NORMAL_PRIORITY_CLASS
+                wintypes.HANDLE(-1), 0x00008000
+            )  # ABOVE_NORMAL_PRIORITY_CLASS
 
-        def wrun_command(command: List[str], timeout: Optional[float], env: Optional[Dict[str, str]]):
+        def wrun_command(
+            command: List[str], timeout: Optional[float], env: Optional[Dict[str, str]]
+        ):
             BUFFER_SIZE = 65536  # 64KB buffer
             process = subprocess.Popen(
                 command,
@@ -404,7 +447,7 @@ class ProcessExecutor:
                 text=False,
                 shell=True,
                 env=env,
-                bufsize=BUFFER_SIZE
+                bufsize=BUFFER_SIZE,
             )
             set_priority()
 
@@ -416,6 +459,7 @@ class ProcessExecutor:
                         break
                     buffer.append(chunk)
                 return b''.join(buffer).decode()
+
             stdout = read_stream(process.stdout)
             stderr = read_stream(process.stderr)
             return_code = process.wait(timeout=timeout)
@@ -435,14 +479,18 @@ class ProcessExecutor:
             raise
 
     @staticmethod
-    def _posix_run_command(command: List[str], timeout: Optional[float], env: Optional[Dict[str, str]]):
+    def _posix_run_command(
+        command: List[str], timeout: Optional[float], env: Optional[Dict[str, str]]
+    ):
         def set_priority():
             try:
                 os.nice(-10)
             except PermissionError:
                 pass
 
-        def run_command(command: List[str], timeout: Optional[float], env: Optional[Dict[str, str]]):
+        def run_command(
+            command: List[str], timeout: Optional[float], env: Optional[Dict[str, str]]
+        ):
             BUFFER_SIZE = 65536  # 64KB
             resource.setrlimit(resource.RLIMIT_NOFILE, (4096, 4096))
             process = subprocess.Popen(
@@ -453,10 +501,11 @@ class ProcessExecutor:
                 shell=True,
                 env=env,
                 bufsize=BUFFER_SIZE,
-                preexec_fn=set_priority
+                preexec_fn=set_priority,
             )
             stdout, stderr = process.communicate(timeout=timeout)
             return stdout.decode(), stderr.decode(), process.returncode
+
         try:
             stdout, stderr, status = run_command(command, timeout, env)
             print("STDOUT:", stdout)
@@ -471,8 +520,11 @@ class ProcessExecutor:
             raise
 
     @staticmethod
-    def run_command(command: List[str], timeout: Optional[float] = None,
-                    env: Optional[Dict[str, str]] = None) -> Tuple[str, str, int]:
+    def run_command(
+        command: List[str],
+        timeout: Optional[float] = None,
+        env: Optional[Dict[str, str]] = None,
+    ) -> Tuple[str, str, int]:
         """Execute a command in a platform-independent way."""
         if IS_WINDOWS:
             return ProcessExecutor._windows_run_command(command, timeout, env)
@@ -541,17 +593,13 @@ class ExecutionResult:
         return output
 
 
-
-
-
 # /main.py
 # this repo, `lager`, is part of "cognosis - cognitive coherence coroutines" project, which amongst other things, is a pythonic implementation of a model cognitive system:
 # This script is part of "cognosis - cognitive coherence coroutines" project,
-# which is a pythonic implementation of a model cognitive system, 
-# utilizing concepts from signal processing, cognitive theories, 
+# which is a pythonic implementation of a model cognitive system,
+# utilizing concepts from signal processing, cognitive theories,
 # and machine learning to create adaptive systems.
 # main.py
-
 
 
 ml = None
@@ -567,13 +615,18 @@ if ml is None:
     """
     ml = logging.getLogger(__name__)
     ml.setLevel(logging.INFO)
-    formatter = logging.Formatter('[%(levelname)s]%(asctime)s||(%(filename)s:%(lineno)d):%(name)s: %(message)s', datefmt='%Y-%m-%d~%H:%M:%S%z')
+    formatter = logging.Formatter(
+        '[%(levelname)s]%(asctime)s||(%(filename)s:%(lineno)d):%(name)s: %(message)s',
+        datefmt='%Y-%m-%d~%H:%M:%S%z',
+    )
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     ml.addHandler(console_handler)
     logs_dir = Path(__file__).resolve().parent / 'logs'
     logs_dir.mkdir(exist_ok=True)
-    file_handler = logging.handlers.RotatingFileHandler(logs_dir / 'app.log', maxBytes=10485760, backupCount=10)
+    file_handler = logging.handlers.RotatingFileHandler(
+        logs_dir / 'app.log', maxBytes=10485760, backupCount=10
+    )
     file_handler.setFormatter(formatter)
     ml.addHandler(file_handler)
     ml.propagate = False
@@ -588,12 +641,14 @@ if ml.__dict__.get('parent') is None or ml.__dict__.get('parent') != 'app':
 
 'ml' in globals() or globals().__setitem__('ml', ml)
 
+
 class Node:
     def __init__(self, size: int):
         self.data = bytearray(size)
         self.next: Optional['Node'] = None
         self.size = size
         self.used = 0
+
 
 class ScratchArena:
     def __init__(self, chunk_size: int):
@@ -614,7 +669,7 @@ class ScratchArena:
         # Allocate memory from the current chunk
         start = self.current.used
         self.current.used += size
-        return memoryview(self.current.data)[start:start + size]
+        return memoryview(self.current.data)[start : start + size]
 
     def reset(self):
         # Reset all chunks for reuse
@@ -630,11 +685,14 @@ class ThreadLocalScratchArena(ScratchArena):
         super().__init__(chunk_size)
         self.thread_local = threading.local()
 
-def log(level=logging.INFO): # asyncio.iscoroutinefunction(func)
-    def decorator(func): # decorator(func) -> async_wrapper or sync_wrapper
+
+def log(level=logging.INFO):  # asyncio.iscoroutinefunction(func)
+    def decorator(func):  # decorator(func) -> async_wrapper or sync_wrapper
         @wraps(func)
         async def async_wrapper(*args, **kwargs):
-            Logger.log(level, f"Executing {func.__name__} with args: {args}, kwargs: {kwargs}")
+            Logger.log(
+                level, f"Executing {func.__name__} with args: {args}, kwargs: {kwargs}"
+            )
             try:
                 result = await func(*args, **kwargs)
                 Logger.log(level, f"Completed {func.__name__} with result: {result}")
@@ -645,7 +703,9 @@ def log(level=logging.INFO): # asyncio.iscoroutinefunction(func)
 
         @wraps(func)
         def sync_wrapper(*args, **kwargs):
-            Logger.log(level, f"Executing {func.__name__} with args: {args}, kwargs: {kwargs}")
+            Logger.log(
+                level, f"Executing {func.__name__} with args: {args}, kwargs: {kwargs}"
+            )
             try:
                 result = func(*args, **kwargs)
                 Logger.log(level, f"Completed {func.__name__} with result: {result}")
@@ -655,27 +715,44 @@ def log(level=logging.INFO): # asyncio.iscoroutinefunction(func)
                 raise
 
         return async_wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper
+
     return decorator
+
 
 def benchmark(func):
     if not asyncio.iscoroutinefunction(func):
-        Logger.error(f"Function {func.__name__} is not an asyncio.iscoroutinefunction object")
+        Logger.error(
+            f"Function {func.__name__} is not an asyncio.iscoroutinefunction object"
+        )
         return ValueError("Function is not a coroutine")
+
     @wraps(func)
     async def wrapper(*args, **kwargs):
         start_time = time.time()
         result = await func(*args, **kwargs)
         end_time = time.time()
-        Logger.info(f"Function {func.__name__} executed in {end_time - start_time:.2f} seconds")
+        Logger.info(
+            f"Function {func.__name__} executed in {end_time - start_time:.2f} seconds"
+        )
         return result
+
     return wrapper
 
+
 # advanced runtime parameter types
-T = TypeVar('T', bound=Type)  # type is synonymous for class: T = type(class()) or vice-versa
-V = TypeVar('V', bound=Union[int, float, str, bool, list, dict, tuple, set, object, Callable, Enum, Type[Any]])
+T = TypeVar(
+    'T', bound=Type
+)  # type is synonymous for class: T = type(class()) or vice-versa
+V = TypeVar(
+    'V',
+    bound=Union[
+        int, float, str, bool, list, dict, tuple, set, object, Callable, Enum, Type[Any]
+    ],
+)
 C = TypeVar('C', bound=Callable[..., Any])  # callable 'T' class/type variable
 
 datum = Union[int, float, str, bool, None, List[Any], Tuple[Any, ...]]
+
 
 class DataType(Enum):
     INTEGER = auto()
@@ -686,12 +763,16 @@ class DataType(Enum):
     LIST = auto()
     TUPLE = auto()
 
-class AtomType(Enum):
-    CLASS = auto() # classes, aka types+classes, variables, and/or (callable) functions: ['T', 'V', 'C']
-    MODULE = auto() # modules are SimpleNamespace objects and/or actual modules
-    ATOM = auto() # atoms are the basic building blocks of the system
 
-def _validation(cls: Type[T]) -> Type[T]: # dataclass.field() would be less round-about and faster
+class AtomType(Enum):
+    CLASS = auto()  # classes, aka types+classes, variables, and/or (callable) functions: ['T', 'V', 'C']
+    MODULE = auto()  # modules are SimpleNamespace objects and/or actual modules
+    ATOM = auto()  # atoms are the basic building blocks of the system
+
+
+def _validation(
+    cls: Type[T],
+) -> Type[T]:  # dataclass.field() would be less round-about and faster
     original_init = cls.__init__
     sig = inspect.signature(original_init)
 
@@ -701,13 +782,18 @@ def _validation(cls: Type[T]) -> Type[T]: # dataclass.field() would be less roun
             if key in cls.__annotations__:
                 expected_type = cls.__annotations__.get(key)
                 if not isinstance(value, expected_type):
-                    raise TypeError(f"Expected {expected_type} for {key}, got {type(value)}")
+                    raise TypeError(
+                        f"Expected {expected_type} for {key}, got {type(value)}"
+                    )
         original_init(self, *args, **kwargs)
 
     cls.__init__ = new_init
     return cls
 
-def _validate(field_name: str, validator_fn: Callable[[Any], None]) -> Callable[[Type[T]], Type[T]]:
+
+def _validate(
+    field_name: str, validator_fn: Callable[[Any], None]
+) -> Callable[[Type[T]], Type[T]]:
     def decorator(cls: Type[T]) -> Type[T]:
         original_init = cls.__init__
 
@@ -754,44 +840,58 @@ class Atom(ABC):
 def reflexivity(x):
     return x == x
 
+
 def symmetry(x, y):
     return x == y
+
 
 def transitivity(x, y, z):
     return x == y and y == z and x == z
 
+
 def transparency(f, x, y):
     return f(x, y) if x == y else None
+
 
 def top(x, _):
     return x
 
+
 def bottom(_, y):
     return y
+
 
 def if_else_a(a, b):
     return a if a else b
 
+
 def negation(a):
     return not a
+
 
 def conjunction(a, b):
     return a and b
 
+
 def disjunction(a, b):
     return a or b
+
 
 def implication(a, b):
     return (not a) or b
 
+
 def biconditional(a, b):
     return (a and b) or (not a and not b)
+
 
 def nor(a, b):
     return not (a or b)
 
+
 def nand(a, b):
     return not (a and b)
+
 
 def contrapositive(a, b):
     return (not b) or (not a)
@@ -869,9 +969,13 @@ class AtomicData(Atom):
             except struct.error:
                 data_len = struct.unpack('!I', data[:4])[0]
                 try:
-                    self.data = struct.unpack(f'!{data_len}s', data[4:4 + data_len])[0].decode('utf-8')
+                    self.data = struct.unpack(f'!{data_len}s', data[4 : 4 + data_len])[
+                        0
+                    ].decode('utf-8')
                 except UnicodeDecodeError:
-                    self.data = json.loads(struct.unpack(f'!{data_len}s', data[4:4 + data_len])[0])
+                    self.data = json.loads(
+                        struct.unpack(f'!{data_len}s', data[4 : 4 + data_len])[0]
+                    )
 
     def execute(self, *args, **kwargs) -> Any:
         return self.data
@@ -919,19 +1023,21 @@ class FormalTheory(Atom, Generic[T]):
     case_base: Dict[str, Callable[..., bool]] = field(default_factory=dict)
 
     def __post_init__(self):
-        self.case_base.update({
-            '⊤': top,
-            '⊥': bottom,
-            'a': if_else_a,
-            '¬': negation,
-            '∧': conjunction,
-            '∨': disjunction,
-            '→': implication,
-            '↔': biconditional,
-            '¬∨': nor,  # NOR operation
-            '¬∧': nand,  # NAND operation
-            'contrapositive': contrapositive
-        })
+        self.case_base.update(
+            {
+                '⊤': top,
+                '⊥': bottom,
+                'a': if_else_a,
+                '¬': negation,
+                '∧': conjunction,
+                '∨': disjunction,
+                '→': implication,
+                '↔': biconditional,
+                '¬∨': nor,  # NOR operation
+                '¬∧': nand,  # NAND operation
+                'contrapositive': contrapositive,
+            }
+        )
 
     def encode(self) -> bytes:
         # Encode attributes using struct
@@ -941,17 +1047,21 @@ class FormalTheory(Atom, Generic[T]):
             encode_callable(self.transitivity),
             encode_callable(self.transparency),
         ]
-        attribute_bytes = struct.pack(f'!4I', *attribute_values)
+        attribute_bytes = struct.pack('!4I', *attribute_values)
 
         # Encode case_base
         case_base_keys = sorted(self.case_base.keys())
         case_base_values = [encode_callable(self.case_base[k]) for k in case_base_keys]
         case_base_bytes = json.dumps(case_base_keys).encode('utf-8')
-        packed_case_base = struct.pack(f"!I{len(case_base_bytes)}s{len(case_base_values)}I", len(case_base_bytes), case_base_bytes, *case_base_values)
+        packed_case_base = struct.pack(
+            f"!I{len(case_base_bytes)}s{len(case_base_values)}I",
+            len(case_base_bytes),
+            case_base_bytes,
+            *case_base_values,
+        )
 
         # Combine everything
         return attribute_bytes + packed_case_base
-
 
     def decode(self, data: bytes) -> None:
         # Extract attribute values
@@ -964,9 +1074,14 @@ class FormalTheory(Atom, Generic[T]):
         # Decode the case_base
         rest = data[16:]
         case_base_len = struct.unpack('!I', rest[:4])[0]
-        case_base_keys = json.loads(rest[4:4 + case_base_len])
-        case_base_values = struct.unpack(f"!{len(case_base_keys)}I", rest[4 + case_base_len:])
-        self.case_base = {case_base_keys[i]: decode_callable(case_base_values[i]) for i in range(len(case_base_keys))}
+        case_base_keys = json.loads(rest[4 : 4 + case_base_len])
+        case_base_values = struct.unpack(
+            f"!{len(case_base_keys)}I", rest[4 + case_base_len :]
+        )
+        self.case_base = {
+            case_base_keys[i]: decode_callable(case_base_values[i])
+            for i in range(len(case_base_keys))
+        }
 
     def execute(self, *args, **kwargs) -> Any:
         return self.transparency(*args, **kwargs)
@@ -1014,14 +1129,13 @@ if __name__ == "__main__":
     benchmark()
 
 
-
-
 # --- Project Management Code ---
 
 
 @dataclass
 class ProjectConfig:
     """Project configuration container ([[ProjectConfig]])."""
+
     name: str
     version: str
     python_version: str
@@ -1050,7 +1164,8 @@ class ProjectManager:
         logger = logging.getLogger("ProjectManager")
         handler = logging.StreamHandler()
         formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
         handler.setFormatter(formatter)
         logger.addHandler(handler)
         logger.setLevel(logging.INFO)
@@ -1065,13 +1180,9 @@ class ProjectManager:
             "dev_dependencies": [],
             "profile_enabled": True,
             "platform_specific": {
-                "windows": {
-                    "priority": 32
-                },
-                "linux": {
-                    "priority": 0
-                }
-            }
+                "windows": {"priority": 32},
+                "linux": {"priority": 0},
+            },
         }
         if not config_path.exists():
             with open(config_path, 'w', encoding='utf-8') as f:
@@ -1084,8 +1195,7 @@ class ProjectManager:
         pyproject_path = self.root_dir / "pyproject.toml"
         self.logger.debug(f"Checking for pyproject.toml at: {pyproject_path}")
         if not pyproject_path.exists():
-            self.logger.info(
-                "No pyproject.toml found. Creating default configuration.")
+            self.logger.info("No pyproject.toml found. Creating default configuration.")
             config = ProjectConfig(
                 name=self.root_dir.name,
                 version="0.1.0",
@@ -1094,16 +1204,16 @@ class ProjectManager:
                 dev_dependencies=[
                     "ruff>=0.3.0",
                     "pytest>=8.0.0",
-                    "pytest-asyncio>=0.23.0"
+                    "pytest-asyncio>=0.23.0",
                 ],
                 ruff_config={
                     "line-length": 88,
                     "target-version": "py313",
                     "select": ["E", "F", "I", "N", "W"],
                     "ignore": [],
-                    "fixable": ["A", "B", "C", "D", "E", "F", "I"]
+                    "fixable": ["A", "B", "C", "D", "E", "F", "I"],
                 },
-                ffi_modules=[]
+                ffi_modules=[],
             )
             self._write_pyproject_toml(config)
             return config
@@ -1118,7 +1228,7 @@ class ProjectManager:
             ruff_config=data.get("tool", {}).get("ruff", {}),
             ffi_modules=data["project"].get("ffi-modules", []),
             src_path=Path(data["project"].get("src-path", "src")),
-            tests_path=Path(data["project"].get("tests-path", "tests"))
+            tests_path=Path(data["project"].get("tests-path", "tests")),
         )
 
     def _write_pyproject_toml(self, config: ProjectConfig):
@@ -1155,7 +1265,7 @@ class ProjectManager:
         dirs = [
             self.config.src_path,
             self.config.tests_path,
-            self.config.src_path / "ffi"
+            self.config.src_path / "ffi",
         ]
         for dir_path in dirs:
             full_path = self.root_dir / dir_path
@@ -1164,7 +1274,9 @@ class ProjectManager:
             if not init_file.exists():
                 init_file.touch()
 
-    async def run_uv_command(self, cmd: List[str], timeout: Optional[float] = None) -> subprocess.CompletedProcess:
+    async def run_uv_command(
+        self, cmd: List[str], timeout: Optional[float] = None
+    ) -> subprocess.CompletedProcess:
         """Run a UV command asynchronously with timeout support."""
         self.logger.debug(f"Running UV command: {' '.join(cmd)}")
         if self.is_windows:
@@ -1176,45 +1288,43 @@ class ProjectManager:
             if shell:
                 cmd_str = subprocess.list2cmdline(cmd)
                 process = await asyncio.create_subprocess_shell(
-                    cmd_str,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
+                    cmd_str, stdout=subprocess.PIPE, stderr=subprocess.PIPE
                 )
             else:
                 process = await asyncio.create_subprocess_exec(
-                    *cmd,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
+                    *cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
                 )
             try:
-                stdout, stderr = await asyncio.wait_for(process.communicate(), timeout=timeout)
+                stdout, stderr = await asyncio.wait_for(
+                    process.communicate(), timeout=timeout
+                )
             except asyncio.TimeoutError:
                 try:
                     process.terminate()
                     await process.wait()
                 except ProcessLookupError:
                     pass
-                raise TimeoutError(
-                    f"Command timed out after {timeout} seconds")
+                raise TimeoutError(f"Command timed out after {timeout} seconds")
             if process.returncode != 0:
                 error_msg = stderr.decode('utf-8', errors='replace')
                 self.logger.error(f"UV command failed: {error_msg}")
                 raise RuntimeError(f"UV command failed: {error_msg}")
             return subprocess.CompletedProcess(
-                cmd, process.returncode,
+                cmd,
+                process.returncode,
                 stdout.decode('utf-8', errors='replace'),
-                stderr.decode('utf-8', errors='replace')
+                stderr.decode('utf-8', errors='replace'),
             )
         except FileNotFoundError:
             self.logger.error(f"Command not found: {cmd[0]}")
             raise RuntimeError(
-                f"Command not found: {cmd[0]}. Is UV installed and in PATH?")
+                f"Command not found: {cmd[0]}. Is UV installed and in PATH?"
+            )
 
     async def setup_environment(self):
         """Set up the environment based on mode."""
         self.logger.info("Setting up environment...")
-        venv_cmd = ["uv", "venv"] if not self.is_windows else [
-            "uv.exe", "venv"]
+        venv_cmd = ["uv", "venv"] if not self.is_windows else ["uv.exe", "venv"]
         await self.run_uv_command(venv_cmd)
         requirements_path = self.root_dir / "requirements.txt"
         dev_requirements_path = self.root_dir / "requirements-dev.txt"
@@ -1226,30 +1336,48 @@ class ProjectManager:
                 f.write('\n'.join(self.config.dev_dependencies) + '\n')
         if requirements_path.exists():
             self.logger.info("Compiling requirements...")
-            pip_cmd = ["uv", "pip"] if not self.is_windows else [
-                "uv.exe", "pip"]
-            await self.run_uv_command([*pip_cmd, "compile", str(requirements_path),
-                                       "--output-file", str(self.root_dir / "requirements.lock")])
+            pip_cmd = ["uv", "pip"] if not self.is_windows else ["uv.exe", "pip"]
+            await self.run_uv_command(
+                [
+                    *pip_cmd,
+                    "compile",
+                    str(requirements_path),
+                    "--output-file",
+                    str(self.root_dir / "requirements.lock"),
+                ]
+            )
         if dev_requirements_path.exists():
             self.logger.info("Compiling dev requirements...")
-            pip_cmd = ["uv", "pip"] if not self.is_windows else [
-                "uv.exe", "pip"]
-            await self.run_uv_command([*pip_cmd, "compile", str(dev_requirements_path),
-                                       "--output-file", str(self.root_dir / "requirements-dev.lock")])
+            pip_cmd = ["uv", "pip"] if not self.is_windows else ["uv.exe", "pip"]
+            await self.run_uv_command(
+                [
+                    *pip_cmd,
+                    "compile",
+                    str(dev_requirements_path),
+                    "--output-file",
+                    str(self.root_dir / "requirements-dev.lock"),
+                ]
+            )
         if (self.root_dir / "requirements.lock").exists():
             self.logger.info("Installing dependencies from lock file...")
-            pip_cmd = ["uv", "pip"] if not self.is_windows else [
-                "uv.exe", "pip"]
-            await self.run_uv_command([*pip_cmd, "install", "-r", str(self.root_dir / "requirements.lock")])
+            pip_cmd = ["uv", "pip"] if not self.is_windows else ["uv.exe", "pip"]
+            await self.run_uv_command(
+                [*pip_cmd, "install", "-r", str(self.root_dir / "requirements.lock")]
+            )
         if (self.root_dir / "requirements-dev.lock").exists():
             self.logger.info("Installing dev dependencies from lock file...")
-            pip_cmd = ["uv", "pip"] if not self.is_windows else [
-                "uv.exe", "pip"]
-            await self.run_uv_command([*pip_cmd, "install", "-r", str(self.root_dir / "requirements-dev.lock")])
+            pip_cmd = ["uv", "pip"] if not self.is_windows else ["uv.exe", "pip"]
+            await self.run_uv_command(
+                [
+                    *pip_cmd,
+                    "install",
+                    "-r",
+                    str(self.root_dir / "requirements-dev.lock"),
+                ]
+            )
         if (self.root_dir / "setup.py").exists():
             self.logger.info("Installing project in editable mode...")
-            pip_cmd = ["uv", "pip"] if not self.is_windows else [
-                "uv.exe", "pip"]
+            pip_cmd = ["uv", "pip"] if not self.is_windows else ["uv.exe", "pip"]
             await self.run_uv_command([*pip_cmd, "install", "-e", "."])
 
     async def run_app(self, module_path: str, *args, timeout: Optional[float] = None):
@@ -1263,7 +1391,9 @@ class ProjectManager:
     async def run_tests(self):
         """Run tests using pytest."""
         uvx_cmd = ["uvx.exe"] if self.is_windows else ["uvx"]
-        await self.run_uv_command([*uvx_cmd, "run", "-m", "pytest", str(self.config.tests_path)])
+        await self.run_uv_command(
+            [*uvx_cmd, "run", "-m", "pytest", str(self.config.tests_path)]
+        )
 
     async def run_linter(self):
         """Run Ruff linter."""
@@ -1283,7 +1413,8 @@ class ProjectManager:
         await self.run_linter()
         await self.format_code()
         self.logger.info(
-            "Development environment setup complete. You can now start coding or run your application.")
+            "Development environment setup complete. You can now start coding or run your application."
+        )
 
     async def run_admin_mode(self):
         """Setup and run operations specific to Admin Mode."""
@@ -1291,15 +1422,23 @@ class ProjectManager:
         await self.setup_environment()
         if self.is_windows:
             self.logger.info("Performing Windows-specific admin tasks...")
-            if "platform_specific" in self.project_config and "windows" in self.project_config["platform_specific"]:
+            if (
+                "platform_specific" in self.project_config
+                and "windows" in self.project_config["platform_specific"]
+            ):
                 priority = self.project_config["platform_specific"]["windows"].get(
-                    "priority", 32)
+                    "priority", 32
+                )
                 self.logger.info(f"Setting process priority to {priority}")
         else:
             self.logger.info("Performing Linux-specific admin tasks...")
-            if "platform_specific" in self.project_config and "linux" in self.project_config["platform_specific"]:
+            if (
+                "platform_specific" in self.project_config
+                and "linux" in self.project_config["platform_specific"]
+            ):
                 priority = self.project_config["platform_specific"]["linux"].get(
-                    "priority", 0)
+                    "priority", 0
+                )
                 self.logger.info(f"Setting process priority to {priority}")
 
     async def run_user_mode(self):
@@ -1308,14 +1447,15 @@ class ProjectManager:
         self.logger.info("Setting up minimal runtime environment...")
         venv_path = self.root_dir / ".venv"
         if not venv_path.exists():
-            venv_cmd = ["uv.exe", "venv"] if self.is_windows else [
-                "uv", "venv"]
+            venv_cmd = ["uv.exe", "venv"] if self.is_windows else ["uv", "venv"]
             await self.run_uv_command(venv_cmd)
         requirements_path = self.root_dir / "requirements.txt"
         if requirements_path.exists():
             self.logger.info("Installing runtime dependencies...")
             pip_cmd = ["uv.exe", "pip"] if self.is_windows else ["uv", "pip"]
-            await self.run_uv_command([*pip_cmd, "install", "-r", str(requirements_path)])
+            await self.run_uv_command(
+                [*pip_cmd, "install", "-r", str(requirements_path)]
+            )
         main_module = self.root_dir / self.config.src_path / "__main__.py"
         if main_module.exists():
             self.logger.info("Running main application...")
@@ -1341,21 +1481,40 @@ class ProjectManager:
         if requirements_path.exists():
             self.logger.info("Upgrading runtime dependencies...")
             pip_cmd = ["uv.exe", "pip"] if self.is_windows else ["uv", "pip"]
-            await self.run_uv_command([
-                *pip_cmd, "compile", str(requirements_path),
-                "--output-file", str(self.root_dir / "requirements.lock"),
-                "--upgrade"
-            ])
-            await self.run_uv_command([*pip_cmd, "install", "-r", str(self.root_dir / "requirements.lock")])
+            await self.run_uv_command(
+                [
+                    *pip_cmd,
+                    "compile",
+                    str(requirements_path),
+                    "--output-file",
+                    str(self.root_dir / "requirements.lock"),
+                    "--upgrade",
+                ]
+            )
+            await self.run_uv_command(
+                [*pip_cmd, "install", "-r", str(self.root_dir / "requirements.lock")]
+            )
         if dev_requirements_path.exists():
             self.logger.info("Upgrading development dependencies...")
             pip_cmd = ["uv.exe", "pip"] if self.is_windows else ["uv", "pip"]
-            await self.run_uv_command([
-                *pip_cmd, "compile", str(dev_requirements_path),
-                "--output-file", str(self.root_dir / "requirements-dev.lock"),
-                "--upgrade"
-            ])
-            await self.run_uv_command([*pip_cmd, "install", "-r", str(self.root_dir / "requirements-dev.lock")])
+            await self.run_uv_command(
+                [
+                    *pip_cmd,
+                    "compile",
+                    str(dev_requirements_path),
+                    "--output-file",
+                    str(self.root_dir / "requirements-dev.lock"),
+                    "--upgrade",
+                ]
+            )
+            await self.run_uv_command(
+                [
+                    *pip_cmd,
+                    "install",
+                    "-r",
+                    str(self.root_dir / "requirements-dev.lock"),
+                ]
+            )
         self.logger.info("Dependency upgrade complete.")
 
     async def create_module(self, module_name: str):
@@ -1407,6 +1566,7 @@ def test_{module_name}_main():
         self.logger.info(f"Created module {module_name} at {module_path}")
         self.logger.info(f"Created test file at {test_file}")
 
+
 # --- Unified Entry Points via Subcommands ---
 
 
@@ -1446,10 +1606,12 @@ def benchmark_main(args) -> int:
     best_time = benchmark.run()
     stdout, stderr, returncode = ProcessExecutor.run_command(command)
     execution_result = ExecutionResult(
-        stdout=stdout, stderr=stderr, returncode=returncode)
+        stdout=stdout, stderr=stderr, returncode=returncode
+    )
     print(execution_result)
-    benchmark_report = BenchmarkReport(command=' '.join(
-        command), best_time=best_time, iterations=args.num)
+    benchmark_report = BenchmarkReport(
+        command=' '.join(command), best_time=best_time, iterations=args.num
+    )
     print(benchmark_report)
     return 0
 
@@ -1457,27 +1619,37 @@ def benchmark_main(args) -> int:
 def unified_main() -> int:
     """[[unified_main]] – Unified CLI entry point using subparsers."""
     parser = argparse.ArgumentParser(
-        description='Monolithic Project Manager & Benchmark Utility')
-    subparsers = parser.add_subparsers(dest="command", required=True,
-                                       help="Choose 'project' or 'benchmark' mode")
+        description='Monolithic Project Manager & Benchmark Utility'
+    )
+    subparsers = parser.add_subparsers(
+        dest="command", required=True, help="Choose 'project' or 'benchmark' mode"
+    )
     # Subparser for project manager
     project_parser = subparsers.add_parser(
-        "project", help="Run project management tasks")
+        "project", help="Run project management tasks"
+    )
+    project_parser.add_argument("--root", default=".", help="Project root directory")
     project_parser.add_argument(
-        "--root", default=".", help="Project root directory")
-    project_parser.add_argument("mode", choices=["DEV", "ADMIN", "USER", "TEARDOWN", "UPGRADE"],
-                                help="Mode to execute")
+        "mode",
+        choices=["DEV", "ADMIN", "USER", "TEARDOWN", "UPGRADE"],
+        help="Mode to execute",
+    )
     project_parser.add_argument(
-        "--timeout", type=float, default=None, help="Timeout in seconds for commands")
+        "--timeout", type=float, default=None, help="Timeout in seconds for commands"
+    )
     project_parser.add_argument(
-        "--create-module", type=str, help="Create a new module with the specified name")
+        "--create-module", type=str, help="Create a new module with the specified name"
+    )
     # Subparser for benchmarking
     bench_parser = subparsers.add_parser(
-        "benchmark", help="Benchmark command execution")
-    bench_parser.add_argument("-n", "--num", type=int,
-                              default=10, help="Number of iterations")
+        "benchmark", help="Benchmark command execution"
+    )
     bench_parser.add_argument(
-        "cmd", nargs=argparse.REMAINDER, help="Command to execute for benchmarking")
+        "-n", "--num", type=int, default=10, help="Number of iterations"
+    )
+    bench_parser.add_argument(
+        "cmd", nargs=argparse.REMAINDER, help="Command to execute for benchmarking"
+    )
     args = parser.parse_args()
 
     if args.command == "project":
