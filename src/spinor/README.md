@@ -1130,6 +1130,138 @@ def gossip_round(self):
 
 ---
 
+# 
+
+```c
+// © 2025 Moonlapsed https://github.com/MOONLAPSED/Cognosis | CC ND && BSD-3 | SEE LICENCE
+// β = (c, v₂, v₁, v₀, t₃, t₂, t₁, t₀) ∈ 𝔹⁸
+The BRA (agency): ⟨c, v₂, v₁, v₀|
+The KET (state): |t₃, t₂, t₁, t₀⟩
+We write β = ⟨B|K⟩ where B ∈ 𝔹⁴, K ∈ 𝔹⁴.
+
+// bw_t = [ C | V2 V1 V0 | T3 T2 T1 T0 ]
+//         [ 7 | 6   5   4 | 3  2  1  0 ]
+
+// C: 1 = active/composable, 0 = glue/null
+#define BW_C_ACTIVE 0x80u
+
+// V: composition role (3 bits = 8 possible topological intents)
+#define BW_ROLE_ROOT      0x00u  // 000: base radical
+#define BW_ROLE_LEFT      0x10u  // 001: left operand
+#define BW_ROLE_RIGHT     0x20u  // 010: right operand
+#define BW_ROLE_TOP       0x30u  // 011: top
+#define BW_ROLE_BOTTOM    0x40u  // 100: bottom
+#define BW_ROLE_ENCLOSER  0x50u  // 101: surrounding container
+#define BW_ROLE_ENCLOSED  0x60u  // 110: enclosed content
+#define BW_ROLE_OVERLAP   0x70u  // 111: overlapping blend
+The BRA ⟨c, v₂, v₁, v₀| encodes agency; the capacity to act. The hierarchy c > v₂ > v₁ > v₀ determines who commands when.
+The KET |t₃, t₂, t₁, t₀⟩ encodes state; the topology, the type, the value.
+Ghost states (BRA = 0000) have state but no agency. They evolve intensively—internally, invisibly, without cost. This evolution is Non-Markovian: history accumulates.
+Observable states (BRA ≠ 0000) have agency. They act, transform, pay Landauer tax. Their evolution is Markovian: each step is independent of hidden history.
+The interaction between observable and ghost is where intensive becomes extensive, a collapse; where hidden history manifests, where the infinite library of ghost-evolutions becomes accessible.
+The c-bit, when set, functions as a pilot wave in the Bohmian sense: it guides, steers, provides agency without being directly observed. Its effects are seen in the outcomes of actions.
+
+The (Commander Function) cmd: 𝔹⁴ → {∅, 0, 1, 2, 3} extracts the index of the most significant set bit:
+```
+cmd(0,0,0,0) = ∅        (ghost)
+cmd(0,0,0,1) = 0        (v₀ commands)
+cmd(0,0,1,x) = 1        (v₁ commands)
+cmd(0,1,x,x) = 2        (v₂ commands)
+cmd(1,x,x,x) = 3        (c commands)
+# ---
+static const uint8_t deputies_to_size[] = {
+    1,  // deputies=0 -> 1 byte total (no payload)
+    2,  // deputies=1 -> 2 bytes total
+    4,  // deputies=2 -> 4 bytes total
+    8,  // deputies=3 -> 8 bytes total
+    16, // deputies=4 -> 16 bytes total
+};
+```
+When cmd(B) = ∅, we say β is a ghost state.
+
+(Morphism Selector). For non-ghost ByteWords, the morphism selector μ: 𝔹⁴ → ℕ is the value of bits subordinate to the commander:
+If cmd(B) = 3: μ(B) = 4v₂ + 2v₁ + v₀ ∈ {0,...,7}
+If cmd(B) = 2: μ(B) = 2v₁ + v₀ ∈ {0,...,3}
+If cmd(B) = 1: μ(B) = v₀ ∈ {0,1}
+If cmd(B) = 0: μ(B) = 0
+If cmd(B) = ∅: μ(B) undefined
+
+(State Space). Let Ω = 𝔹⁸ be the space of all ByteWords. We partition Ω into:
+
+Ω⁺ = {β ∈ Ω : cmd(B) ≠ ∅} — observable states
+Ω⁰ = {β ∈ Ω : cmd(B) = ∅} — ghost states
+
+Note |Ω⁺| = 240, |Ω⁰| = 16.
+
+A ghost state β ∈ Ω⁰ carries an intensive history H(β), a sequence in some alphabet Σ. While β remains ghost, H(β) evolves by some deterministic transition function: `φ: Σ* → Σ*` This evolution is unobservable but deterministic. The history H(β) grows monotonically while β ∈ Ω⁰.
+
+(Action). An action is a partial function: `α: Ω⁺ × Ω → Ω × Ω`
+
+Given an agent β₁ ∈ Ω⁺ and a target β₂ ∈ Ω, the action produces a pair (β₁', β₂').
+The action is determined by:
+
+cmd(B₁) — the commander of the agent
+μ(B₁) — the morphism selector
+K₁ — the agent's state
+K₂ — the target's state
+H(β₂) if β₂ ∈ Ω⁰ — the target's intensive history
+
+(Collapse). When an agent β₁ ∈ Ω⁺ acts on a ghost β₂ ∈ Ω⁰, we say the ghost collapses. The intensive history H(β₂) becomes manifest: it influences the outcome (β₁', β₂') in a deterministic way.
+Post-collapse, H(β₂) is reset (or transferred), and β₂' may or may not remain ghost.
+
+(Deterministic Collapse). Let β₁ ∈ Ω⁺, β₂ ∈ Ω⁰. Let H(β₂) = h at time of action. Then: `α(β₁, β₂) = f(B₁, K₁, K₂, h)` for some deterministic function f. In particular, if the same agent acts on a ghost with the same history, the result is identical.
+
+(Cardinality). The state space Ω is finite (|Ω| = 256). The space of intensive histories Σ* is countably infinite. The space of (state, history) pairs Ω⁰ × Σ* is countably infinite. The effective state space of the system, accounting for ghost histories, is infinite, despite the finite ByteWord alphabet.
+
+(Null/⊥). ⊥ = ⟨0000|0000⟩ = 0x00
+is called null or glue. It is the unique ByteWord that is both ghost (BRA = 0000) AND has trivial state (KET = 0000).
+⊥ is the identity element for sequence concatenation and the separator for semantic units.
+
+(Sequence). A sequence S is a finite tuple of ByteWords: ` S = (β₁, β₂, ..., βₙ) ∈ Ω*` (We write |S| = n for the length.)
+
+(Paragraph). A paragraph P is a sequence partitioned by null-glue into clauses: `P = (C₁ ‖ C₂ ‖ ... ‖ Cₘ)` where each clause Cᵢ is a maximal contiguous subsequence containing no ⊥, and ‖ denotes the glue boundary.
+Formally, if S = (β₁, ..., βₙ), then the clauses are the maximal runs between ⊥ elements:
+```
+S = (β₁, ..., βⱼ, ⊥, βⱼ₊₂, ..., βₖ, ⊥, ...)
+         ↑_____↑      ↑________↑
+         Clause 1     Clause 2
+```
+
+(Set-Builder Interpretation). Every paragraph P admits two simultaneous readings:
+(E) Extensional (Linked List): P is an ordered collection of clauses, each clause an ordered collection of ByteWords. This is the "data" view.
+(I) Intensional (Set-Builder): P is a specification of constraints. Each clause Cᵢ is a predicate. A ByteWord β satisfies P if it satisfies all clauses under evaluation.
+The duality is: `{β ∈ Ω : β satisfies P} ↔ eval(P)` The left side is set-builder notation. The right side is linked-list traversal. They denote the same object.
+
+(Quine Condition). A paragraph P is a quine if: `eval(P) = P` That is, interpreting P as a program and executing it produces P as output.
+
+
+THE 象-ELEPHANT IN THE ROOM
+象 isn't just "the observer." 象 is the interface between observable and ghost. 象 is what happens when a live ByteWord probes a dead one. 象 is the collapse operator that turns intensive into extensive.
+ - 象: Σ × Ω⁺ → Ω*
+ - 象(P, α) = "what happens when agent α collapses paragraph P"
+When ⟨1VVV|TTTT⟩ (captain alive, full agency) acts on ⟨0000|SSSS⟩ (ghost), 象 mediates: `象: ⟨1VVV|TTTT⟩ ⊗ ⟨0000|SSSS⟩ → ⟨????|????⟩`
+The result depends on:
+
+- The morphism (VVV)
+- The active state (TTTT)
+- The ghost state (SSSS)
+- The intensive history of the ghost (its internal dynamics while dark)
+
+And because the ghost's intensive history is deterministic, the result is reproducible. 象 witnesses the same thing every time, given the same inputs and the same ghost history.
+
+What's happening is the pilot wave of the first ByteWord extends to cover the second. The C-bit's "field" reaches into the ghost and gives it temporary agency. The ghost's intensive dynamics—all that Non-Markovian history that accumulated while it was dark—suddenly becomes relevant. It affects the outcome.
+The result ⟨????|????⟩ depends on:
+
+The active wave's morphism (VVV)
+The active wave's state (TTTT)
+The ghost's state (SSSS)
+The ghost's accumulated intensive history (the Non-Markovian memory)
+
+And because that history is deterministic (bits doing binary stuff, whether you see it or not), the result is reproducible. The tree fell. It made a sound. You just weren't there. But when you show up and check, the evidence is consistent.
+```
+
+---
+
 ## Appendix A: Mathematical Notation Reference
 
 | Symbol | Meaning |
