@@ -3,38 +3,101 @@
 # 3.14 std libs **ONLY** | Platform(s): Win11 (production), Ubuntu-22.04 (dev, staging);
 # © 2025 Moonlapsed https://github.com/MOONLAPSED/Cognosis | CC ND && BSD-3 | SEE LICENCE
 from __future__ import annotations
-import subprocess
-import tempfile
-import traceback
-import cProfile
-import time
-import socket
-import threading
-import argparse
-import asyncio
-import tomllib
-import pstats
+#!/usr/bin/env -S uv run
+# /* script
+# requires-python = ">=3.12"
+# dependencies = [
+#     "uv==*.*",
+# ]
+# */
+# <a href="https://github.com/Moonlapsed/SmallBang">Morphological Source Code</a> © 2023 by MOONLAPSED:MOONLAPSED@gmail.com CC BY
+# Optional dependency handling (also add to '/* script..' comment, just above)
+try:
+    import flask
+    USE_FLASK = True
+    # if we omit "flask==*.*", or any non-std lib from the '/* script..' comment, then this should always fail
+    pass
+except ImportError:
+    USE_FLASK = False
+    coreLSP = False
+# Import standard library components
+import io
 import os
+import gc
 import re
 import sys
-import platform
-import ctypes
-import decimal
+import ast
+import dis
+import mmap
 import json
-import array
+import uuid
+import time
+import math
 import enum
-import gzip
+import array
+import cmath
+import errno
+import shlex
+import ctypes
 import random
-from io import StringIO
-from dataclasses import dataclass, field
-from pathlib import Path, PureWindowsPath
-from typing import List, Dict, Any, Optional, Union, Tuple
-from dataclasses import asdict
-from enum import IntFlag, IntEnum, auto, Enum
-from typing import TypeVar, Callable, Generic, Set, FrozenSet, cast
-from functools import lru_cache, wraps
+import pickle
+import socket
+import struct
+import pstats
+import shutil
+import weakref
+import tomllib
+import decimal
+import pathlib
 import logging
+import inspect
+import asyncio
+import hashlib
+import argparse
+import cProfile
+import platform
+import tempfile
+import mimetypes
+import functools
+import linecache
+import traceback
+import threading
+import importlib
+import subprocess
+import tracemalloc
+import http.server
+from socketserver import ThreadingMixIn
+from math import sqrt, log2
+from io import StringIO
+from array import array
+from queue import Queue, Empty
+from abc import ABC, abstractmethod
+from enum import Enum, IntEnum, StrEnum, IntFlag, auto
+from collections import namedtuple
+from operator import mul, xor
+from typing import (
+    Any, Dict, List, Optional, Union, Callable, TypeVar,
+    Tuple, Generic, Set, Coroutine, Type, NamedTuple,
+    ClassVar, Protocol, runtime_checkable, AsyncIterator,
+    get_type_hints, get_origin, get_args, cast, FrozenSet
+)
+from types import (
+    SimpleNamespace, ModuleType, MethodType,
+    FunctionType, CodeType, TracebackType, FrameType
+)
+from dataclasses import dataclass, field
+from functools import reduce, lru_cache, partial, wraps
+from collections.abc import Iterable, Mapping
+from datetime import datetime, timedelta
 from logging.handlers import RotatingFileHandler
+from pathlib import Path, PureWindowsPath
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from contextlib import contextmanager, asynccontextmanager
+from concurrent.futures import ThreadPoolExecutor
+from functools import reduce
+from importlib.util import spec_from_file_location, module_from_spec
+from importlib.metadata import distributions
+
 
 """
 A monolithic __init__.py that provides:
