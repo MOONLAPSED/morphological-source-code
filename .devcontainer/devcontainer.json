@@ -33,14 +33,6 @@
             "VIRTUAL_ENV": "/workspaces/${localWorkspaceFolderBasename}/.venv",
             "PATH": "/workspaces/${localWorkspaceFolderBasename}/.venv/bin:${PATH}"
           }
-        },
-        "jupyter.jupyterServerType": "local",
-        "jupyter.serverLaunchTimeout": 120000,
-        "jupyter.serverLauncherArgs": [
-          "--no-browser",
-          "--ip=0.0.0.0",
-          "--port=8888"
-        ]
       },
       "extensions": [
         "ms-python.python",
@@ -50,21 +42,11 @@
         "perras.UV",
         "eamodio.gitlens"
       ]
-    }
-  },
-  "forwardPorts": [
-    8888
-  ],
-  "portsAttributes": {
-    "8888": {
-      "label": "JupyterLab",
-      "onAutoForward": "notify"
-    }
-  },
-  "postAttachCommand": "if [ \"$CODESPACES\" = \"true\" ]; then echo 'In Codespaces: Running minimal setup'; else bash .devcontainer/provisioning.sh; fi || true",
-  "postCreateCommand": "export UV_LINK_MODE=copy && uv venv .venv --clear --python 3.14.0 && uv pip install --no-cache -U jupyterlab ipykernel",
-  "postStartCommand": "bash -c 'source /workspaces/${localWorkspaceFolderBasename}/.venv/bin/activate && nohup jupyter lab --no-browser --ip=0.0.0.0 --port=8888 --ServerApp.token=\"\" --ServerApp.password=\"\" --ServerApp.allow_origin=\"*\" > /tmp/jupyter.log 2>&1 &'",
+    },
+  "postAttachCommand": "if [ \"$CODESPACES\" = \"true\" ]; then echo 'In Codespaces: Running minimal setup'; else bash source .devcontainer/.bashrc; fi || true",
+  "postCreateCommand": "export UV_LINK_MODE=copy && uv venv .venv --clear --python 3.14.0",
+  "postStartCommand": "bash -c 'source /workspaces/${localWorkspaceFolderBasename}/.venv/bin/activate && nohup uv run main.py\" > /tmp/postStart.log 2>&1 &'",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "remoteUser": "vscode"
-}
+}}}
