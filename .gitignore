@@ -18,6 +18,7 @@ pdm.lock
 /.request_cache.json
 /states/*
 nohup.out
+/imports/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

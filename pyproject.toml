@@ -1,9 +1,9 @@
 [project]
 name = "cognosis"
-description = "Cognosis & MSC: Morphological Source Code"
+description = "Cognosis: Morphological Source Code"
 authors = [{ name = "MOONLAPSED", email = "MOONLAPSED@gmail.com" }]
-requires-python = ">=3.13"
-version = "0.4.20"
+requires-python = ">=3.13
+version = "0.4.22
 
 [project.readme]
 file = "README.md"
@@ -14,28 +14,17 @@ main = "main:main"
 
 [project.optional-dependencies]
 dev = [
-    "mypy",
-    "nox",
+    "uv",
     "pre-commit",
-    "jupyterlab",
 ]
 
 [project.scripts]
 setup = "pip install -e .[dev]"
 lint = "ruff ."
-typecheck = "mypy ."
-
-[tool.mypy]
-python_version = "3.13"
-strict = true
-show_error_codes = true
-disallow_untyped_defs = true
-exclude = ["build/", "dist/", ".venv/"]
-ignore_missing_imports = true
 
 [tool.ruff]
 line-length = 88
-exclude = ["build/", "dist/", ".venv/"]
+exclude = ["build/", "dist/", ".venv/", "imports/",]
 extend-ignore = [
     "E501",  # line too long
     "W291",  # trailing whitespace
