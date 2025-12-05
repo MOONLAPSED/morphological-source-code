@@ -2,8 +2,8 @@
 name = "cognosis"
 description = "Cognosis: Morphological Source Code"
 authors = [{ name = "MOONLAPSED", email = "MOONLAPSED@gmail.com" }]
-requires-python = ">=3.13
-version = "0.4.22
+requires-python = ">=3.14"
+version = "0.4.23"
 
 [project.readme]
 file = "README.md"
@@ -25,6 +25,9 @@ lint = "ruff ."
 [tool.ruff]
 line-length = 88
 exclude = ["build/", "dist/", ".venv/", "imports/",]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B"]
 extend-ignore = [
     "E501",  # line too long
     "W291",  # trailing whitespace
@@ -33,9 +36,6 @@ extend-ignore = [
     "D206",  # docstring whitespace errors
     "D300",  # triple double quotes on one line
 ]
-
-[tool.ruff.lint]
-select = ["E", "F", "W", "B"]
 
 [tool.ruff.format]
 quote-style = "preserve"
