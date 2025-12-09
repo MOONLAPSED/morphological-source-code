@@ -1,3 +1,4 @@
+# <a href="https://github.com/MOONLAPSED/cognosis">Morphological Source Code</a> © 2025 by Moonlapsed:MOONLAPSED@GMAIL.COM BSD-3 & CC ND
 import sys
 import platform
 import ctypes

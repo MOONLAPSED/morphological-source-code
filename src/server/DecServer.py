@@ -1,5 +1,5 @@
 #!/usr/bin/env -S uv run
-# <a href="https://github.com/MOONLAPSED/SmallBang">Morphological Source Code: SmallBang</a> © 2025 by Moonlapsed:MOONLAPSED@GMAIL.COM CC BY
+# <a href="https://github.com/MOONLAPSED/cognosis">Morphological Source Code</a> © 2025 by Moonlapsed:MOONLAPSED@GMAIL.COM BSD-3 & CC ND
 import os
 import sys
 import math
