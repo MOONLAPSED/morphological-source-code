@@ -1,54 +1,41 @@
-from __future__ import annotations
-
-#!/usr/bin/env python
+#!/usr/bin/env -S uv run
 # -*- coding: utf-8 -*-
-# ------------------------------------------------------------------------------
-# 3.13 std libs **ONLY** | Platform(s): Win11 (production), Ubuntu-22.04 (dev, staging);
-# master branch is for immutable releases, only;
-# © 2025 Moonlapsed https://github.com/MOONLAPSED/Cognosis | CC ND && BSD-3 | SEE LICENCE
-# ------------------------------------------------------------------------------
-# PLATFORM, INIT, MONOLITHIC NUTS & BOLTS + IMPORTS;
-# ------------------------------------------------------------------------------
-import os
-import sys
-import time
-import math
-import enum
-import array
-import types
-import socket
-import select
-import ctypes
-import random
-import logging
-import asyncio
-import hashlib
-import functools
-import linecache
-import collections
-import tracemalloc
-from enum import Enum, auto, StrEnum
-from datetime import datetime
-from abc import ABC, abstractmethod
-from contextlib import contextmanager
-from functools import wraps, lru_cache
-from dataclasses import dataclass, field
-from typing import (
-    Any,
-    Dict,
-    List,
-    Optional,
-    Union,
-    Callable,
-    TypeVar,
-    Tuple,
-    Generic,
-    Set,
-    Type,
-    cast,
-    Hashable,
-    Iterator,
-)
+# /* script
+# requires-python = ">=3.14"
+# dependencies = [
+#     "uv==*.*",
+# ]
+# pylsp: disable
+# pyright: ignore-all
+# ruff: noqa: E401,F401,I001,F811,TC003,TC004,E402,E702,UP029,PLR0402,PLC0415,F406,E301,E302,E305
+# fmt: off
+# © 2023-2025 Moonlapsed https://github.com/MOONLAPSED/Cognosis | CC ND && BSD-3 | SEE LICENCE
+# © 2024-2025 Phovos https://github.com/Phovos/Morphologic
+# ------------------------------
+# CPy3.14 std libs **ONLY**    |
+# Platform(s): (5600xRyzen)    |
+# Win11 (production)           |
+# Ubuntu-22.04 (dev, staging)  |
+# ------------------------------
+import ast, os, sys, pathlib, logging, threading, datetime, inspect, uuid, base64, json, asyncio, functools, time, random, queue, hashlib, math, cmath, enum, re, types, dataclasses, typing, contextlib, collections, abc, io, string, itertools, operator, copy, weakref, gc, marshal, struct, array, mmap, ssl, socket, concurrent, multiprocessing, subprocess, tempfile, shutil, glob, fnmatch, csv, pickle, sqlite3, urllib, http, ftplib, smtplib, email, mimetypes, hmac, secrets, ipaddress, socketserver, http.server, xml, html, webbrowser, turtle, tkinter, ctypes, ctypes.wintypes, site  # noqa: E401, F401, F811, E702 # fmt: skip
+logger = logging.getLogger(__name__); logger.addHandler(logging.NullHandler())  # Add a NullHandler by default
+from dataclasses import dataclass, field; from enum import Enum, auto, IntEnum; from types import SimpleNamespace, ModuleType  # noqa: E702, F401 # fmt: skip
+Path = pathlib.Path; Queue = queue.Queue  # noqa: E702 # fmt: skip
+from typing import Any, Dict, Optional, Set, Type, Union, Callable, List, Tuple, Generic, TypeVar, Protocol, runtime_checkable, cast, get_origin, get_args; from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer; from socketserver import ThreadingMixIn  # fmt: skip noqa: F401
+try:
+    import flask; import pylsp
+# if we don't have "flask==*.*", or any non-std lib from the '/* script.. depenencies = [..' comment, above, in local .venv or $PATH; then this idempotent fails
+except ImportError:
+    USE_FLASK = False; coreLSP = False
+_SELF = Path(__file__).resolve(); _COMMENT_RE = re.compile(r'# /\* script\n(.*?)\n# \*/', re.S)
+_TOML_RE = re.compile(r'dependencies\s*=\s*\[(.*?)\]', re.S); _PKG_RE = re.compile(r'"([^"]+)"')
+def _read_deps() -> list[str]:
+    """Return the list of *optional* third-party packages mentioned in the comment."""
+    raw = _SELF.read_text(encoding='utf-8')
+    block = _COMMENT_RE.search(raw)[1]  # type: ignore[index]
+    deps_section = _TOML_RE.search(block)[1]  # type: ignore[index]
+    return _PKG_RE.findall(deps_section)  # fmt: on
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
