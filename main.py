@@ -1,11 +1,15 @@
-from __future__ import annotations
-
-#!/usr/bin/env python
+#!/usr/bin/env -S uv run
 # -*- coding: utf-8 -*-
+# /* script
+# requires-python = ">=3.14"
+# dependencies = [
+#     "uv==*.*",
+# ]
+# */
+# Optional dependency handling (also add to '/* script..' comment, just above)
 # ------------------------------------------------------------------------------
-# 3.13 std libs **ONLY** | Platform(s): Win11 (production), Ubuntu-22.04 (dev, staging);
-# master branch is for immutable releases, only;
-# © 2025 Moonlapsed https://github.com/MOONLAPSED/Cognosis | CC ND && BSD-3 | SEE LICENCE
+# © 2025 Moonlapsed https://github.com/MOONLAPSED/Cognosis | CC ND & BSD-3 | SEE LICENCE
+# <!--- <a href="https://github.com/Moonlapsed/Cognosis">Morphological Source Code</a> © 2023-2025 by MOONLAPSED:MOONLAPSED@gmail.com ---!>
 # ------------------------------------------------------------------------------
 # PLATFORM, INIT, MONOLITHIC NUTS & BOLTS + IMPORTS;
 # ------------------------------------------------------------------------------
