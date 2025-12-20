@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown LSP Editor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                        },
+                        secondary: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            500: '#64748b',
+                            600: '#475569',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Markdown editor styling */
+        .editor {
+            min-height: calc(100vh - 80px);
+            tab-size: 2;
+        }
+        
+        /* Syntax highlighting for code blocks */
+        .code-block {
+            background-color: #f8fafc;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            color: #334155;
+        }
+        
+        /* Tooltip for LSP features */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #1e293b;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.875rem;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col h-screen">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+            <i class="fas fa-code text-primary-500 text-xl"></i>
+            <h1 class="text-xl font-bold text-gray-800">Markdown LSP Editor</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+            <button class="px-3 py-1 bg-primary-100 hover:bg-primary-200 text-primary-600 rounded-md text-sm font-medium transition-colors">
+                <i class="fas fa-save mr-1"></i> Save
+            </button>
+            <div class="relative">
+                <button id="file-menu-btn" class="px-3 py-1 bg-secondary-100 hover:bg-secondary-200 text-secondary-600 rounded-md text-sm font-medium flex items-center transition-colors">
+                    <i class="fas fa-file-alt mr-1"></i> Files
+                </button>
+                <div id="file-menu" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200">
+                    <div class="px-4 py-2 text-sm text-secondary-500 border-b border-gray-100">Recent Files</div>
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">documentation/intro.md</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">api/reference.md</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">getting-started.md</a>
+                    <div class="px-4 py-2 text-sm text-secondary-500 border-t border-gray-100">Open File...</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar - File Explorer -->
+        <aside class="w-64 bg-white border-r border-gray-200 hidden md:block overflow-y-auto">
+            <div class="p-4">
+                <h2 class="text-sm font-semibold text-secondary-500 uppercase tracking-wider mb-2">Knowledge Base</h2>
+                <div class="space-y-1">
+                    <div class="group flex items-center px-2 py-1 text-sm rounded-md hover:bg-gray-100 cursor-pointer">
+                        <i class="fas fa-folder-open text-yellow-500 mr-2"></i>
+                        <span>Getting Started</span>
+                    </div>
+                    <div class="group flex items-center px-2 py-1 text-sm rounded-md hover:bg-gray-100 cursor-pointer">
+                        <i class="fas fa-folder-open text-yellow-500 mr-2"></i>
+                        <span>API Reference</span>
+                    </div>
+                    <div class="group flex items-center px-2 py-1 text-sm rounded-md hover:bg-gray-100 cursor-pointer">
+                        <i class="fas fa-folder-open text-yellow-500 mr-2"></i>
+                        <span>Documentation</span>
+                    </div>
+                    <div class="group flex items-center px-2 py-1 text-sm rounded-md hover:bg-gray-100 cursor-pointer">
+                        <i class="fas fa-folder-open text-yellow-500 mr-2"></i>
+                        <span>Tutorials</span>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-200 p-4">
+                <h2 class="text-sm font-semibold text-secondary-500 uppercase tracking-wider mb-2">Recent Files</h2>
+                <div class="space-y-1">
+                    <div class="group flex items-center px-2 py-1 text-sm rounded-md hover:bg-gray-100 cursor-pointer text-primary-600">
+                        <i class="far fa-file-alt text-primary-500 mr-2"></i>
+                        <span>intro.md</span>
+                    </div>
+                    <div class="group flex items-center px-2 py-1 text-sm rounded-md hover:bg-gray-100 cursor-pointer">
+                        <i class="far fa-file-alt text-blue-500 mr-2"></i>
+                        <span>api-overview.md</span>
+                    </div>
+                    <div class="group flex items-center px-2 py-1 text-sm rounded-md hover:bg-gray-100 cursor-pointer">
+                        <i class="far fa-file-alt text-blue-500 mr-2"></i>
+                        <span>installation.md</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Editor Area -->
+        <main class="flex-1 flex flex-col overflow-hidden bg-white">
+            <!-- Tab Bar -->
+            <div class="border-b border-gray-200 flex items-center overflow-x-auto">
+                <div class="flex items-center px-4 py-2 border-b-2 border-primary-500">
+                    <span class="text-sm font-medium text-gray-800">intro.md</span>
+                    <button class="ml-2 text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                </div>
+                <div class="flex items-center px-4 py-2 text-sm text-gray-500 hover:text-gray-700 cursor-pointer">
+                    <span>+</span>
+                </div>
+            </div>
+
+            <!-- Editor and Preview -->
+            <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+                <!-- Markdown Editor -->
+                <div class="flex-1 border-r border-gray-200 overflow-y-auto">
+                    <div class="px-4 py-2 flex items-center justify-between bg-gray-50 border-b border-gray-200">
+                        <div class="text-sm font-medium text-secondary-500">EDITOR</div>
+                        <div class="flex space-x-2">
+                            <button id="preview-btn" class="p-1 text-gray-500 hover:text-primary-500">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button id="format-btn" class="p-1 text-gray-500 hover:text-primary-500">
+                                <i class="fas fa-indent"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <textarea id="markdown-editor" class="editor w-full px-4 py-3 font-mono text-sm outline-none resize-none" autofocus spellcheck="false"># Welcome to the Markdown Knowledge Base
+
+This is a local Language Server Protocol (LSP) enabled editor for your Markdown knowledge base articles. The LSP will provide:
+
+- Auto-completion of Markdown syntax
+- File system linking (start typing "[[file" to link to other files)
+- Reference validation
+- And more!
+
+## Getting Started
+
+To create a new note, click the `+` button in the tab bar.
+
+```javascript
+// Code blocks are supported
+function helloWorld() {
+  console.log("Hello, world!");
+}
+```
+
+### Features
+
+- Real-time preview (click the eye icon)
+- Syntax highlighting
+- Keyboard shortcuts
+- Cross-referencing between files
+- File system navigation (sidebar)
+
+[[getting-started]]
+[[api-reference]]
+</textarea>
+                </div>
+
+                <!-- Markdown Preview -->
+                <div id="preview-pane" class="flex-1 hidden md:block overflow-y-auto">
+                    <div class="px-4 py-2 bg-gray-50 border-b border-gray-200">
+                        <div class="text-sm font-medium text-secondary-500">PREVIEW</div>
+                    </div>
+                    <div id="preview-content" class="prose max-w-none p-4">
+                        <!-- Preview will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar - LSP Features -->
+        <aside class="w-64 bg-white border-l border-gray-200 hidden lg:block overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <h2 class="text-sm font-semibold text-secondary-500 uppercase tracking-wider mb-2">LSP Features</h2>
+                <div class="space-y-3">
+                    <div class="tooltip">
+                        <button class="w-full flex items-center justify-between px-3 py-2 bg-gray-100 rounded-md text-sm">
+                            <span>Diagnostics</span>
+                            <span class="bg-green-500 text-white text-xs px-2 py-0.5 rounded-full">0 Issues</span>
+                        </button>
+                        <span class="tooltiptext">No syntax errors or warnings found</span>
+                    </div>
+                    <div class="tooltip">
+                        <button class="w-full flex items-center px-3 py-2 bg-gray-100 rounded-md text-sm">
+                            <i class="fas fa-search mr-2 text-primary-500"></i>
+                            <span>Find References</span>
+                        </button>
+                        <span class="tooltiptext">Find all references to this file in your knowledge base</span>
+                    </div>
+                    <div class="tooltip">
+                        <button class="w-full flex items-center px-3 py-2 bg-gray-100 rounded-md text-sm">
+                            <i class="fas fa-link mr-2 text-primary-500"></i>
+                            <span>Show Links</span>
+                        </button>
+                        <span class="tooltiptext">Show all files that link to this document</span>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4">
+                <h2 class="text-sm font-semibold text-secondary-500 uppercase tracking-wider mb-2">Outline</h2>
+                <div class="space-y-1">
+                    <a href="#" class="block px-2 py-1 text-sm text-primary-500"># Welcome to the Markdown Knowledge Base</a>
+                    <a href="#" class="block px-2 py-1 text-sm text-gray-700 ml-4">## Getting Started</a>
+                    <a href="#" class="block px-2 py-1 text-sm text-gray-700 ml-4">### Features</a>
+                </div>
+            </div>
+            <div class="p-4 border-t border-gray-200">
+                <h2 class="text-sm font-semibold text-secondary-500 uppercase tracking-wider mb-2">Suggestions</h2>
+                <div class="space-y-1">
+                    <div class="px-2 py-1 text-sm bg-blue-50 text-blue-700 rounded-md">
+                        You might want to link to: [[troubleshooting]]
+                    </div>
+                    <div class="px-2 py-1 text-sm bg-blue-50 text-blue-700 rounded-md">
+                        Similar files: api-overview.md, commands.md
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Status Bar -->
+    <footer class="bg-gray-100 border-t border-gray-200 px-4 py-2 flex items-center justify-between text-xs text-gray-600">
+        <div class="flex items-center space-x-4">
+            <span>Markdown</span>
+            <span><i class="fas fa-check-circle text-green-500 mr-1"></i> Saved</span>
+            <span class="tooltip">
+                <i class="fas fa-circle text-green-500 mr-1"></i>
+                <span>LSP Connected</span>
+                <span class="tooltiptext">Local Language Server Protocol is active</span>
+            </span>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span>UTF-8</span>
+            <span>LF</span>
+            <span><i class="fas fa-terminal mr-1"></i> 42 lines, 1,256 chars</span>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle file menu
+        document.getElementById('file-menu-btn').addEventListener('click', function() {
+            document.getElementById('file-menu').classList.toggle('hidden');
+        });
+
+        // Close file menu when clicking elsewhere
+        document.addEventListener('click', function(event) {
+            const fileMenu = document.getElementById('file-menu');
+            const fileMenuBtn = document.getElementById('file-menu-btn');
+            if (!fileMenu.contains(event.target) && event.target !== fileMenuBtn) {
+                fileMenu.classList.add('hidden');
+            }
+        });
+
+        // Toggle preview pane
+        document.getElementById('preview-btn').addEventListener('click', function() {
+            const previewPane = document.getElementById('preview-pane');
+            const editor = document.getElementById('markdown-editor');
+            if (previewPane.classList.contains('hidden')) {
+                previewPane.classList.remove('hidden');
+                editor.classList.remove('w-full');
+                updatePreview();
+            } else {
+                previewPane.classList.add('hidden');
+                editor.classList.add('w-full');
+            }
+        });
+
+        // Format button
+        document.getElementById('format-btn').addEventListener('click', function() {
+            // In a real implementation, this would format the Markdown
+            alert('Document formatted! (This would connect to the LSP in a real implementation)');
+        });
+
+        // Simple Markdown preview rendering (in a real app, use a proper library like marked.js)
+        function updatePreview() {
+            const markdown = document.getElementById('markdown-editor').value;
+            // Very basic markdown to HTML conversion for demo purposes
+            let html = markdown
+                .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+                .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+                .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/```javascript([\s\S]*?)```/g, '<pre class="code-block"><code>$1</code></pre>')
+                .replace(/\[\[(.*?)\]\]/g, '<a href="#" class="text-primary-500 hover:underline">$1</a>')
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>');
+            
+            document.getElementById('preview-content').innerHTML = '<p>' + html + '</p>';
+        }
+
+        // Update preview when content changes
+        document.getElementById('markdown-editor').addEventListener('input', function() {
+            updatePreview();
+        });
+
+        // Initial preview update
+        updatePreview();
+    </script>
+</body>
+</html>
