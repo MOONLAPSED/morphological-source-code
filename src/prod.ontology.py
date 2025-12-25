@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# ------------------------------------------------------------------------------
+# 3.13 std libs **ONLY** | Platform(s): Win11 (production), Ubuntu-22.04 (dev, staging)
+# © 2025 Moonlapsed https://github.com/MOONLAPSED/Cognosis | CC ND && BSD-3 | SEE LICENCE
+
 import enum
 import math
 import hashlib
