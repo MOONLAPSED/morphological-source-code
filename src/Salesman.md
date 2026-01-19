@@ -2,6 +2,7 @@
 > *Or: How embodied knowledge solves NP-hard problems in polynomial time*
 
 A "Morphological Source Code + Quineic Statistical Dynamics" bifurcated-epistimology treatise.
+
 `# © 2025 Moonlapsed https://github.com/MOONLAPSED/Cognosis | CC ND && BSD-3 | SEE LICENCE`
 
 
@@ -218,10 +219,12 @@ With that, we have set the stage for the explicitly cognitive, digital MSC+QSD S
 T = Tail position (Mach's principle)
 C = Continuation (Noether conservation)
 H = Hermitian (reversible conjugate)
+TCH = Tail Call Hermitian (Noetic-Machian Quineic 'stack machine')
 C = CPT symmetry (charge-parity-time)
 F = Fiber bundle (multi-scale)
 P = Projection (bulk → boundary)
 S = Section (boundary → bulk)
+FPS = First Person [Shooter] Observer (Little Man in the Computer)
 R = Reversible (unitary)
 P = Polynomial (tractable)
 N = Navigation (embodied)
@@ -432,8 +435,7 @@ Trust the old horse.
 
 ## References
 
-1. Egyptian Turin Papyrus (~1160 BCE) : Linear itinerary structure
-2. Rumi, *Masnavi* Book II : Desert crossing with midpoint revelation
-3. 道德经 (*Dào Dé Jīng*), Chapter 64 : Journey begins with single step
-4. Mach, E. "The Science of Mechanics" (1893) : Relational inertia
-5. Noether, E. "Invariant Variation Problems" (1918) : Symmetry and conservation
+1. Rumi, *Masnavi* Book II : Desert crossing with midpoint revelation
+2. 道德经 (*Dào Dé Jīng*), Chapter 64 : Journey begins with single step
+3. Mach, E. "The Science of Mechanics" (1893) : Relational inertia
+4. Noether, E. "Invariant Variation Problems" (1918) : Symmetry and conservation
