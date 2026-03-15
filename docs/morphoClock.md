@@ -12,8 +12,8 @@ The **morphological clock** is not a temporal timer or usual event loop it is an
 
 It governs:
 
-- When a runtime "dies" (i.e., becomes immutable)
-- When it "rests" (i.e., reaches low-energy state)
+- When a runtime "fossilizes" (i.e., becomes immutable detritus)
+- When it "rests" (i.e., reaches low-energy state; can't "point-to" other constituents, is intensive in character)
 - How much **ψ** (energetic cost) it pays to stay dynamic
 - How its **morphological structure** determines its lifespan
 
@@ -21,7 +21,7 @@ It governs:
 
 ## What Is Ψ (Psi)?
 
-> **Ψ (Psi)**: The energetic cost of maintaining a high-energy state in a morphological runtime; temporal topology, not morphological character (T/V/C)
+> **Ψ (Psi)**: The energetic cost of maintaining a high-energy state in a morphological runtime; with respect to temporal topology; morphological character (T/V/C) (Psi is the 'cost of deputization', locally, which is different from the null-degeneracy or the ratio (percentage) of an ensemble that are Null [Low-energy, and no-intensive character nor extensive character; BEC Bosonic not Fermionic ByteWords]).
 
 Psi is the **thermodynamic toll** paid to remain in the high-energy phase.
 
