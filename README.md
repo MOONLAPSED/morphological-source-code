@@ -1,18 +1,21 @@
 ---
-tags: [Morphological-Source-Code, Quineic Statistical Dynamics, ads-cft, de-rham-cohomology, holography, bulk-boundary]
-copyright: [Ⓟ© 2026 Quineic(SP); Morphological Source Code: MSC&QSD(TM) https://github.com/Morphological-Source-Code]
-Licenses: CC ND & BSD-3, (not-admissable as prior-art), TM/SP-PEND Ⓟ 2026
+tags: [Morphological-Source-Code, Quineic Statistical Dynamics, de-rham-cohomology, holography, bulk-boundary, duality]
+copyright: "Ⓟ© 2026 Quineic(SP); Morphological Source Code & Quineic Statistical Dynamics"
+license-doc(s)+dist: CC BY-ND 4.0
+license-code+file(s): BSD 3-Clause
+stipulations: not-admissible as prior-art, 'Quineic' & 'MSC' & 'QSD' TM/SP-PEND Ⓟ 2026
 copyright1: |
 
-  © 2023-26 Moonlapsed https://github.com/MOONLAPSED/Cognosis CC BY (architecturally), BSD-3 (files) 
+  © 2023-26 Moonlapsed https://github.com/MOONLAPSED/Cognosis CC BY
 copyright2: |
 
   © 2025-26 Phovos https://github.com/Phovos/Morphological-Source-Code CC ND
-version: 0.40.4
+version: 0.40.5
+
 aliases:
   - MSC
+  - QSD
   - morphological-source-code
-  - phase-change-semantics
   - bulk-boundary-duality
   - conformal-cohomology
   - morphosemantics
@@ -25,58 +28,41 @@ topics:
   - morphic-operators
   - exterior-calculus
 ---
-<!-- This document uses YAML front matter for metadata management in a third-party tool not git: 
-
-# Best practices:
-- Utilize camelCase for internal source code
-- Utilize CAPS_CASE for ffi funcs and external source
-
-# Frontmatter Implementation
- - Utilize 'frontmatter' to include the title and other `property`, `tag`, etc. in the knowledge base article(s).
-   - For Example:
-      ```
-      ---
-      name: "Article Title"
-      link: "[[Related Link]]"
-      linklist:
-        - "[[Link1]]"
-        - "[[Link2]]"
-      ---
-      ``` """
-
-disclaimer:
+<!-- This document uses YAML front matter for metadata management in a third-party tool not git.
+Markdown Syntax: Standard GitHub-flavored Markdown. Not Obsidian wikilinks.
+Disclaimer: |
   Broad-strokes, painting cultural, scientific, philosophical,
   and historiographical analogy and abstraction are layered onto
   the page with the goal of instrumenting the author's own
   machinations. Everything said here should be considered 'stilted'.
   Don't quote me expecting there is anything more there than is there
   because this is not authoritative in any fashion outside of this
-  very architecture.
+  very architecture. |
 -->
 
 © 2023-2026 by [Moonlapsed](https://github.com/MOONLAPSED). [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-blue.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![Status: Experimental](https://img.shields.io/badge/Status-Experimental-red.svg)](https://github.com/Moonlapsed/Cognosis)[![Python 3.14+](https://img.shields.io/badge/Python-3.14+-3776AB.svg?logo=python)](https://www.python.org)
 
-[![Python 3.14+](https://img.shields.io/badge/Python-3.14+-3776AB.svg?logo=python)](https://www.python.org)[![Status: Experimental](https://img.shields.io/badge/Status-Experimental-red.svg)](https://github.com/Moonlapsed/Cognosis)
+Ⓟ© 2026 Quineic(SP); [Morphological-Source-Code](https://github.com/Morphological-Source-Code): [![Doc(s)+Dist: CC BY-ND 4.0](https://img.shields.io/badge/Docs-CC%20BY--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nd/4.0/)
+[![Code+File(s): BSD 3-Clause](https://img.shields.io/badge/Code-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![Python 3.14+](https://img.shields.io/badge/Python-3.14+-3776AB.svg?logo=python)](https://www.python.org)
+[![Status: Experimental](https://img.shields.io/badge/Status-Experimental-red.svg)](https://github.com/Phovos/Morphological-Source-Code)
 
-Ⓟ© 2026 Quineic(SP); [Morphological-Source-Code](https://github.com/Morphological-Source-Code): 'MSC&QSD'(TM) 
-[![License: CC BY-ND 4.0](https://img.shields.io/badge/License-CC%20BY--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nd/4.0/)
+# Cognosis, the Pleroma, Abraxas, and the Demiurge
 
-[![Python 3.14+](https://img.shields.io/badge/Python-3.14+-3776AB.svg?logo=python)](https://www.python.org)[![Status: Experimental](https://img.shields.io/badge/Status-Experimental-red.svg)](https://github.com/Morphological-Source-Code)
+Morphological Source Code and Quineic Statistical Dynamics are the CPython and C appendages of a multi-year conquest of dimensionality and process ontology (formerly) known as "Cognosis". `Cognosis` is an experimental framework that explores the dynamic evolution of software architectures during runtime. It aims to combine the fluidity of human-centric interactions, like an interactive video game, with the stability of traditional code, CLI, scripting, and continuous integration and continuous development. At its core lies the concept of "Morphological Source Code," where code adapts and changes in response to user interactions, particularly those leveraging natural language processing (NLP) and phenomenology; here referring, specifically, to the process ontology of machine learning, but also to that of a conscious observer able to exist before and after any given event: a cognitive wave function, so to speak.
 
-# Cognosis and the Pleroma; Abraxas, (the) Demiurge.
+Scope, being a sick joke of a concept when you think about it, is one of the eternal curses of this endeavor. The notions of the Pleroma, Abraxas, and the Demiurge serve as the knowable forms of the unknowable — the "Gnosis" within "Cognosis" and act as bounds on the knowable (epistemology) and therefore the beable (ontology). The fundamental Jungian kernel of such a bounding mechanism gives shape and form to these gnostic entities, both through one's own actions and through all universal, even unknowable, degrees of freedom.
 
-  Morphological Source Code and Quineic Statistical Dynamics are the CPython and C appendages of a multi-year conquest of dimensionality and process ontology (formerly) known as "Cognosis"; `Cognosis` is an experimental framework that explores the dynamic evolution of software architectures during runtime. It aims to combine the fluidity of human-centric interactions, like an interactive video game, with the stability of traditional 'code', CLI, scripting, and continuous integration and continuous development. At its core lies the concept of "Morphological Source Code," where code adapts and changes in response to user interactions, particularly those leveraging natural language processing (NLP) and phenomenology, here referring, specifically, to the process ontology of 'Machine Learning', but, also, that of a conscious 'observer' that is able to exist before and after any given event, a cognitive wave function so to speak.
+These gnostic entities are archetypes of archetypes. The well-foundedness of any given situation can be determined, up to isometry, with these variable fundamental constraints. If one cannot, for whatever reason, stomach Jung, then I am happy to inform you that there is someone you will probably dislike even more (other than Kant) who could help situate your faculties to the present task of describing a universal field theory which incorporates all degrees of freedom, language, and logic: his name is Schopenhauer.
 
-  Scope, being a sick joke of a concept, when you think about it, is one of the eternal-curses of this endeavor. The notions of "Pleroma", "Abraxas" and "(the)Demiurge" are the knowable forms of the unknowable, the "Gnosis" of "Cognosis", serve as a 'bounds' of the knowable (epistemology) and therefore the beable (ontology). The fundamental Jungian kernel of such a bounding-mechanism gives shape and form to these gnostic-entities; both through one's own actions, but also, through, all universal, even-unknowable, degrees of freedom.
-  
-  These Gnostic 'entities' are the archetypes of archetypes, the 'well-foundedness' of any-given situation can be determined, up to isometry, with these 'variable' fundamental 'constraints'. If one cannot, for whatever reason, stomach Master Jung, then I'm happy to inform you that there is someone you'll probably dislike even more (other than Kant), whom could help situate your faculties to the present task of describing a universal field theory which incorporates all degrees of freedom, language, and 'logic', and his name is Schopenhauer. Pleroma (Noumenon/Will/Archetype), Abraxas (epestemology/noema[ata]), (the) Demiurge (ontology/phenomenology), are all elements of the variable universal characteristic function of Noetherian, Machian, indeed, multicosmos; such a theory having one-advantage over contemporary metaphysics, that-being, no silly problems of "many worlds" and, this is key to the whole architecture, [[Zero Point Energy]], or, the ill-fondedness of Electrodynamics.
+The Pleroma, Abraxas, and the Demiurge are elements of the variable universal characteristic function of a Noetherian, Machian, indeed multi-cosmic framework. Such a theory has one advantage over contemporary metaphysics: no zero-point energy catastrophe, nor the ill-foundedness of certain electrodynamic assumptions. This being an introduction and therefore incapable of earning your credulity, I urge you to read Dr. Jacob Barandes's Indivisible Stochastic Quantum Mechanics if the mention of such a "founding of the ill-founded" has excited you too much. He is a genius, and your awe should be directed at him — he has a working theory, unlike this in-process software and epistemology project. There is indeed hope of attaining the absurdly lofty goals laid out herein, but the academic wait (thankfully) belongs not to me. In my opinion, it is important to state, considering I have never met nor corresponded with Senpai and he does not notice us.
 
-  There is an assumption inherent in the project that a neural network is a cognitive system. The assumption is that there is something for this cognitive system to do in any given situation, and that it is the cognitive system's job to figure out what that thing is. Upon location of its head/parent, it either orients itself within a cognitive system or creates a new cognitive system. Cognitive systems pass as parameters namespaces, syntaxes, and cognitive systems. Namespaces and syntaxes are in the form of key-value pairs. Cognitive systems are also in the form of key-value pairs, but the values are cognitive systems. **kwargs are used to pass these parameters.
+There is an assumption inherent in the project that a neural network is a cognitive system. The assumption is that there is something for this cognitive system to do in any given situation, and that it is the cognitive system's job to figure out what that thing is. Upon location of its head or parent, it either orients itself within a cognitive system or creates a new cognitive system. Cognitive systems pass namespaces, syntaxes, and other cognitive systems as parameters. Namespaces and syntaxes are in the form of key-value pairs. Cognitive systems are also in the form of key-value pairs, but the values are themselves cognitive systems. Python's `**kwargs` are used to pass these parameters.
 
-  The challenge (of this architecture) lies in the 'cognitive lambda calculus' needed to bring these runtimes into existence and evolve them, not the computation itself. Cognosis is designed for consumer hardware and extreme scalability via self-distribution of cognitive systems (amongst constituent [[subscribers|asynchronous, stake-holders]]) peer-to-peer.
+The challenge of this architecture lies in the cognitive lambda calculus needed to bring these runtimes into existence and evolve them and not the computation itself. Cognosis is designed for consumer hardware and extreme scalability via self-distribution of cognitive systems (amongst constituent asynchronous stakeholders) peer to peer.
 
-"Cognitive systems are defined by actions, orientations within structures, and communicative parameters, all of which align with the goal of creating a coherent and organized cognitive framework. The idea of modular cognitive units communicating via namespaces and syntaxes resonates with the framework of prioritizing and organizing cognitive tasks."
-
+> Cognitive systems are defined by actions, orientations within structures, and communicative parameters, all of which align with the goal of creating a coherent and organized cognitive framework. The idea of modular cognitive units communicating via namespaces and syntaxes resonates with the priority and organization of cognitive tasks.
 ---
 
 ## "Associative Knowledge Base" (this repo):
