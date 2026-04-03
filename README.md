@@ -1,5 +1,5 @@
 ---
-tags: [Morphological-Source-Code, Quineic Statistical Dynamics, de-rham-cohomology, holography, bulk-boundary, duality]
+tags: [Morphological-Source-Code, Quineic Statistical Dynamics, holography, bulk-boundary, duality]
 copyright: "Ⓟ© 2026 Quineic(SP); Morphological Source Code & Quineic Statistical Dynamics"
 license-doc(s)+dist: CC BY-ND 4.0
 license-code+file(s): BSD 3-Clause
@@ -10,34 +10,38 @@ copyright1: |
 copyright2: |
 
   © 2025-26 Phovos https://github.com/Phovos/Morphological-Source-Code CC ND
-version: 0.40.5
+version: 0.40.6
 
 aliases:
-  - MSC
-  - QSD
-  - morphological-source-code
+  - msc
+  - qsd
+  - morphosemantics
   - bulk-boundary-duality
   - conformal-cohomology
-  - morphosemantics
+  - morphological-source-code
+  - quineic-statistical-dynamics
+  - quine
 topics:
-  - two-way-light (anisotropy of c/light-speed)
-  - Special Conformal Transformation
-  - holographic-cohomology
+  - ads/cft
   - gauge-theory
-  - semantic-embeddings
   - morphic-operators
   - exterior-calculus
+  - de-rham-cohomology
+  - semantic-embeddings
+  - holographic-cohomology
+  - special conformal transformation
+  - two-way-light/anisotropy-of-light-speed
 ---
 <!-- This document uses YAML front matter for metadata management in a third-party tool not git.
 Markdown Syntax: Standard GitHub-flavored Markdown. Not Obsidian wikilinks.
-Disclaimer: |
+Disclaimer:
   Broad-strokes, painting cultural, scientific, philosophical,
   and historiographical analogy and abstraction are layered onto
   the page with the goal of instrumenting the author's own
   machinations. Everything said here should be considered 'stilted'.
   Don't quote me expecting there is anything more there than is there
   because this is not authoritative in any fashion outside of this
-  very architecture. |
+  very architecture.
 -->
 
 © 2023-2026 by [Moonlapsed](https://github.com/MOONLAPSED). [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-blue.svg)](https://creativecommons.org/licenses/by/4.0/)
@@ -63,31 +67,54 @@ The challenge of this architecture lies in the cognitive lambda calculus needed 
 
 ---
 
-## "Associative Knowledge Base" (this repo):
-All directories which contain markdown files are to include a `/media/` sub directory for multimedia files the markdown files may reference.
+## 'Gnosis'
+
+Some other jokers took the name Cognosis at about the same time as I did so it is, now, deprecated but, not the Gnostic kernel it precipitated. The Pleroma, Abraxas, and the Demiurge serve as the three *holoicons* of the architecture; mapping respectively to epistemology (T/Type), ontology (V/Value), and phenomenology (C/Captain — computor insofar as Entscheidungsproblem). This tripartite casuistry is the Noetherian-Machian aether within which the ByteWord's gauge topology evolves. The architecture does not claim these mappings are traditional or even non-synthetic; only that they are *well-founded* up to the holographic bound (Δ⁴). The names *Pleroma*, *Abraxas*, and *the Demiurge* are borrowed from Gnostic tradition but redefined here as architectural *holoicons*. They are boundary-anchored referents that compress otherwise ineffable degrees of freedom, a morphic (phenomenological/topological) external derivative calculus. 
+- **Pleroma** — The fullness of knowable form. Maps to **epistemology** and the Type field (T) in the ByteWord: what *can* be said.
+- **Abraxas** — The generative, paradoxical mediator between fullness and lack. Maps to **ontology** and the Value field (V): what *is* the case, deputizable under absorption.
+- **The Demiurge** — The flawed craftsman of the material cognitive substrate. Maps to **phenomenology** and the Captain bit (C, computor, the wave function observer/collapser; pays the demons (Landauer's and Maxwell's)): the thermodynamic boundary between radiative and absorptive phases, the quantum/classical cut made geometric.
+
+> **Note on chirality:** The conceptual triple (TVC) and the physical byte layout (CVT) are chiral duals. The transformation between them is the deputization cascade (Δ¹). This asymmetry is the architecture's analog of worldsheet chirality in string theory. `Big-endian gauge topology: [C V V V | T T T T] =~= (Conceptual order TVC is the chiral dual of physical CVT, both valid, connected by Δ¹)`
+
+---
+
+## Associative Knowledge Base (this repo)
+
+All directories that contain Markdown files **MUST** include a `/media/` subdirectory for multimedia files (images, audio, video) that those Markdown files reference.
+
+### Image embedding
 
 To enable horrors such as this:
 
-![this:](/media/image.png)
+```text
+![description](/media/filename.png)
+```
 
-    `! [ ... ] ( /media/image.png )` (no spaces)
+![this:](public/media/image.png)
 
-## <Frontmatter Implementation>
- - [API README](/src/README.md)
- - Utilize 'frontmatter' to include the title and other `property`, `tag`, etc. in the knowledge base article(s).
-   - For Example:
-      ```
-      ---
-      name: "Article Title"
-      link: "[[Related Link]]"
-      linklist:
-        - "[[Link1]]"
-        - "[[Link2]]"
-      ---
-      ``` 
 ---
 
-____
+## Frontmatter Implementation
+
+- [API README](/README.md)
+
+Use YAML frontmatter to include metadata (title, tags, links, etc.) in knowledge base articles.
+
+**Example:**
+
+```yaml
+---
+name: "Article Title"
+link: "[Related Link](/path/to/article.md)"
+linklist:
+  - "[Link One](/path/to/one.md)"
+  - "[Link Two](/path/to/two.md)"
+---
+```
+
+> This repository uses standard GitHub Flavored Markdown. Links use `[text](url)` syntax.
+
+---
 
 # MSC: Morphological Source Code
 
