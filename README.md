@@ -1,13 +1,29 @@
 ---
-title: "README.md"
-Licenses: CC ND & BSD-3
-copywrite: |
+tags: [Morphological-Source-Code, Quineic Statistical Dynamics, ads-cft, de-rham-cohomology, holography, bulk-boundary]
+copyright: [Ⓟ© 2026 Quineic(SP); Morphological Source Code: MSC&QSD(TM) https://github.com/Morphological-Source-Code]
+Licenses: CC ND & BSD-3, (not-admissable as prior-art), TM/SP-PEND Ⓟ 2026
+copyright1: |
 
-  © 2025 Phovos https://github.com/Phovos/Morphological-Source-Code
-copywrite2: |
+  © 2023-26 Moonlapsed https://github.com/MOONLAPSED/Cognosis
+copyright2: |
 
-  © 2023-2025 Moonlapsed https://github.com/MOONLAPSED/Cognosis
-tag: [Morphological Source Code, Quinic Statistical Dynamics, Public Statements: on MSC & QSD, version: 2.25]
+  © 2025-26 Phovos https://github.com/Phovos/Morphological-Source-Code
+version: 0.40.3
+aliases:
+  - MSC
+  - morphological-source-code
+  - phase-change-semantics
+  - bulk-boundary-duality
+  - conformal-cohomology
+  - morphosemantics
+topics:
+  - two-way-light (anisotropy of c/light-speed)
+  - Special Conformal Transformation
+  - holographic-cohomology
+  - gauge-theory
+  - semantic-embeddings
+  - morphic-operators
+  - exterior-calculus
 ---
 <!-- This document uses YAML front matter for metadata management in a third-party tool not git: 
 
@@ -37,6 +53,45 @@ disclaimer:
   because this is not authoritative in any fashion outside of this
   very architecture.
 -->
+
+# Cognosis and the Pleroma (Abraxas, (the) Demiurge)
+
+  Morphological Source Code and Quineic Statistical Dynamics are the CPython and C appendages of a multi-year conquest of dimensionality and process ontology (formerly) known as "Cognosis"; `Cognosis` is an experimental framework that explores the dynamic evolution of software architectures during runtime. It aims to combine the fluidity of human-centric interactions, like an interactive video game, with the stability of traditional 'code', CLI, scripting, and continuous integration and continuous development. At its core lies the concept of "Morphological Source Code," where code adapts and changes in response to user interactions, particularly those leveraging natural language processing (NLP) and phenomenology, here refering, specifically, to the process ontology of 'Machine Learning', but, also, that of a conscious 'observer' that is able to exist before and after any given event, a cognitive wave function so to speak.
+
+  Scope, being a sick joke of a concept, when you think about it, is one of the eternal-curses of this endeavour. The notions of "Pleroma", "Abraxas" and "(the)Demiurge" are the knowable forms of the unknowable, the "Gnosis" of "Cognosis", serve as a 'bounds' of the knowable (epistemology) and therefore the beable (ontology). The fundemental Jungian kernel of such a bounding-mechanism gives shape and form to these gnostic-entities; both through one's own actions, but also, through, all universal, even-unknowable, degrees of freedom.
+  
+  These gnostic 'entities' are the archetypes of archetypes, the 'well-foundedness' of any-given situation can be determined, up to isometry, with these 'variable' fundemental 'constraints'. If one cannot, for whatever reason, stomach Master Jung, then I'm happy to inform you that there is someone you'll probably dislike even more (other than Kant), whom could help situate your faculties to the present task of describing a universal field theory which incororates all degrees of freedom, language, and 'logic', and his name is Shopenhauer. Pleroma (Noumenon/Will/Archetype), Abraxas (epestemology/noema[ata]), (the) Demiurge (ontology/phenomenology), are all elements of the variable universal characteristic function of Noetherian, Machian, indeed, multicosmos; such a theory having one-advantage over contemporary metaphysics, that-being, no silly problems of "many worlds" and, this is key to the whole architecture, [[Zero Point Energy]], or, the ill-fondedness of Electrodynamics.
+
+  There is an assumption inherent in the project that a neural network is a cognitive system. The assumption is that there is something for this cognitive system to do in any given situation, and that it is the cognitive system's job to figure out what that thing is. Upon location of its head/parent, it either orients itself within a cognitive system or creates a new cognitive system. Cognitive systems pass as parameters namespaces, syntaxes, and cognitive systems. Namespaces and syntaxes are in the form of key-value pairs. Cognitive systems are also in the form of key-value pairs, but the values are cognitive systems. **kwargs are used to pass these parameters.
+
+  The challenge (of this architecture) lies in the 'cognitive lambda calculus' needed to bring these runtimes into existence and evolve them, not the computation itself. Cognosis is designed for consumer hardware and extreme scalability via self-distribution of cognitive systems (amongst constituent [[subscribers|asynchronous, stake-holders]]) peer-to-peer.
+
+"Cognitive systems are defined by actions, orientations within structures, and communicative parameters, all of which align with the goal of creating a coherent and organized cognitive framework. The idea of modular cognitive units communicating via namespaces and syntaxes resonates with the framework of prioritizing and organizing cognitive tasks."
+
+## "Associative Knowledge Base" (this repo):
+All directories which contain markdown files are to include a `/media/` sub directory for multimedia files the markdown files may reference.
+
+To enable horrors such as this:
+
+![this:](/media/image.png)
+
+    `! [ ... ] ( /media/image.png )` (no spaces)
+
+## <Frontmatter Implementation>
+ - [API README](/src/README.md)
+ - Utilize 'frontmatter' to include the title and other `property`, `tag`, etc. in the knowledge base article(s).
+   - For Example:
+      ```
+      ---
+      name: "Article Title"
+      link: "[[Related Link]]"
+      linklist:
+        - "[[Link1]]"
+        - "[[Link2]]"
+      ---
+      ``` 
+---
+
 # MSC: Morphological Source Code
 
 To begin-with, let's assume a set-theoretic-foundation. Let's have our "universe" 'u' equal to our own universe that we all share. This will allow us to speculate, broadly, with set-theoretic syntax with the goal of motivating the Morphological-Category-Theoretic cognitive lambda calculus and calling-convention of QSD with MSC. Let's review Mach, Einstein, Noether, and the key assumptions:
