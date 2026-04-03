@@ -4,10 +4,10 @@ copyright: [Ⓟ© 2026 Quineic(SP); Morphological Source Code: MSC&QSD(TM) https
 Licenses: CC ND & BSD-3, (not-admissable as prior-art), TM/SP-PEND Ⓟ 2026
 copyright1: |
 
-  © 2023-26 Moonlapsed https://github.com/MOONLAPSED/Cognosis
+  © 2023-26 Moonlapsed https://github.com/MOONLAPSED/Cognosis CC BY (architecturally), BSD-3 (files) 
 copyright2: |
 
-  © 2025-26 Phovos https://github.com/Phovos/Morphological-Source-Code
+  © 2025-26 Phovos https://github.com/Phovos/Morphological-Source-Code CC ND
 version: 0.40.3
 aliases:
   - MSC
@@ -54,7 +54,18 @@ disclaimer:
   very architecture.
 -->
 
-# Cognosis and the Pleroma (Abraxas, (the) Demiurge)
+[![Python 3.14+](https://img.shields.io/badge/Python-3.14+-3776AB.svg?logo=python)](https://www.python.org)
+
+© 2023-2026 by [Moonlapsed](https://github.com/MOONLAPSED). [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-blue.svg)](https://creativecommons.org/licenses/by/4.0/)
+
+[![Status: Experimental](https://img.shields.io/badge/Status-Experimental-red.svg)](https://github.com/Moonlapsed/Cognosis)
+
+Ⓟ© 2026 Quineic(SP); [Morphological-Source-Code](https://github.com/Morphological-Source-Code): 'MSC&QSD'(TM) 
+[![License: CC BY-ND 4.0](https://img.shields.io/badge/License-CC%20BY--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nd/4.0/)
+
+[![Status: Experimental](https://img.shields.io/badge/Status-Experimental-red.svg)](https://github.com/Morphological-Source-Code)
+
+# Cognosis and the Pleroma; Abraxas, (the) Demiurge.
 
   Morphological Source Code and Quineic Statistical Dynamics are the CPython and C appendages of a multi-year conquest of dimensionality and process ontology (formerly) known as "Cognosis"; `Cognosis` is an experimental framework that explores the dynamic evolution of software architectures during runtime. It aims to combine the fluidity of human-centric interactions, like an interactive video game, with the stability of traditional 'code', CLI, scripting, and continuous integration and continuous development. At its core lies the concept of "Morphological Source Code," where code adapts and changes in response to user interactions, particularly those leveraging natural language processing (NLP) and phenomenology, here refering, specifically, to the process ontology of 'Machine Learning', but, also, that of a conscious 'observer' that is able to exist before and after any given event, a cognitive wave function so to speak.
 
@@ -91,6 +102,8 @@ To enable horrors such as this:
       ---
       ``` 
 ---
+
+____
 
 # MSC: Morphological Source Code
 
