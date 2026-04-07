@@ -1,8 +1,0 @@
-pandas
-requests
-litellm
-pydantic
-python-dotenv
-httpx
-spacy
-open-interpreter
