@@ -31,10 +31,6 @@ from typing import Dict, Callable, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
 
-# -----------------------------------------------------------------------------
-# Language dispatch patterns - the "morphological kernel"
-# -----------------------------------------------------------------------------
-
 class Language(Enum):
     PYTHON = "python"
     OCAML = "ocaml"
@@ -42,6 +38,7 @@ class Language(Enum):
     FOSSIL = "fossil"
     SHELL = "shell"
     MULTILINE = "multiline"
+    BLOB = "blob"
 
 @dataclass
 class DispatchRule:
@@ -398,11 +395,6 @@ def setup_completion(kernel: MorphologicalKernel):
     readline.set_completer_delims(' \t\n;')
     readline.parse_and_bind("tab: complete")
     readline.parse_and_bind("set show-all-if-ambiguous on")
-
-
-# -----------------------------------------------------------------------------
-# Main Entry Point
-# -----------------------------------------------------------------------------
 
 if __name__ == "__main__":
     kernel = MorphologicalKernel()
