@@ -3,9 +3,9 @@ tags: [Morphological-Source-Code, Quineic Statistical Dynamics, holography, moti
 copyright: "Ⓟ© 2026 Morphological Source Code & Quineic Statistical Dynamics"
 license-doc(s)+dist: CC BY-ND-NC 4.0
 license-code+file(s): BSD 3-Clause
-root: ".github"
+root: "/MOONLAPSED/cognosis"
 name: "README.md"
-version: 0.49.85
+version: 0.49.87
 aliases:
   - msc
   - qsd
@@ -112,9 +112,7 @@ Some other jokers took the name Cognosis at about the same time as I did so it i
 
 All directories that contain Markdown files **MUST** include a `/media/` subdirectory for multimedia files (images, audio, video) that those Markdown files reference.
 
-### Image embedding
-
-To enable horrors such as this:
+Image embedding:
 
 ```text
 ![description](/media/filename.png)
@@ -125,8 +123,6 @@ To enable horrors such as this:
 ---
 
 ## Frontmatter Implementation
-
-- [API README](/README.md)
 
 Use YAML frontmatter to include metadata (title, tags, links, etc.) in knowledge base articles.
 
@@ -144,11 +140,13 @@ linklist:
 
 > This repository uses standard GitHub Flavored Markdown. Links use `[text](url)` syntax.
 
+- [README](/README.md)
+
 ---
 
 # Morphological Source Code: The Quantum Bridge to Data-Oriented Design
 
-In modern computational paradigms, we face an ongoing challenge: how do we efficiently represent, manipulate, and reason about data in a way that can bridge the gap between abstract mathematical models and real-world applications? The concept of Morphological Source Code (MSC) offers a radical solution—by fusing semantic data embeddings, Hilbert space representation, and non-relativistic, morphological reasoning into a compact and scalable system. This vision draws from a wide range of computational models, including quantum mechanics, data-oriented design (DOD), and human cognitive architectures, to create a system capable of scaling from fundamental computational elements all the way to self-replicating cognitive systems.
+In modern computational paradigms, we face an ongoing challenge: how do we efficiently represent, manipulate, and reason about data in a way that can bridge the gap between abstract mathematical models and real-world applications? The concept of Morphological Source Code (MSC) offers a radical solution by fusing semantic data embeddings, Hilbert space representation, and non-relativistic, morphological reasoning into a compact and scalable system. This vision draws from a wide range of computational models, including quantum mechanics, data-oriented design (DOD), and human cognitive architectures, to create a system capable of scaling from fundamental computational elements all the way to self-replicating cognitive systems, in a (hypothetical) QFT-like Information-flux addition to Maxwell's Extended Equations. Foreshadowing; 'QFT', in MSC&QSD, is neither "Quantum Field Theory" nor a "Conformal Field Theory" it is a `Quineic Field Theory` which is both; with the progenitor of this formalism lying in super-symmetry of String Theories, but the best of them; the ADS/CFT universal correspondence. (now is your chance to run a script to change all instances of 'Quineic' throughout this entire repo into 'Quinic', if you disagree with my arbitrary spelling; MSC&QSD uses 'The Quineian' which promotes "Quineic dynamics"; contrast to Lagrangian, Hamiltonian, etc. and spell it however you want)
 
 ## Theoretical Foundation: Operators and Observables in MSC
 
@@ -825,6 +823,7 @@ Evolution is holonomic.
 | Geometric Interpretation | Flat connection | Curved connection (entanglement) |
 
 ---
+
 ### Computational Order Parameter  
 The computational order parameter, $\Phi_{\text{QSD}}$, can be expressed in two dual forms:
 
@@ -860,6 +859,7 @@ Landau theory of phase transitions, applied to computational coherence.
 See also: [[pi/psi/phi]]
 
 ---
+
 ## Pauli/Dirac Matrix Mechanics Kernel
 
 Define Hilbert-like space of runtime states $\mathcal{H}_{\text{RT}}$, where:
@@ -881,11 +881,13 @@ Use Pauli matrices for binary decision paths.
 Use Dirac algebra for spinor-like runtime state evolution.  
 Quaternion/octonion structure emerges in path composition over z-coordinate shifts.
 ---
+
 #### Homotopy Interpretation:
 
 - These are higher-dimensional paths; think of 2-simplices (triangles) representing a path that folds back on itself or loops.
 - We’re now dealing with homotopies between morphisms, i.e., transformations of runtime behaviors across time.
 ---
+
 #### Grothendieck Interpretation:
 
 - The runtime inhabits a fibered category, where each layer (time slice) maps to a base category (like a timeline).
@@ -968,8 +970,6 @@ For a gate to obey the second law of thermodynamics, it must ensure that any dec
          
      
 
-Practical Example: Quantum Gates and Entropy 
-
 Consider a quantum gate operating on qubits: 
 
     Unitary Operations : 
@@ -983,7 +983,7 @@ Consider a quantum gate operating on qubits:
          
      
 
-Connecting XNOR Gates and Abelian Dynamics 
+> Connecting XNOR Gates and Abelian Dynamics 
 
 To understand how an XNOR gate might "abelize" dynamics: 
 
@@ -995,10 +995,8 @@ To understand how an XNOR gate might "abelize" dynamics:
     Continuous Bijection : 
         Mapping input states to output states continuously ensures smooth transitions without abrupt changes.
         This can model reversible transformations, aligning with abelian group properties.
-         
-     
 
-Chirality and Symmetry Breaking 
+> Chirality and Symmetry Breaking 
 
 Chirality and symmetry breaking add another layer of complexity: 
 
@@ -1013,117 +1011,96 @@ Chirality and symmetry breaking add another layer of complexity:
 
 
 
-Involution & convolution; Abelianization of dynamics, entropy generation using star-algebras, unitary ops and exponential + complex exponential functions:
+> Involution & convolution; Abelianization of dynamics, entropy generation using sigma+star-algebras, unitary ops and exponential + complex exponential functions:
 
 
-____
+> Monoids and Abelian Groups: The Foundation  
 
-1. Monoids and Abelian Groups: The Foundation  
-Monoids  
+A monoid  is a set equipped with an associative binary operation and an identity element:
 
-    A monoid  is a set equipped with an associative binary operation and an identity element.
-    In your context:
-        Monoids model combinatorial operations  like convolution or hashing.
-        They describe how "atoms" (e.g., basis functions, modes) combine to form larger structures.
+	- Monoids model combinatorial operations  like convolution or hashing.
+	- They describe how "atoms" (e.g., basis functions, modes) combine to form larger structures.
          
      
 
-Abelian Groups  
+An abelian group  extends a monoid by requiring inverses and commutativity:
 
-    An abelian group  extends a monoid by requiring inverses and commutativity.
-    In your framework:
-        Abelian groups describe reversible transformations  (e.g., unitary operators in quantum mechanics).
-        They underpin symmetries  and conservation laws .
+	- Abelian groups describe reversible transformations  (e.g., unitary operators in quantum mechanics).
+	- They underpin symmetries  and conservation laws .
          
      
 
-Atoms/Nouns/Elements  
+Atoms/Nouns/Verbs/Parameters/Paragraphs/Elements/Rules/Magnitude/Velocity/Momentum/etc.:
 
-    These are the irreducible representations  (irreps) of symmetry groups:
-        Each irrep corresponds to a specific vibrational mode (longitudinal, transverse, etc.).
-        Perturbations are decomposed into linear combinations of these irreps: `δρ=n∑​i∑​ci(n)​ϕi(n)`​, where:
-            ci(n)​: Coefficients representing the strength of each mode.
-            ϕi(n)​: Basis functions describing spatial dependence.
-             
-         
-     
+	- These are the irreducible representations  (irreps) of symmetry groups
+	- Each irrep corresponds to a specific vibrational mode (longitudinal, transverse, etc.).
+	- Perturbations are decomposed into linear combinations of these irreps: `δρ=n∑​i∑​ci(n)​ϕi(n)`​, where:
+            > ci(n)​: Coefficients representing the strength of each mode.
+            > ϕi(n)​: Basis functions describing spatial dependence.
 
-2. Involution, Convolution, Sifting, Hashing  
-Involution  
+0. Involution, Convolution, Sifting, Hashing  
 
-    An involution  is a map ∗:A→A such that (a∗)∗=a.
-    In your framework:
-        Involution corresponds to time reversal  (f∗(t)=f(−t)​) or complex conjugation .
-        It ensures symmetry in operations like Fourier transforms or star algebras.
-         
-     
+An involution  is a map ∗:A→A such that (a∗)∗=a.
+
+	- Involution corresponds to time reversal  (f∗(t)=f(−t)​) or complex conjugation .
+	- It ensures symmetry in operations like Fourier transforms or star algebras.
 
 Convolution  
 
-    Convolution combines two signals f(t) and g(t):(f∗g)(t)=∫−∞∞​f(τ)g(t−τ)dτ.
-    Key properties:
-        Associativity : (f∗g)∗h=f∗(g∗h).
-        Identity Element : The Dirac delta function acts as the identity: f∗δ=f.
-         
-     
+    - Convolution combines two signals f(t) and g(t):(f∗g)(t)=∫−∞∞​f(τ)g(t−τ)dτ.
+    - Key properties:
+        > Associativity : (f∗g)∗h=f∗(g∗h).
+        > Identity Element : The Dirac delta function acts as the identity: f∗δ=f.
 
 Sifting Property  
 
-    The Dirac delta function "picks out" values:∫−∞∞​f(t)δ(t−a)dt=f(a).
-    This property is fundamental in signal processing and perturbation theory.
+    - The Dirac delta function "picks out" values:∫−∞∞​f(t)δ(t−a)dt=f(a).
+    - This property is fundamental in signal processing and perturbation theory.
      
 
 Hashing  
 
-    Hashing maps data to fixed-size values, often using modular arithmetic or other algebraic structures.
-    In your framework, hashing could correspond to projecting complex systems onto simpler representations (e.g., irreps).
-     
+    - Hashing maps data to fixed-size values, often using modular arithmetic or other algebraic structures.
+	- correspond to projecting complex systems onto simpler representations (e.g., irreps).
 
 3. Complex Numbers, Exponentials, Trigonometry  
-Complex Numbers  
 
-    Complex numbers provide a natural language for oscillatory phenomena:
-        Real part: Amplitude.
-        Imaginary part: Phase.
-         
-     
+Complex numbers provide a natural language for oscillatory phenomena:
+
+	- Real part: Amplitude.
+	- Imaginary part: Phase.
 
 Exponential Function  
 
-    The complex exponential eiωt encodes sinusoidal behavior compactly:eiωt=cos(ωt)+isin(ωt).
-    This is central to Fourier analysis, quantum mechanics, and control systems.
+	- The complex exponential eiωt encodes sinusoidal behavior compactly:eiωt=cos(ωt)+isin(ωt).
+	- This is central to Fourier analysis, quantum mechanics, and control systems.
      
 
 Trigonometry  
 
-    Trigonometric functions describe periodic motion and wave phenomena.
-    They are closely tied to the geometry of circles and spheres, which appear in symmetry groups.
+    - Trigonometric functions describe periodic motion and wave phenomena.
+    - They are closely tied to the geometry of circles and spheres, which appear in symmetry groups.
      
 
-4. Control Systems: PID and PWM  
-PID Control  
+0. Control Systems: PID and PWM
+
+PID Control (proportional integral derivative [[feedback mechanisms]] in [[dynamical systems]])
 
     Proportional-Integral-Derivative (PID) controllers adjust a system based on:
         Proportional term : Current error.
         Integral term : Accumulated error over time.
         Derivative term : Rate of change of error.
-         
-    In your framework, PID could correspond to feedback mechanisms in dynamical systems.
-     
 
-PWM (Pulse Width Modulation)  
+PWM
 
-    PWM encodes information in the width of pulses.
+    PWM (Pulse Width Modulation) encodes information in the width of pulses.
     It is used in digital-to-analog conversion and motor control.
-    In your framework, PWM could represent discretized versions of continuous signals.
+	PWM represent discretized versions of continuous signals, like the FFT.
      
-
-5. Unitary Operators and Symmetry  
 Unitary Operators  
 
     Unitary operators preserve inner products and describe reversible transformations:U†U=I,where U† is the adjoint (conjugate transpose) of U.
     In quantum mechanics, unitary operators represent evolution under the Schrödinger equation:∣ψ(t)⟩=U(t)∣ψ(0)⟩.
-     
 
 Symmetry  
 
@@ -1132,6 +1109,7 @@ Symmetry
 
 
 ## The Transcendental Metric
+
 Instead of: `(β₁ ⊥ β₂ ⊥ ⊥ ⊥ β₃ ⊥ β₄ ⊥ ⊥ β₅ ...)` ...which requires you to manually place every null; you pass a single irrational as the null distribution function:
 ```c
 // The nulls emerge from the transcendental. You don't place them; you derive them.
@@ -1154,9 +1132,15 @@ This means: every position is unique. No two ByteWords have the same local null-
 Irrational strings can escape the bulk. They're not trapped in periodicity. They can reach the boundary because they're not recursively folded back on themselves.
 
 ### The Euler Identity as Null Metric
-`e^(iπ) + 1 = 0`
-This isn't just beautiful it's all five transcendentals in one equation: e, i, π, 1, 0.
-If you use this as your metric generator: `N(i) = f(e^(iπ × g(i)) + 1)`
+
+Even-better than the exponential function or the Riemann or Lebesgue integral:
+
+	`e^(iπ) + 1 = 0`
+
+This isn't just beautiful it's all five transcendentals in one equation: `e, i, π, 1, 0`.
+
+As a metric generator: `N(i) = f(e^(iπ × g(i)) + 1)`
+
 Where f and g are some discretization functions... you get a null distribution that encodes:
 
 ```
@@ -1175,7 +1159,7 @@ ByteWords|The atoms|Enumerated (finite list)|
 Ghosts|The hidden ensemble|Enumerated + initial histories|
 Metric|The null distribution|Single transcendental constant|
 
-And because irrationals have infinite decimal expansions, your finite string can index into an infinite structure. The 256 states access an infinite tape. The metric IS the tape. The metric is no longer a list. It's a number. One irrational. That's it. That's the whole topology.
+And because irrationals have infinite decimal expansions, a finite string can index into an infinite structure. The 256 states access an infinite tape. The metric IS the tape. The metric is no longer a list. It's a number. One irrational. That's it. That's the whole topology.
 
 #### Quirky, biological-view:
 When you breed strings, you're now varying:
@@ -1368,7 +1352,7 @@ Then GitHub's network effect crushed everything, and everyone forgot Fossil exis
 This is the most ambitious part. You want:
 
 ```
-Your Python Code
+Python Code
     ↓ (CPython interpreter)
 CPython C Code
     ↓ (C compiler)
@@ -1379,7 +1363,8 @@ Actual Silicon
 
 **And you want to inspect EVERY layer from Python.**
 
-**Historical parallel**: Lisp Machines (1980s)
+Historical parallel: Lisp Machines (1980s)
+
 ```lisp
 (disassemble #'my-function)  ; See the assembly
 ; => LAP code (Lisp Assembly Program)
@@ -1392,10 +1377,9 @@ Actual Silicon
 
 The Lisp Machine had **no separation** between "system" and "user" code. Everything was Lisp, inspectable at runtime.
 
-**MSC Approach** (using your LSP server as the reflective layer):
+MSC Approach (using LSP server as the reflective layer, a "TUI" of "Squeak" morphic canvas):
 
 ```python
-# In your monolith:
 def introspect_stack():
     import inspect, dis, ctypes
     
@@ -1475,53 +1459,11 @@ Your LSP server becomes **the lens** through which you inspect all layers.
 # => Now Deps.flask is available
 ```
 
-### Day 30: Lock Dependencies
-```bash
-# You've been using Flask 3.1.0, works great
-./monolith.py --relock
-# => Inspects current environment
-# => Writes resolved-versions = {"flask": "3.1.0", "Werkzeug": "3.1.3", ...}
-# => Writes resolved-hash = "sha256:..."
-
-fossil commit -m "Lock Flask to 3.1.0"
-```
-
-##### Cross-Sync to Git
-```bash
-# Export to Git for CI
-fossil git export --repository my.fossil | git fast-import
-
-# Push to GitHub
-git push origin main
-
-# GitHub Actions can now run your tests:
-# - Checks out the file
-# - Runs ./monolith.py --verify-lock
-# - Runs ./monolith.py --test
-# - All dependencies auto-install from the embedded lock
-```
-
-##### Debug Deep
-```python
-# You hit a bug in Flask's routing
-# Your LSP server lets you:
-
-# 1. Jump to Flask source (it's in site-packages)
-# 2. See the CPython bytecode for werkzeug.routing
-# 3. Disassemble the C code for _Py_ROUTE_DISPATCH
-# 4. See the x86 assembly for the actual regex matcher
-
-# All from within your LSP server, which is PART of your monolith
-# No external debugger needed
-```
-
----
-
 ## Why This Ontology is "Idempotent"
 
 **Idempotent** = Running the same operation twice has the same effect as running it once.
 
-Your script is idempotent because:
+Each script is idempotent because:
 
 1. **`--relock` twice** → Same lock (deterministic resolution)
 2. **Re-exec twice** → Second exec is a no-op (`UV_RUN=1` guard)
@@ -1622,35 +1564,15 @@ git push origin main
 # Runs tests
 ```
 
-**Both repos have identical content** because the lock lives **in the source**.
-
-No `git submodule update` nonsense. No "forgot to commit poetry.lock" bugs. One file, one truth.
+Both repos have identical content because the lock lives **in the source**. No git nonsense. No "forgot to commit poetry.lock" bugs. One file, one source of truth.
 
 ---
 
 # Architectural Inspirations
 
-“MSC and QSD together as a system satisfies Lamport clocks, Brewer’s CAP, CALM monotonicity, CRDT merge-free semantics, virtual synchrony, eventual consistency, delta compression, and Helland immutability; via epistimology and by treating runtime death (''quantized' runtime,  'modified-quine behavior', generator-semantic syntax generators of 'lifted IR''; all 'children' are identical and entangled,  etc) as the single coordination event.”
+“MSC and QSD together as a system satisfies [[Lamport clocks]], Brewer’s [[CAP]], [[CALM]] monotonicity, [[CRDT]] merge-free semantics, virtual [[synchrony]], [[eventual consistency]], [[delta compression]], log-structured durability, privacy-by-latch, and Helland immutability; via epistimology and by treating runtime death (quantized runtime, generator-semantic syntax-generators of 'lifted IR'; all 'children' are identical and entangled, etc) as the single coordination event.”
 
-## CAP & Consistency
-
-| Original Concept | Author / Year | Morphological Translation |
-|------------------|---------------|---------------------------|
-| **CAP Theorem** | Brewer, 2000 | *“Keep A+P by construction; C is statistical via oracle latch.”* |
-| **CALM Theorem** | Alvaro et al., 2011 | *“Parent-IR freeze makes every child monotonic; CALM without coordination.”* |
-| **Eventual Consistency** | Fox et al., 1999 | *“Children converge statistically through the first-input oracle.”* |
-| **Immutability Removes Coordination** | Helland, 2015 | *“Parent IR is an immutable anchor; no locks required.”* |
-
-## CRDTs & Anti-Entropy
-
-| Original Concept | Author / Year | Morphological Translation |
-|------------------|---------------|---------------------------|
-| **CRDT (state-based)** | Shapiro et al., 2011 | *“Payload = frozen IR thunk + oracle latch.”* |
-| **Delta-CRDT** | Baquero et al., 2016 | *“Delta = 1 constant: the oracle value.”* |
-| **Observed-Remove Set** | — | *“Store `(hash, first_input)` pairs; no tombstones.”* |
-| **Conflict-free Replicated Execution (CRE)** | MS “Paxos made live”, 2020 | *“Quine Replicated Execution (QRE): thunk itself is the payload.”* |
-
-## Time & Ordering
+### Time & Ordering
 
 | Original Concept | Author / Year | Morphological Translation |
 |------------------|---------------|---------------------------|
@@ -1670,241 +1592,141 @@ No `git submodule update` nonsense. No "forgot to commit poetry.lock" bugs. One 
 | **Monotonic Lattice** | Conway & Charron-Bost, 1995 | *“Oracle latch is a join-semilattice with one ascending value.”* |
 | **Differential Privacy via Latch** | Budiu et al., 2012 | *“Only first result ever revealed ⇒ ε = 0 privacy leakage.”* |
 
-- [[CRDT]]  
-- [[CALM Theorem]]  
-- [[Oracle Latch]]  
 
-> “MSC+QSD as a system inherits **Lamport clocks**, **CAP compliance**, **CALM monotonicity**, **CRDT merge-free semantics**, **virtual synchrony**, **eventual consistency**, **delta compression**, **immutability guarantees**, **privacy-by-latch**, and **log-structured durability** , all achieved by treating **runtime death** as the single epistemic coordination event.”
+### CRDTs & Anti-Entropy
 
-1.  Conflict-free Replicated Data Type (CRDT)
-Textbook pedigree: Shapiro et al., 2011.
+0.  Conflict-free Replicated Data Type (CRDT)
+
+Shapiro et al., 2011.
 
     “A Morphological CRDT (M-CRDT) is a CRDT whose payload is not a JSON blob but a frozen IR thunk + oracle latch.
     The join operation is simply the oracle’s first_input rule; all other states are causally independent quine bubbles.
-    No merge function, no vector clocks, just statistical convergence.”
-
-2.  Gossip / Epidemic Protocol
-
-Textbook pedigree: Demers et al., 1987.
-
-    “Each quine child implements Epidemic Gossip with Death Certificates: the parent’s death is the anti-entropy seed; children randomly probe peers for oracle values, but only the first accepted value survives.”
-
-Existing libraries (Hashicorp Serf, SWIM, HyParView) can be wrapped unchanged.
-
-3.  Monotonic Lattice
-
-Textbook pedigree: Conway & Charron-Bost, 1995.
-
-    “The oracle generator is a monotonic join-semilattice with a single ascending element: the first observed value.  Every sibling contributes an inflationary update (yield first_input), preserving lattice properties.”
+    No merge function nor vector clocks, just statistical convergence.”
 
 
-4.  Calm / CALM Theorem
-
-Textbook pedigree: Alvaro et al., 2011.
-
-    “The CALM theorem guarantees consistency-as-monotonicity.  By freezing the parent IR we trivially satisfy CALM: no non-monotonic operations exist across quine bubbles.”
-
-5.  Conflict-free Replicated Execution (CRE)
+0.  Conflict-free Replicated Execution (CRE)
 
 Emerging term (Microsoft “Paxos made live”, 2020).
 
     “CRE becomes Quine Replicated Execution (QRE) where the execution itself (the thunk) is the replicated payload, and the oracle latch is the deterministic output.”
 
-6.  Observed-Remove Set (OR-Set)
+0.  Observed-Remove Set (OR-Set)
 
 Textbook CRDT.
 
     “An OR-Set of Quine Observations stores (hash, first_input) pairs.  first_input is observed-once, echoed-forever, achieving OR semantics without tombstones.”
 
-7.  Delta-CRDT / Anti-Entropy
+0.  Delta-CRDT / Anti-Entropy
 
-Textbook pedigree: Almeida et al., 2018.
+Almeida et al., 2018.
 
     “Each quine child periodically ships a delta-state containing only its oracle value.  Anti-entropy converges in O(1) round because the lattice is already at the top element.”
 
-8.  Leslie Lamport – Time, Clocks, and the Ordering of Events (1978)
-Original – Vector clocks & partial ordering.
-MSC – The parent’s death is a Lamport clock tick; every child quine lives in its own causal slice that never needs a total order.
-	“We replace vector clocks with IR digests.”
-
-9.  Eric Brewer – CAP Theorem (2000)
-
-Original – You must trade off C, A, P.
-MSC – Keep A + P by definition; C is statistical via oracle.
-	“Morphological systems are CAP-compliant by lineage.”
-
-10.  Peter Alvaro et al. – CALM Theorem (2011)
-
-Original – Consistency = Monotonicity.
-MSC – Parent IR freeze guarantees monotonicity for free.
-	""We satisfy CALM without coordination.”
-
-11.  Shapiro et al. – CRDTs (2011)
+0.  Shapiro et al. – CRDTs (2011)
 
 Original – Merge functions for shared state.
 MSC – Merge = oracle first-input latch (no merge function).
 	“M-CRDT: a CRDT whose payload is an irreducible thunk.”
 
-12.  Ken Birman et al. – Virtual Synchrony (1987)
-
-Original – Membership events provide synchrony illusion.
-MSC – Parent death is a virtual synchrony epoch; children are born already partitioned.
-	“Virtual synchrony at birth obviates membership protocols.”
-
-13.  Armando Fox et al. – Eventual Consistency (1999)
-
-Original – Clients eventually see the same state.
-MSC – Children converge statistically through the oracle latch.
-	“Eventual consistency via latch monotonicity.”
-
-14.  Mihai Budiu et al. – Differential Privacy via Latch (2012)
-
-Original – Output noise guarantees privacy.
-MSC – Oracle latch gives ε = 0 privacy because only the first result is ever revealed.
-	“Privacy by deterministic latch.”
-
-15.  Carlos Baquero et al. – Delta-CRDT (2016)
+0.  Carlos Baquero et al. – Delta-CRDT (2016)
 
 Original – Send only deltas.
 MSC – Delta = the oracle value itself (constant size).
 	“Delta-CRDT with O(1) payload.”
 
-16.  Seth Gilbert & Nancy Lynch – Brewer’s Conjecture Proof (2002)
+| Original Concept | Author / Year | Morphological Translation |
+|------------------|---------------|---------------------------|
+| **CRDT (state-based)** | Shapiro et al., 2011 | *“Payload = frozen IR thunk + oracle latch.”* |
+| **Delta-CRDT** | Baquero et al., 2016 | *“Delta = 1 constant: the oracle value.”* |
+| **Observed-Remove Set** | — | *“Store `(hash, first_input)` pairs; no tombstones.”* |
+| **Conflict-free Replicated Execution (CRE)** | MS “Paxos made live”, 2020 | *“Quine Replicated Execution (QRE): thunk itself is the payload.”* |
+
+
+0.  Gossip / Epidemic Protocol
+
+Demers et al., 1987. Existing libraries (Hashicorp Serf, SWIM, HyParView) can be wrapped unchanged.
+
+    “Each quine child implements Epidemic Gossip with Death Certificates: the parent’s death is the anti-entropy seed; children randomly probe peers for oracle values, but only the first accepted value survives.”
+
+0.  Monotonic Lattice
+
+Conway & Charron-Bost, 1995.
+
+    “The oracle generator is a monotonic join-semilattice with a single ascending element: the first observed value.  Every sibling contributes an inflationary update (yield first_input), preserving lattice properties.”
+
+### CAP & Consistency
+
+0.  Calm / CALM Theorem
+
+Alvaro et al., 2011.
+
+    “The CALM theorem guarantees consistency-as-monotonicity.  By freezing the parent IR we trivially satisfy CALM: no non-monotonic operations exist across quine bubbles.”
+
+0.  Eric Brewer – CAP Theorem (2000)
+
+Original – You must trade off C, A, P.
+MSC – Keep A + P by definition; C is statistical via oracle.
+	“Morphological systems are CAP-compliant by lineage.”
+
+0.  Seth Gilbert & Nancy Lynch – Brewer’s Conjecture Proof (2002)
 
 Original – Formal CAP proof.
 MSC – Proof trivially satisfied because C is statistical.
 	“We sidestep the CAP trade-off by redefining C.”
 
-17.  Pat Helland – Immutability Changes Everything (2015)
+0.  Leslie Lamport – Time, Clocks, and the Ordering of Events (1978)
+
+Original – Vector clocks & partial ordering.
+MSC – The parent’s death is a Lamport clock tick; every child quine lives in its own causal slice that never needs a total order.
+	“We replace vector clocks with IR digests.”
+
+0.  Peter Alvaro et al. – CALM Theorem (2011)
+
+Original – Consistency = Monotonicity.
+MSC – Parent IR freeze guarantees monotonicity for free.
+	""We satisfy CALM without coordination.”
+| Original Concept | Author / Year | Morphological Translation |
+|------------------|---------------|---------------------------|
+| **CAP Theorem** | Brewer, 2000 | *“Keep A+P by construction; C is statistical via oracle latch.”* |
+| **CALM Theorem** | Alvaro et al., 2011 | *“Parent-IR freeze makes every child monotonic; CALM without coordination.”* |
+| **Eventual Consistency** | Fox et al., 1999 | *“Children converge statistically through the first-input oracle.”* |
+| **Immutability Removes Coordination** | Helland, 2015 | *“Parent IR is an immutable anchor; no locks required.”* |
+
+---
+
+0.  Ken Birman et al. – Virtual Synchrony (1987)
+
+Original – Membership events provide synchrony illusion.
+MSC – Parent death is a virtual synchrony epoch; children are born already partitioned.
+	“Virtual synchrony at birth obviates membership protocols.”
+
+0.  Armando Fox et al. – Eventual Consistency (1999)
+
+Original – Clients eventually see the same state.
+MSC – Children converge statistically through the oracle latch.
+	“Eventual consistency via latch monotonicity.”
+
+0.  Mihai Budiu et al. – Differential Privacy via Latch (2012)
+
+Original – Output noise guarantees privacy.
+MSC – Oracle latch gives ε = 0 privacy because only the first result is ever revealed.
+	“Privacy by deterministic latch.”
+
+0.  Pat Helland – Immutability Changes Everything (2015)
 
 Original – Immutable data removes coordination.
 MSC – Parent IR is the immutable anchor that makes coordination unnecessary.
 	“Helland’s immutability becomes runtime death.”
 
-18.  Jay Kreps – Log-Structured Merge Trees (2013)
+0.  Jay Kreps – Log-Structured Merge Trees (2013)
 
 Original – Append-only log gives durability.
 MSC – The registry digest is an append-only log of WHNF snapshots.
 	“LSM for quine lineage.”
 
-19.  Martin Kleppmann – Designing Data-Intensive Applications (2017)
+0.  Martin Kleppmann – Designing Data-Intensive Applications (2017)
 
 Original – Whole textbook.
 MSC – Every chapter maps to a quine pattern.
 	“Kleppmann’s patterns implemented as morphological operators.”
 ---
-
-
-
-=========================================================
-## Putonghua; alternative to "hooked-on-quantum; phonics"
-### THE SIXTEEN RADICAL CLASSES AND TWO FIXED-ENDPOINTS
-
-| Byte | Bra-Ket     | Name | Role |
-|------|-------------|------|------|
-| `0x00` | `⟨ 空 \| 空 ⟩` | **空 (Kōng)** | Null. Glue. Identity morphism. Ground state. |
-| `0xFF` | `⟨ 象 \| 象 ⟩` | **象 (Xiàng)** | Self-witness. Quine operator. Observer collapse. |
-
-- **空** is the vacuum.  
-- **象** is the eye that sees itself seeing.
-
-| Nibble | Radical | Pinyin | Domain              | Algebraic Role           |
-|--------|---------|--------|---------------------|--------------------------|
-| `0x0_` | 空      | kōng   | void/control        | Identity, NOP            |
-| `0x1_` | 氵      | shuǐ   | water/flow          | Memory, streams          |
-| `0x2_` | 手      | shǒu   | hand/grasp          | Manipulation, move       |
-| `0x3_` | 目      | mù     | eye/sight           | Observation, compare     |
-| `0x4_` | 口      | kǒu    | mouth/speech        | I/O, call, emit          |
-| `0x5_` | 心      | xīn    | heart/mind          | State, branch, affect    |
-| `0x6_` | 足      | zú     | foot/walk           | Jump, traverse, return   |
-| `0x7_` | 金      | jīn    | metal/gold          | Arithmetic, logic        |
-| `0x8_` | 木      | mù     | wood/tree           | Structure, alloc, grow   |
-| `0x9_` | 火      | huǒ    | fire/burn           | Destruction, halt        |
-| `0xA_` | 土      | tǔ     | earth/ground        | Storage, persistence     |
-| `0xB_` | 言      | yán    | speech/word         | Strings, symbols, meta   |
-| `0xC_` | 糸      | mì     | silk/thread         | Concurrency, async       |
-| `0xD_` | 門      | mén    | gate/door           | Scope, context           |
-| `0xE_` | 力      | lì     | power/force         | Energy, intensity        |
-| `0xF_` | 象      | xiàng  | elephant/image      | Witness, reflect, collapse |
-
----
-
-### Metal-Ops (金-Class Operations)
-
-| Byte | Op | Glyph | Name | Action        |
-|------|----|-------|------|---------------|
-| `0x70` | 0 | 釘 | dīng | ZERO — push 0 |
-| `0x71` | 1 | 針 | zhēn | ONE — push 1  |
-| `0x72` | 2 | 鋒 | fēng | ADD — a + b   |
-| `0x73` | 3 | 銳 | ruì | SUB — a - b   |
-| `0x74` | 4 | 鑄 | zhù | MUL — a × b   |
-| `0x75` | 5 | 鋸 | jù | DIV — a ÷ b   |
-| `0x76` | 6 | 鏡 | jìng | MOD — a % b   |
-| `0x77` | 7 | 鍊 | liàn | AND — a & b   |
-| `0x78` | 8 | 鎔 | róng | OR — a \| b   |
-| `0x79` | 9 | 鑰 | yào | XOR — a ^ b   |
-| `0x7A` | A | 鋼 | gāng | NOT — ~a      |
-| `0x7B` | B | 銜 | xián | SHL — a << b  |
-| `0x7C` | C | 鋤 | chú | SHR — a >> b  |
-| `0x7D` | D | 鑑 | jiàn | CMP — compare  |
-| `0x7E` | E | 鍛 | duàn | INC — a + 1   |
-| `0x7F` | F | 銷 | xiāo | DEC — a - 1   |
-
----
-
-### COMPOSITION RULES: Sequential Composition:
-
-ByteWords concatenate left-to-right. Glue (`0x00`) separates semantic units:
-            [Word₁][Word₂]    [0x00]      [Word₃][Word₄]
-   └─────┬─────┘       └─────┬─────┘
-                        Unit A                                           Unit B
-
-Multi-byte sequences form compound glyphs using Unicode composition operators:
-
-| Byte   | Operator | Structure             |
-|--------|----------|-----------------------|
-| `0x01` | ⿰       | left-right            |
-| `0x02` | ⿱       | top-bottom            |
-| `0x03` | ⿲       | left-mid-right        |
-| `0x04` | ⿳       | top-mid-bottom        |
-| `0x05` | ⿴       | surround              |
-| `0x06` | ⿵       | surround-open-bottom  |
-| `0x07` | ⿶       | surround-open-top     |
-| `0x08` | ⿷       | surround-open-right   |
-| `0x09` | ⿸       | top-left-surround     |
-| `0x0A` | ⿹       | top-right-surround    |
-| `0x0B` | ⿺       | bottom-left-surround  |
-| `0x0C` | ⿻       | overlap               |
-
-### The Linked List / Set Builder Duality
-Any sequence is simultaneously:
-- **Extensional**: an ordered list of morphisms  
-- **Intensional**: a constraint specification (set builder)  
-
-Interpretation depends on **象-context**.
-
----
-
-### ENERGY & LANDAUER ACCOUNTING
-
-Every Word → Null transition costs **1 Landauer unit**.
-
-Energy(system) = Σ active_words × word_charge
-Temperature = ∫ Energy dt over evaluation
-
-When a Word exhausts its charge, it **decays to glue** (`0x00`).  
-The system tends toward heat death—unless **象** witnesses regeneration.
-
----
-
-### 象-COLLAPSE CONDITIONS
-
-**象 (0xFF)** triggers **Born-rule collapse** when:
-1. A computation reaches a **fixed point** (output = input)  
-2. A **Diophantine constraint** is satisfied  
-3. A **quine condition** holds: `hash(source) == hash(runtime) == hash(output)`  
-
-Upon collapse:
-- The morphosemantic state is **witnessed**  
-- Energy is **conserved** (transferred, not destroyed)  
-- A new **eigenstate** is recorded  
