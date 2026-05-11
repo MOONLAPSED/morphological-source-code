@@ -5,7 +5,7 @@ license-doc(s)+dist: CC BY-ND-NC 4.0
 license-code+file(s): BSD 3-Clause
 root: ".github"
 name: "README.md"
-version: 0.49.84
+version: 0.49.85
 aliases:
   - msc
   - qsd
@@ -32,10 +32,9 @@ topics:
     This project employs a layered licensing approach governed by the incl. Morphological LICENSE;
     The architecture (MSC&QSD) distinguishes between:
       (1) Individual source files, like this one (BSD 3-Clause)
-      (2) Distributed collective works (CC BY-NC-SA 4.0)
+      (2) Distributed collective works (CC BY-ND-NC 4.0)
       (3) Quine-generated outputs (CC0 1.0 + mandatory thermodynamic ledger)
-      (4) Private ensemble configurations (operator's IP, until revealed/released)
-          - Privacy of your Quineic-output is, therefore, your prerogative. CC0 carries, after 'escape'/release
+      (4) Private ensemble configurations are operator's IP, until revealed/released (privacy of your Quineic output is, therefore, your prerogative. CC0 carries, after 'escape'/release)
 ---
 <!-- This document uses YAML front matter for metadata management in a third-party tool not git.
 Markdown Syntax: Standard GitHub-flavored Markdown. Not Obsidian wikilinks.
@@ -80,9 +79,9 @@ The result: A system where **computation is measurement**, **types are boundary 
 
 > In a dual-representational phase/state space—trivially a Hilbert Space, the AdS/CFT correspondence manifests as the 'special conformal twist' operator: the 'spinor' in boundary-bulk correspondence.
 
-<img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"> <a href="https://github.com/Morphological-Source-Code">Morphological Source Code & QSD</a> © 2024-2026 licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-ND-NC 4.0</a> by <a href="https://github.com/Phovos">Phovos</a> <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;">
+<img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"> <a href="https://github.com/Morphological-Source-Code">MSC & QSD</a> © 2024-2026 licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-ND-NC 4.0</a> by <a href="https://github.com/Phovos">Phovos</a> <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;">
 
-<img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"> <a href="https://github.com/MOONLAPSED/cognosis">Morphological Source Code & QSD</a> © 2023-2026 licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-ND-NC 4.0</a> by <a href="https://github.com/MOONLAPSED/cognosis">MOONLAPSED</a> <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;">
+<img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"> <a href="https://github.com/MOONLAPSED/cognosis">MSC & QSD</a> © 2023-2026 licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-ND-NC 4.0</a> by <a href="https://github.com/MOONLAPSED/cognosis">MOONLAPSED</a> <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;">
 
 # Cognosis, the Pleroma, Abraxas, and the Demiurge
 
