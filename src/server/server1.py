@@ -173,7 +173,11 @@ class AppConfig:
 
 class ThreadSafeFormatter(logging.Formatter):
     """Thread-safe formatter with color support."""
-
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.log_queue = Queue()
+        self.log_thread = threading.Thread(target=self._log_thread_func, daemon=True)
+        self.log_thread.start()
     COLORS = {
         logging.DEBUG: "\x1b[36m",  # Cyan
         logging.INFO: "\x1b[32m",  # Green
@@ -212,6 +216,24 @@ class ThreadSafeFormatter(logging.Formatter):
         color = self.COLORS.get(record.levelno, "")
         return f"{color}{message}{self.RESET}" if color else message
 
+    def _log_thread_func(self):
+        while True:
+            try:
+                record = self.log_queue.get()
+                if record is None:
+                    break
+                super().handle(record)
+            except Exception:
+                import traceback
+                print("Error in log thread:", file=sys.stderr)
+                traceback.print_exc()
+    
+    def emit(self, record):
+        self.log_queue.put(record)
+    
+    def close(self):
+        self.log_queue.put(None)
+        self.log_thread.join()
 
 class AppLogger(logging.Logger):
     """Enhanced logger with structured logging support."""
