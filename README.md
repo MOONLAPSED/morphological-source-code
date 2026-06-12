@@ -5,12 +5,11 @@ license-doc(s)+dist: CC BY-ND-NC 4.0
 license-code+file(s): BSD 3-Clause
 root: "/MOONLAPSED/cognosis"
 name: "README.md"
-version: 0.49.87
+version: 0.1.99
 aliases:
   - msc
   - qsd
   - quine
-  - morphosemantics
   - morphological-source-code
   - quineic-statistical-dynamics
 topics:
@@ -50,6 +49,16 @@ Disclaimer:
 
 # Morphological Source Code (MSC/QSD)
 
+**Legacy** repository; visit the official vehicle(s) of MSC & QSD, here:
+
+- (1) [Gitlab](https://gitlab.com/morphological/source/code)
+- (2) [Github](https://github.com/Morphological-Source-Code)
+
+## LEGACY copyright (this repo)
+
+> © 2024-2026 Phovos https://github.com/Phovos/Morphological-Source-Code
+> 
+> © 2023-2026 Moonlapsed https://github.com/MOONLAPSED/Cognosis
 
 **A CPython standard-library-only framework for morphological computation with hermitian type semantics**
 **Welcome to the root of the Morphological Source Code (MSC) repository!**
@@ -59,13 +68,8 @@ Disclaimer:
 [![CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC_BY--NC--ND_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 [![Status: Experimental](https://img.shields.io/badge/Status-Experimental-red.svg)](https://github.com/Phovos/Morphological-Source-Code)
 
-CommunityLinks: [r/Morphological](https://www.reddit.com/r/Morphological/) | [Phovos@X](https://x.com/Phovso) | [Phovos@youtube](https://www.youtube.com/@phovos) | [Code of Conduct](https://github.com/Phovos/.github/CODE_OF_CONDUCT.md)
+CommunityLinks: [r/Morphological](https://www.reddit.com/r/Morphological/) | [Phovos@youtube](https://www.youtube.com/@phovos) | [Code of Conduct](https://github.com/Phovos/.github/CODE_OF_CONDUCT.md) [r/Quine](https://www.reddit.com/r/Quine); | [production gitter(dev-chat)](https://app.gitter.im/#/room/#production:gitter.im)
 
-NEW: [r/Quine](https://www.reddit.com/r/Quine); | [production gitter(dev-chat)](https://app.gitter.im/#/room/#production:gitter.im)
-
-> © 2024-2026 Phovos https://github.com/Phovos/Morphological-Source-Code
-> 
-> © 2023-2026 Moonlapsed https://github.com/MOONLAPSED/Cognosis
 
 This SDK implements Morphological Source Code exhibiting Quineic Statistical Dynamics (QSD), a computational framework where:
 - **ByteWords** are atomic morphogens (8-bit quantum observables)
@@ -79,25 +83,7 @@ The result: A system where **computation is measurement**, **types are boundary 
 
 > In a dual-representational phase/state space—trivially a Hilbert Space, the AdS/CFT correspondence manifests as the 'special conformal twist' operator: the 'spinor' in boundary-bulk correspondence.
 
-<img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"> <a href="https://github.com/Morphological-Source-Code">MSC & QSD</a> © 2024-2026 licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-ND-NC 4.0</a> by <a href="https://github.com/Phovos">Phovos</a> <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;">
-
-<img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"> <a href="https://github.com/MOONLAPSED/cognosis">MSC & QSD</a> © 2023-2026 licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-ND-NC 4.0</a> by <a href="https://github.com/MOONLAPSED/cognosis">MOONLAPSED</a> <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;">
-
 # Cognosis, the Pleroma, Abraxas, and the Demiurge
-
-Morphological Source Code and Quineic Statistical Dynamics are the CPython and C appendages of a multi-year conquest of dimensionality and process ontology (formerly) known as "Cognosis". `Cognosis` is an experimental framework that explores the dynamic evolution of software architectures during runtime. It aims to combine the fluidity of human-centric interactions, like an interactive video game, with the stability of traditional code, CLI, scripting, and continuous integration and continuous development. At its core lies the concept of "Morphological Source Code," where code adapts and changes in response to user interactions, particularly those leveraging natural language processing (NLP) and phenomenology; here referring, specifically, to the process ontology of machine learning, but also to that of a conscious observer able to exist before and after any given event: a cognitive wave function, so to speak.
-
-Scope, being a sick joke of a concept when you think about it, is one of the eternal curses of this endeavor. The notions of the Pleroma, Abraxas, and the Demiurge serve as the knowable forms of the unknowable — the "Gnosis" within "Cognosis" and act as bounds on the knowable (epistemology) and therefore the beable (ontology). The fundamental Jungian kernel of such a bounding mechanism gives shape and form to these gnostic entities, both through one's own actions and through all universal, even unknowable, degrees of freedom.
-
-These Gnostic entities are archetypes of archetypes. The well-foundedness of any given situation can be determined, up to isometry, with these variable fundamental constraints. If one cannot, for whatever reason, stomach Jung, then I am happy to inform you that there is someone you will probably dislike even more (other than Kant) who could help situate your faculties to the present task of describing a universal field theory which incorporates all degrees of freedom, language, and logic: his name is Schopenhauer.
-
-The Pleroma, Abraxas, and the Demiurge are elements of the variable universal characteristic function of a Noetherian, Machian, indeed multi-cosmic framework. Such a theory has one advantage over contemporary metaphysics: no zero-point energy catastrophe, nor the ill-foundedness of certain electrodynamic assumptions. This being an introduction and therefore incapable of earning your credulity, I urge you to read Dr. Jacob Barandes's Indivisible Stochastic Quantum Mechanics if the mention of such a "founding of the ill-founded" has excited you too much. He is a genius, and your awe should be directed at him — he has a working theory, unlike this in-process software and epistemology project. There is indeed hope of attaining the absurdly lofty goals laid out herein, but the academic wait (thankfully) belongs not to me. In my opinion, it is important to state, considering I have never met nor corresponded with Senpai and he does not notice us.
-
-There is an assumption inherent in the project that a neural network is a cognitive system. The assumption is that there is something for this cognitive system to do in any given situation, and that it is the cognitive system's job to figure out what that thing is. Upon location of its head or parent, it either orients itself within a cognitive system or creates a new cognitive system. The calling convention and morpho-topology of cognitive systems, including how they pass namespaces, syntaxes, and other cognitive systems as parameters, is detailed in CPython; Python's `**kwargs` are used to pass these parameters.
-
-The challenge of this architecture lies in the cognitive lambda calculus needed to bring these runtimes into existence and evolve them. It is not insurmountable, Dr. Barandes has proven by well-founding an ontology-less epistemology whose classical limit is the standard model of particle physics. If he is right, and this architecture is right about why he is right, then the only thing left to do is iterate. The scientific method, at this point, has done its job. Only the engineer's method and Will are required now.
-
----
 
 ## 'Gnosis'
 
@@ -107,3 +93,7 @@ Some other jokers took the name Cognosis at about the same time as I did so it i
 - **The Demiurge** — The flawed craftsman of the material cognitive substrate. Maps to **phenomenology** and the Captain bit (C, computor, the wave function observer/collapser; pays the demons (Landauer's and Maxwell's)): the thermodynamic boundary between radiative and absorptive phases, the quantum/classical cut made geometric.
 
 ---
+
+<img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"> <a href="https://github.com/Morphological-Source-Code">MSC & QSD</a> © 2024-2026 licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-ND-NC 4.0</a> by <a href="https://github.com/Phovos">Phovos</a> <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;">
+
+<img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"> <a href="https://github.com/MOONLAPSED/cognosis">MSC & QSD</a> © 2023-2026 licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-ND-NC 4.0</a> by <a href="https://github.com/MOONLAPSED/cognosis">MOONLAPSED</a> <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;">

@@ -6,9 +6,6 @@
 			"text": "This dev container includes an up-to-date version of Git, built from source as needed, pre-installed and available on the `PATH`."
 		},
 		{
-			"text": "This dev container includes an up-to-date version of Git, built from source as needed, pre-installed and available on the `PATH`."
-		},
-		{
 			"text": "This dev container includes Git Large File Support (Git LFS) along with needed dependencies pre-installed and available on the `PATH`."
 		},
 		{
