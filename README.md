@@ -1,11 +1,11 @@
 ---
 tags: [Morphological-Source-Code, Quineic Statistical Dynamics, holography, motility, dynamics]
 copyright: "Ⓟ© 2026 Morphological Source Code & Quineic Statistical Dynamics"
-license-doc(s)+dist: CC BY-ND-NC 4.0
+license-doc(s)+dist: CC BY-ND-SA 4.0
 license-code+file(s): BSD 3-Clause
 root: "/MOONLAPSED/cognosis"
 name: "README.md"
-version: 0.1.99
+version: 0.2.99
 aliases:
   - msc
   - qsd
@@ -49,27 +49,30 @@ Disclaimer:
 
 # Morphological Source Code (MSC/QSD)
 
-**Legacy** repository; visit the official vehicle(s) of MSC & QSD, here:
+This is the **Legacy** Repository; visit the _official_ vehicle(s) of MSC & QSD, **here**:
 
 - (1) [Gitlab](https://gitlab.com/morphological/source/code)
 - (2) [Github](https://github.com/Morphological-Source-Code)
 
-## LEGACY copyright (this repo)
-
-> © 2024-2026 Phovos https://github.com/Phovos/Morphological-Source-Code
-> 
-> © 2023-2026 Moonlapsed https://github.com/MOONLAPSED/Cognosis
-
-**A CPython standard-library-only framework for morphological computation with hermitian type semantics**
-**Welcome to the root of the Morphological Source Code (MSC) repository!**
-
 [![Python 3.14+](https://img.shields.io/badge/python-3.14+-blue.svg)](https://www.python.org/downloads/)
 [![Code+File(s): BSD 3-Clause](https://img.shields.io/badge/Code-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC_BY--NC--ND_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
+[![CC BY-NC-SA 4.0](https://shields.io/badge/license-CC--BY--NC--SA-lightgrey?style=for-the-badge)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![Status: Experimental](https://img.shields.io/badge/Status-Experimental-red.svg)](https://github.com/Phovos/Morphological-Source-Code)
 
 CommunityLinks: [r/Morphological](https://www.reddit.com/r/Morphological/) | [Phovos@youtube](https://www.youtube.com/@phovos) | [Code of Conduct](https://github.com/Phovos/.github/CODE_OF_CONDUCT.md) [r/Quine](https://www.reddit.com/r/Quine); | [production gitter(dev-chat)](https://app.gitter.im/#/room/#production:gitter.im)
 
+## LEGACY copyright (this repo)
+
+> © 2024-2026 Phovos https://github.com/Phovos/
+<img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"> <a href="https://github.com/Phovos">MSC & QSD</a> © 2024-2026 licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-ND-SA 4.0</a> by <a href="https://github.com/Phovos">Phovos</a> <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;">
+
+> © 2023-2026 MOONLAPSED https://github.com/MOONLAPSED/Cognosis
+<img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"> <a href="https://github.com/MOONLAPSED/cognosis">MSC & QSD</a> © 2023-2026 licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-ND-SA 4.0</a> by <a href="https://github.com/MOONLAPSED/cognosis">MOONLAPSED</a> <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;">
+
+# Cognosis, the Pleroma, Abraxas, and the Demiurge
+
+**A CPython standard-library-only framework for morphological computation with hermitian type semantics**
+**Welcome to the root of the Morphological Source Code (MSC) repository!**
 
 This SDK implements Morphological Source Code exhibiting Quineic Statistical Dynamics (QSD), a computational framework where:
 - **ByteWords** are atomic morphogens (8-bit quantum observables)
@@ -77,23 +80,14 @@ This SDK implements Morphological Source Code exhibiting Quineic Statistical Dyn
 - **WindingPairs** encode non-Markovian state (holonomic memory)
 - **T-strings** (Python 3.14) enforce hermitian type constraints at the boundary
 
-The result: A system where **computation is measurement**, **types are boundary conditions**, and **the morphological clock emerges from thermodynamic cost**.
+The result is a system where **computation is measurement**, **types are boundary conditions**, and **the morphological clock emerges from thermodynamic cost**.
 
 **Time, causality, and identity emerge from morphology and, specifically, not the other way around.** A multi-scale ontogeny must do-so in [[Hermitian Conjugation]] syntax. This very requirement also gives rise to the [[Fermionic]] half-integer spin and it's symmetry group. It is thereby extended into the local domain using 'correspondence' about a 'boundary'; a type of symmetry that is something like mirror-symmetry, implying an observer and a two way speed of light, if nothing else. The spinor - Dual-Valued Representation in Holographic Runtime Systems (Classically Non-Determinable 2-Valuedness in Phase Space Topology) is the substrate of said aformentioned **time**, and importantly; entropy and ergodic, intensive character:
 
 > In a dual-representational phase/state space—trivially a Hilbert Space, the AdS/CFT correspondence manifests as the 'special conformal twist' operator: the 'spinor' in boundary-bulk correspondence.
 
-# Cognosis, the Pleroma, Abraxas, and the Demiurge
-
 ## 'Gnosis'
 
-Some other jokers took the name Cognosis at about the same time as I did so it is, now, deprecated but, not the Gnostic kernel it precipitated. The Pleroma, Abraxas, and the Demiurge serve as the three *holoicons* of the architecture; mapping respectively to epistemology (T/Type), ontology (V/Value), and phenomenology (C/Captain — computor insofar as Entscheidungsproblem). This tripartite casuistry is the Noetherian-Machian aether within which the ByteWord's gauge topology evolves. The architecture does not claim these mappings are traditional or even non-synthetic; only that they are *well-founded* up to the holographic bound (Δ⁴). The names *Pleroma*, *Abraxas*, and *the Demiurge* are borrowed from Gnostic tradition but redefined here as architectural *holoicons*. They are boundary-anchored referents that compress otherwise ineffable degrees of freedom, a morphic (phenomenological/topological) external derivative calculus. 
-- **Pleroma** — The fullness of knowable form. Maps to **epistemology** and the Type field (T) in the ByteWord: what *can* be said.
-- **Abraxas** — The generative, paradoxical mediator between fullness and lack. Maps to **ontology** and the Value field (V): what *is* the case, deputizable under absorption.
-- **The Demiurge** — The flawed craftsman of the material cognitive substrate. Maps to **phenomenology** and the Captain bit (C, computor, the wave function observer/collapser; pays the demons (Landauer's and Maxwell's)): the thermodynamic boundary between radiative and absorptive phases, the quantum/classical cut made geometric.
+Some other jokers took the name Cognosis at about the same time as I did so it is, now, deprecated but, not the Gnostic kernel it precipitated. The Pleroma, Abraxas, and the Demiurge serve as the three *holoicons* of the architecture; mapping respectively to epistemology (T/Type), ontology (V/Value), and phenomenology (C/Captain — computor insofar as Entscheidungsproblem). This tripartite casuistry is the Noetherian-Machian aether within which the ByteWord's gauge topology evolves. The architecture does not claim these mappings are traditional or even non-synthetic; only that they are *well-founded* up to the holographic bound (Δ⁴). The names *Pleroma*, *Abraxas*, and *the Demiurge* are borrowed from Gnostic tradition but redefined here as architectural *holoicons*. They are boundary-anchored referents that compress otherwise ineffable degrees of freedom, a morphic (phenomenological/topological) external derivative calculus. So, retired.
 
 ---
-
-<img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"> <a href="https://github.com/Morphological-Source-Code">MSC & QSD</a> © 2024-2026 licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-ND-NC 4.0</a> by <a href="https://github.com/Phovos">Phovos</a> <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;">
-
-<img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"> <a href="https://github.com/MOONLAPSED/cognosis">MSC & QSD</a> © 2023-2026 licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-ND-NC 4.0</a> by <a href="https://github.com/MOONLAPSED/cognosis">MOONLAPSED</a> <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;">
