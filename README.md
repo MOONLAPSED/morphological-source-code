@@ -54,20 +54,23 @@ This is the **Legacy** Repository; visit the _official_ vehicle(s) of MSC & QSD,
 - (1) [Gitlab](https://gitlab.com/morphological/source/code)
 - (2) [Github](https://github.com/Morphological-Source-Code)
 
-[![Python 3.14+](https://img.shields.io/badge/python-3.14+-blue.svg)](https://www.python.org/downloads/)
-[![Code+File(s): BSD 3-Clause](https://img.shields.io/badge/Code-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![CC BY-NC-SA 4.0](https://shields.io/badge/license-CC--BY--NC--SA-lightgrey?style=for-the-badge)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-[![Status: Experimental](https://img.shields.io/badge/Status-Experimental-red.svg)](https://github.com/Phovos/Morphological-Source-Code)
+These repositories and art are Share-Alike Non-Commercial, as-opposed to the source code files, themselves (BSD 3-Clause):
 
-CommunityLinks: [r/Morphological](https://www.reddit.com/r/Morphological/) | [Phovos@youtube](https://www.youtube.com/@phovos) | [Code of Conduct](https://github.com/Phovos/.github/CODE_OF_CONDUCT.md) [r/Quine](https://www.reddit.com/r/Quine); | [production gitter(dev-chat)](https://app.gitter.im/#/room/#production:gitter.im)
+[![CC BY-NC-SA 4.0](https://img.shields.io/badge/license-CC--BY--NC--SA-lightgrey?style=for-the-badge)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
+[![Python 3.14+](https://img.shields.io/badge/python-3.14+-blue.svg)](https://www.python.org/downloads/)
+[![Status: Experimental](https://img.shields.io/badge/Status-Experimental-red.svg)](https://github.com/Phovos/Morphological-Source-Code)
+[![Code+File(s): BSD 3-Clause](https://img.shields.io/badge/Code-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
+CommunityLinks: [r/Morphological](https://www.reddit.com/r/Morphological/) | [Phovos@youtube](https://www.youtube.com/@phovos) | [r/Quine](https://www.reddit.com/r/Quine); | [production gitter](https://app.gitter.im/#/room/#production:gitter.im) | [Code of Conduct](https://github.com/Phovos/.github/CODE_OF_CONDUCT.md)
 
 ## LEGACY copyright (this repo)
 
-> © 2024-2026 Phovos https://github.com/Phovos/
+> © 2024-2026 https://github.com/Phovos/
 <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"> <a href="https://github.com/Phovos">MSC & QSD</a> © 2024-2026 licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-ND-SA 4.0</a> by <a href="https://github.com/Phovos">Phovos</a> <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;">
 
-> © 2023-2026 MOONLAPSED https://github.com/MOONLAPSED/Cognosis
-<img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"> <a href="https://github.com/MOONLAPSED/cognosis">MSC & QSD</a> © 2023-2026 licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-ND-SA 4.0</a> by <a href="https://github.com/MOONLAPSED/cognosis">MOONLAPSED</a> <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;">
+> © 2023-2026 https://github.com/MOONLAPSED/Cognosis
+<img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"> <a href="https://github.com/MOONLAPSED/">MSC & QSD</a> © 2023-2026 licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-ND-SA 4.0</a> by <a href="https://github.com/MOONLAPSED/">MOONLAPSED</a> <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;">
 
 # Cognosis, the Pleroma, Abraxas, and the Demiurge
 
