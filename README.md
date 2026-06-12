@@ -23,17 +23,18 @@ topics:
 "copyright_attribution": >
   (1) © 2023-2026 Moonlapsed; https://github.com/MOONLAPSED/cognosis
   (2) © 2024-2026 Phovos; https://github.com/Phovos/Morphological-Source-Code
-"© 2026 `Phovos` (phovos@outlook.com)":
+"Maintained, distributed and © 2026 `MOONLAPSED` (MOONLAPSED@gmail.com)": >
     (1) https://gitlab.com/morphological/source/code
     (2) https://github.com/Morphological-Source-Code
     (3) https://reddit.com/r/morphological
 "description": >
     This project employs a layered licensing approach governed by the incl. Morphological LICENSE;
     The architecture (MSC&QSD) distinguishes between:
-      (1) Individual source files, like this one (BSD 3-Clause)
-      (2) Distributed collective works (CC BY-ND-NC 4.0)
-      (3) Quine-generated outputs (CC0 1.0 + mandatory thermodynamic ledger)
-      (4) Private ensemble configurations are operator's IP, until revealed/released (privacy of your Quineic output is, therefore, your prerogative. CC0 carries, after 'escape'/release)
+      (1) Individual source "files", like this one (BSD 3-Clause)
+      (2) Distributed collective "works" (CC BY-NC-SA 4.0)
+      (3) Quine-generated "outputs" (CC0 1.0 + mandatory thermodynamic ledger)
+      (4) Private "ensemble(s)"/"configuration(s)" are operator's IP, until revealed/released.
+        - Privacy of your Quineic output is, therefore, your prerogative. CC0 carries, after 'escape'/release.
 ---
 <!-- This document uses YAML front matter for metadata management in a third-party tool not git.
 Markdown Syntax: Standard GitHub-flavored Markdown. Not Obsidian wikilinks.
@@ -87,7 +88,7 @@ The result is a system where **computation is measurement**, **types are boundar
 
 **Time, causality, and identity emerge from morphology and, specifically, not the other way around.** A multi-scale ontogeny must do-so in [[Hermitian Conjugation]] syntax. This very requirement also gives rise to the [[Fermionic]] half-integer spin and its symmetry group. It is thereby extended into the local domain using 'correspondence' about a 'boundary'; a type of symmetry that is something like mirror-symmetry, implying both an observer and a two way speed of light, if nothing else. Dual-Valued Representation in Holographic Runtime Systems (Classically Non-Determinable 2-Valuedness in Phase Space Topology), 'represented' by 'The Spinor' (symmetry group) is the substrate of the aformentioned **time**, and importantly; entropy and ergodic, intensive character: "(cognitive) motility" (a cyclic (time, spacetime-like: polar decomposition), conjugative, Action-integrable).
 
-> In a dual-representational phase/state space (trivially a Hilbert Space); the "AdS/CFT" correspondence manifests as the 'special conformal twist' operator: the 'spinor' in boundary-bulk correspondence. With boundary integrables standing-in as observation & operator (with respect to, a somhow more-rich [higher dimensional], 'bulk' action).
+> In a dual-representational phase/state space (trivially a Hilbert Space); the "AdS/CFT" correspondence manifests as the 'special conformal twist' operator: the 'spinor' in boundary-bulk correspondence. With boundary integrables standing-in as observation & operator (with respect to a, somehow, richer [higher dimensional] 'bulk' action [functional; measurable, computable, etc.]).
 
 ## 'Gnosis'
 
