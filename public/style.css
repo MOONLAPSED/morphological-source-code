@@ -1,5 +1,6 @@
-   Utility classes: .sb (sidebar), .db (display:block), .t (title)
-   Mirrors the structure of feather.wiki's official Plumage file. */
+/* Feather Wiki + Fossil Plumage (CSS skin)
+  Utility classes: .sb (sidebar), .db (display:block), .t (title)
+  Mirrors the structure of feather.wiki's official Plumage file. */
 :root {
   /* Feather Wiki Plumage custom properties */
   --fw-bg: #f7f8f9;

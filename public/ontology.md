@@ -51,6 +51,24 @@ if command -v xdg-open &> /dev/null; then
 fi
 ```
 
+# Python (preferred) version (future)
+
+```md
+# Step 1: Extract CSS from original.html (preserves comments)
+# Using Python (most reliable, you have Python in the devcontainer)
+python3 -c "
+import re
+with open('original.html', 'r') as f:
+    content = f.read()
+    css = re.search(r'<style>(.*?)</style>', content, re.DOTALL)
+    if css:
+        print(css.group(1).strip())
+" > public/style.css
+
+# Alternative using sed (if Python not available)
+# sed -n '/<style>/,/<\/style>/p' original.html | sed '1s/.*<style>//; $s/<\/style>.*//' > public/style.css
+```
+
 # 2-stage 0.1.1 build system
 
 ```md
@@ -59,7 +77,7 @@ tag: 0.1.1
 ---
 
 # Step 1: Extract CSS from original index.html
-> sed -n '/<style>/,/<\/style>/p' original.html | grep -v '<style>\|</style>' > public/style.css
+> sed -n '/<style>/,/<\/style>/p' original.html | sed '1s/.*<style>//; $s/<\/style>.*//' > public/style.css
 
 # Step 2: Create minimal Bones HTML (index.html) with external references
 > "Manual" (ideally script-based) editing to remove inline CSS/JS, add <link> and <script src>
@@ -99,5 +117,30 @@ Manual Alt:
 git tag -a 0.1.1 -m "Successful build #${GITHUB_RUN_NUMBER}" c0eaaa5
 
 # Push the tag
+git push origin 0.1.1
+```
+
+# The Ironic part
+## Versioning Strategy (Git → Fossil bridge)
+
+Until we migrate to FossilBones fully, we use Git tags to track releases:
+
+- **0.1.1** - Initial working release (CSP fix, bifurcated architecture)
+- **0.1.1-fix1** - Patch: CSS extraction syntax, valid CSS comments
+- **0.2.y** - Python scripting layer / SDK (future)
+
+### Replacing a tag (fix a bug in a release)
+
+```bash
+# Delete old tag
+git tag -d 0.1.1 && git push origin --delete 0.1.1
+
+# Commit fixes
+git add . && git commit -m "fix: patch for 0.1.1"
+
+# Recreate tag at new HEAD
+git tag -a 0.1.1 -m "Release 0.1.1 (patched: CSS fix)"
+
+# Push new tag
 git push origin 0.1.1
 ```
