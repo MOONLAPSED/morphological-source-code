@@ -3,7 +3,7 @@ name: Deploy GitHub Pages
 on:
   push:
     branches:
-      - production  # Trigger on pushes to the 'production' branch
+      - redirect  # Trigger on pushes to the 'production' branch
 
   workflow_dispatch:  # Allows you to run this workflow manually from the Actions tab
 
