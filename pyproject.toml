@@ -1,9 +1,9 @@
 [project]
 name = "cognosis"
-description = "Cognosis: Morphological Source Code"
+description = "Morphological Source Code: coGnosis"
 authors = [{ name = "MOONLAPSED", email = "MOONLAPSED@gmail.com" }]
 requires-python = ">=3.14"
-version = "0.4.23"
+version = "0.1.1"
 
 [project.readme]
 file = "README.md"
@@ -24,7 +24,7 @@ lint = "ruff ."
 
 [tool.ruff]
 line-length = 88
-exclude = ["build/", "dist/", ".venv/", "imports/",]
+exclude = ["build/", "dist/", ".venv/", ".vscode/", ".devcontainer/", "public/", ".github/", ".fossil/", "fossil/", "fosgit/",]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "B"]

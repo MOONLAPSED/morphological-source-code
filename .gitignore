@@ -19,6 +19,10 @@ pdm.lock
 /states/*
 nohup.out
 /imports/
+fosgit/
+.fossil/
+fossil/
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
