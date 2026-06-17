@@ -1,0 +1,49 @@
+/* Container that limits viewport and enables horizontal snapping */
+.book-viewport {
+  width: 100vw;
+  height: 100vh;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: row;
+  
+  /* Modern CSS Scroll Snapping */
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  
+  /* Hide scrollbars for the book aesthetic */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.book-viewport::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Individual Page Wrapper */
+.book-page {
+  flex: 0 0 100vw; /* Each page takes up exactly one viewport width */
+  height: 100vh;
+  padding: 4rem;
+  box-sizing: border-box;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  
+  /* Multi-column layout within the page */
+  column-width: 45vw;
+  column-gap: 5vw;
+  column-fill: auto;
+}
+
+/* Typography adjustments for readability */
+.book-page h2 {
+  break-before: avoid-column;
+  margin-top: 0;
+  font-family: serif;
+}
+
+.book-page p {
+  text-align: justify;
+  text-indent: 1.5em;
+  margin: 0 0 0.5em 0;
+}
