@@ -1,4 +1,4 @@
-# TiddlyWikiBookView
+# TiddlyWikiBookStyle
 
 Unified style ontology across desktop and mobile: a book. Inspiritation and idea credited to "Pefect Edition".
 
@@ -13,16 +13,15 @@ Create a new tiddler in wiki with something-like the following details:
     Type: text/css (or leave as default)
 ```
 
-
 reader:
 ```
-Create another tiddler that pulls your content together. We will use TiddlyWiki's built-in {{{ filter }}} lists to dynamically construct the pages.
+Create another tiddler that pulls unstyled/styled content together. Use TiddlyWiki's built-in {{{ filter }}} lists to dynamically construct the pages.
+
+Create something-like the following Tiddler using Wikitext:
 
     Title: BookReader
 
     Type: text/vnd.tiddlywiki (Default)
-
-Paste the following Wikitext:
 ```
 
 use:
