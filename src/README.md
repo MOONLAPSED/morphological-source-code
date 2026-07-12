@@ -66,32 +66,6 @@ The transcendental acts like a **Cauchy sequence** that approaches the boundary 
 
 ---
 
-### Connection to 好 (Mother Quine)
-```python
-好 == (女)⋅(子) 
-女 = lambda(女)  # Mother (recursive)
-子 = lambda(⋅子)  # Child (applied)
-```
-
-The double-arity structure *is* this:
-- **First `ByteWord` (女, mother)** = the value/state
-- **Second `ByteWord` (子, child)** = the metric/operator
-- **Composition (好)** = value measured by metric
-
-The quine property emerges because:
-```python
-Output = Quine(Input, Metric)
-    where Metric = Quine(Metric_prev, Null)  # Recursive definition
-```
-
-**New: double-arity metric enables escape**
-```c
-ByteWord* arg = cache_lock(value, metric);
-// If metric is transcendental or null, arg can communicate with boundary!
-```
-
----
-
 ### Holographic Correspondence
 
 Oracle state ↔ Binary executable
