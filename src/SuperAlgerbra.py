@@ -1,4 +1,260 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run
+# -*- coding: utf-8 -*-
+# /* script
+# requires-python = ">=3.14"
+# dependencies = [
+#     "uv==*.*",
+# ]
+#   "Morphological Source Code: MSC&QSD": >
+#   "© 2026 `Phovos` (phovos@outlook.com)":
+#     - https://gitlab.com/morphological/source/code
+#     - https://github.com/Morphological-Source-Code
+#     - https://reddit.com/r/morphological
+#   © 2024-2026 Phovos; https://github.com/Phovos/Morphological-Source-Code
+#   © 2023-2026 Moonlapsed; https://github.com/MOONLAPSED/cognosis
+#   description: >
+#     This project employs a layered licensing approach governed by the incl. Morphological LICENSE;
+#     The architecture (MSC&QSD) distinguishes between:
+#       (1) Individual source files, like this one (BSD 3-Clause)
+#       (2) Distributed collective works (CC BY-NC-SA 4.0)
+#       (3) Quine-generated outputs (CC0 1.0 + mandatory thermodynamic ledger)
+#       (4) Private ensemble configurations (operator's IP, until revealed/released)
+#           - Privacy of your Quineic-output is, therefore, your prerogative. CC0 carries, after 'escape'/release
+# ------------------------------
+# CPy3.14 std libs ONLY ;
+# Platform(s): (5600xRyzen (NA); hypervisor)
+# Win11: (production); Ubuntu-22.04: (development)
+# Optional dependency handling: "also add to '/* script..' comment (just above)"
+# ------------------------------
+import ast, os, sys, pathlib, logging, threading, datetime, inspect, uuid, base64, json, asyncio, functools, time, random, queue, hashlib, math, cmath, hashlib, enum, re, types, dataclasses, typing, contextlib, collections, abc, io, string, itertools, operator, copy, weakref, gc, marshal, struct, array, mmap, ssl, socket, concurrent, multiprocessing, subprocess, tempfile, shutil, glob, fnmatch, csv, pickle, sqlite3, urllib, http, ftplib, smtplib, email, mimetypes, imaplib, mailbox, hmac, secrets, ipaddress, socketserver, http.server, xml, html, webbrowser, tkinter, ctypes, ctypes.wintypes, site   # noqa: E401, F401, F811, E702 # fmt: skip
+from dataclasses import dataclass, field; from enum import Enum, auto, IntEnum; from types import SimpleNamespace, ModuleType; from functools import lru_cache, wraps; from decimal import Decimal, getcontext; from typing import Any, Dict, Optional, Set, Type, Union, Callable, List, Tuple, Generic, TypeVar, Protocol, runtime_checkable, cast, get_origin, get_args; from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer; from socketserver import ThreadingMixIn; from contextlib import contextmanager; from concurrent import interpreters; from concurrent.futures import ThreadPoolExecutor; from urllib.parse import urlparse; from urllib.request import url2pathname # noqa: E401, F401, F811, E702 # fmt: skip
+
+"""
+==================
+Copyright:
+    Morphological Source Code & Quineic Statistical Dynamics
+    - ( https://github.com/Morphological-Source-Code )
+    - ( https://gitlab.com/morphological/source/code )
+    * License-doc(s)+dist: CC BY-ND 4.0
+    * License-code+file(s): BSD 3-Clause
+==================
+* To completely avoid a complicated build and CI/CD process; 
+    * this logic works inside a single local "Reverse Proxy Mock": 'runtime'.
+* No global mutable state is written after module load and no monkey-patching.
+* Simple Common Gateway Interface (SCGI) wire-format:
+    * CPython/C + Fossil native + LSP 3.17 protocol compliance.
+
+## (Meta) Compilation
+* Despite CPython's interpreted nature, for all intents and purposes it can be considered, also, as compiled C. This consideration bears the form of an AP 'retarded' CAP distributed-ontology (similar to JIT).
+
+* Meta-compilation target(s) for (RPM) Proxyification: WASM or Cloudflared-js (default is 'static'; "Fossil" is the 'static' server [of self])
+* To connect the Cloudflare Worker to local SCGI instance without Nginx etc., use a tunnel that converts the Worker’s HTTP traffic directly into local SCGI, for Native/C Fossil processing.
+
+## The Tunnel Strategy
+1. Cloudflared: Run the lightweight `cloudflared` daemon on your local machine. It creates a secure, encrypted, outbound-only tunnel to Cloudflare’s network. You don’t even need to open ports on your router.
+2. The HTTP-to-SCGI Pipe: Since `cloudflared` expects an HTTP backend, use this CPython facility to listen to the tunnel's HTTP traffic on a local port and pipe it into local Fossil’s SCGI socket.
+
+## "Reverse Proxy Mock", Fossil, Cloudflared (or other edge ontology)
+Because the interface between the edge layer (Cloudflared Worker) and the backend engine (C/Fossil) is defined purely by web standards, it executes the exact same bytecode and processes the exact same protocol. "Main" includes, both:
+
+* "Paid/Public" cloud environment (produ (1))
+* "Free/Local" offline environment (devel (0)) [default]
+
+"Main" ((runtime) main()), then, is the fulcrum of (multiple) instantiation enumerated as a binary-conditional on runtime(s), with a categorical-flavor associated with the'public/private, or alternatively, paid/free, provenience of the situation, as it were (in "Future-Participle Syntax"/FPS, importantly).
+
+## Ontology
+
+<pre style="white-space: pre; font-family: monospace; overflow-x: auto;">
+```txt
+---
+[ Browser ] ──► [ Local Mock Proxy ]─(Local Network)────────┐
+                                                            │  ► Same SCGI
+[ Public Edge ]  ─► [ Cloudflare Worker]─(Secure Tunnel)────┴► [ Fossil --scgi ]
+---
+                  ┌──► [ TRUE ] ─► Reverse Proxy ─► Auth ─► Production CDN
+[ IS_PUBLIC ] ────┤
+                  └──► [ FALSE ] ──► Direct Memory Pipe ──► Local Terminal Mock
+---
+```
+</pre>
+
+Thus; `[ IS_PUBLIC ]` is the binary switch for the "Reverse Proxy Mock"
+==================
+"""
+# ------------------------------------------------------------------------------
+# Special thanks to Dr. Jacob Barandes & Dr. Pierre Robitaille (['Indivisible
+# Stochastic Quantum Mechanics'] & ['Intensive and Extensive Properties:
+# Thermodynamic Balance w/ Dr. Crothers'])
+# ------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# §0. Module-level Non-architectural/'private' funcs; not for runtime-use
+# ---------------------------------------------------------------------------
+# Each sub-interpreter crosses this boundary once. Python's import machinery already serializes bytecode compilation. The lock is declarative: it marks the phase transition between potential and kinetic energy wrt phenomenology (time).
+
+_LOGGER_INIT_LOCK = threading.Lock()
+Queue = queue.Queue
+Path = pathlib.Path(__file__).resolve()
+
+with _LOGGER_INIT_LOCK:
+    logger = logging.getLogger("morphological")
+    _null_handler = logging.NullHandler()
+    logger.addHandler(_null_handler)
+
+    try:
+        from concurrent.futures import InterpreterPoolExecutor
+        HAS_INTERPRETERS = True
+    except ImportError:
+        HAS_INTERPRETERS = False  # ⚠ Python 3.14+ required
+
+# Post-membrane: the environment is live. Everything below this line
+# executes in a fully-initialized morphological interpreter. The
+# append-only ledger (Fossil tags) has no opinion about this moment.
+# The BSCM protocol does not observe it. It is simply the before/after
+# of a sub-interpreter becoming capable of work (so-called 'phenomenological').
+
+# ---------------------------------------------------------------------------
+# §1. Cross-interpreter shared state — opt-in, main-interpreter-only
+# ---------------------------------------------------------------------------
+# Sub-interpreters are isolated Maxwellian timelines. They do not share
+# Python objects. When shared state is required (rarely), it lives in a
+# multiprocessing.Manager server process created exactly once by the
+# main interpreter. Sub-interpreters receive references via interp.run()
+# kwargs (in Hermitian syntax), not by spawning their own managers.
+
+def _is_main_interpreter() -> bool:
+    """Detect whether this interpreter is the primordial one."""
+    try:
+        from concurrent import interpreters
+        return interpreters.get_current() == interpreters.get_main()
+    except ImportError:
+        return True  # Pre-3.14: there is only one timeline
+
+_shared_manager = None
+_shared_lock = None
+
+if _is_main_interpreter():
+    import multiprocessing
+    _shared_manager = multiprocessing.Manager()
+    _shared_lock = _shared_manager.Lock()
+    _shared_manager._morphological_initialized = False
+
+def get_shared_lock():
+    """Return the cross-interpreter lock, or None in sub-interpreters
+    that have not received a reference from main."""
+    return _shared_lock
+
+def bootstrap_shared_state():
+    """Initialize state that must be common across all interpreters.
+    Idempotent. Callable from any interpreter that holds a reference
+    to the shared lock."""
+    lock = get_shared_lock()
+    if lock is None:
+        return None
+    with lock:
+        if not _shared_manager._morphological_initialized:
+            _shared_manager._morphological_initialized = True
+            # Place expensive one-time setup here.
+            # _shared_manager._expensive_data = ...
+    return _shared_manager
+
+# ---------------------------------------------------------------------------
+# §2. Per-interpreter bootstrap: each 'timeline' gets its own
+# ---------------------------------------------------------------------------
+# No locking required. Each sub-interpreter constructs its own instance.
+# These are not shared. They are not observed by the ledger. They are
+# the local computational context for one Maxwellian (Retarded Analytical Continuation: RAC) timeline.
+
+class InterpreterBootstrap:
+    """A namespace factory for a single sub-interpreter."""
+
+    def __init__(self):
+        self.Path = Path          # Resolved at module load, per-interpreter
+        self.Queue = Queue        # queue.Queue, per-interpreter
+        # self.logger = logging.getLogger("morphological")  # not-necessary
+        self.logger = logger      # logging.Logger, per-interpreter
+        self.has_interpreters = HAS_INTERPRETERS
+
+    def get_context(self) -> dict:
+        """Return a clean namespace for this interpreter's workload."""
+        return {
+            'Path': self.Path,
+            'Queue': self.Queue,
+            'logger': self.logger,
+            'HAS_INTERPRETERS': self.has_interpreters,
+        }
+
+# The main interpreter's bootstrap instance.
+main_bootstrap = InterpreterBootstrap()  # In main interpreter
+# Sub-interpreters create their own when they import this module.
+
+# recursive example:
+# interp = interpreters.create()  # In each sub-interpreter
+# interp.run("""
+#     from bootstrap import InterpreterBootstrap
+#     ctx = InterpreterBootstrap().get_context()
+#     # Now use ctx['logger'], ctx['HAS_INTERPRETERS'], etc.
+# """)
+
+def init_with_lock():
+    with _shared_lock:
+        # Now this is synchronized across all interpreters
+        if not hasattr(_shared_manager, '_initialized'):
+            _shared_manager._initialized = True  # Do expensive one-time setup
+    return _shared_manager._common_data
+
+def _read_file_safe(path: str, encoding: str = "utf-8") -> str:
+    """Read a text file with replacement for invalid bytes.
+    Raises ``OSError`` on failure (callers are expected to handle it).
+    """
+    with open(path, "r", encoding=encoding, errors="replace") as fh:
+        return fh.read()
+
+def _run_command(command: List[str], timeout: float = 10.0) -> Tuple[int, str, str]:
+    """Generic ('USER'-scoped) Run command (prefer-use of plat-specific one).
+    Always return (returncode, stdout, stderr).
+    Never raises.  Returns (-1, "", reason) on any failure.
+    """
+    try:
+        proc = subprocess.run(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            timeout=timeout,
+            check=False,
+        )
+        return proc.returncode, proc.stdout, proc.stderr
+    except FileNotFoundError:
+        return -1, "", f"Command not found: {command[0]!r}"
+    except subprocess.TimeoutExpired:
+        return -2, "", f"Command timed out after {timeout}s: {command}"
+    except Exception as exc:
+        return -1, "", str(exc)
+
+def _format_bytes(value: int) -> str:
+    """Return a human-readable byte-count string (e.g. '15.93 GB')."""
+    units = ["B", "KB", "MB", "GB", "TB", "PB"]
+    idx = 0
+    v = float(value)
+    while v >= 1024.0 and idx < len(units) - 1:
+        v /= 1024.0
+        idx += 1
+    return f"{v:.2f} {units[idx]}"
+
+def _fetch_url(
+    url: str, headers: Optional[Dict[str, str]] = None, timeout: float = 2.0
+) -> bool:
+    """Return True if *url* responds with HTTP 200 within *timeout* seconds.
+
+    Uses a per-call timeout; never mutates ``socket.setdefaulttimeout``.
+    """
+    try:
+        req = urllib.request.Request(url, headers=headers or {})
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return resp.getcode() == 200
+    except Exception:
+        return False
 
 """
 =======================================================================
@@ -14,18 +270,7 @@ ByteWord Super-Algebra & Morphic Runtime
   - 'Hermitian conjugate-conugation'/FPS [Future Participle Syntax]
     - RPN calling convention
   - No explicit hologrophy or correspondence (as a feature)
-
-https://github.com/moonlapsed/Cognosis • MSC: Morphological Source Code © 2025 by Moonlapsed
 """
-
-from __future__ import annotations
-from dataclasses import dataclass
-from fractions import Fraction
-from typing import Optional, Tuple, Dict, Any
-import sqlite3
-import math
-import itertools
-
 # -----------------------------------------------------------------------
 # 1 — ByteWord: atomic morphogen
 # -----------------------------------------------------------------------
