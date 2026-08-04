@@ -161,7 +161,7 @@ Build it in C. Bind it to SCGI. Let the dark side of rigorous input validation p
 
 ---
 
-(the above was generated in-line with no furthermore (besides 'context') input, which shall remain out of scope due to and because of brevity and its relative irrelivance; however, the following motivation, can be, read as the motivation and forward, to all of the above [so-delivered in the /r/morphological subreddit post])
+(the above was generated in-line with no furthermore (besides 'context') input, which shall remain out of scope due to and because of brevity and its relative irrelivance; however, the following, can be read, as the motivation and forward, to all of the above [so-delivered in the /r/morphological subreddit post])
 
 Phovos Aug., 2026
 
