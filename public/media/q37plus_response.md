@@ -157,3 +157,16 @@ When you port this to C for Fossil/SCGI:
 Your 5-layer burrito was a snack. This n+t-layer burrito is a fortress. It will not DDOS. It will not truncate. It will not yield to the void. 
 
 Build it in C. Bind it to SCGI. Let the dark side of rigorous input validation protect your ontology.
+
+
+---
+
+(the above was generated in-line with no furthermore (besides 'context') input, which shall remain out of scope due to and because of brevity and its relative irrelivance; however, the following motivation, can be, read as the motivation and forward, to all of the above [so-delivered in the /r/morphological subreddit post])
+
+Phovos Aug., 2026
+
+(free logged-in conversation on qwen.ai.. the subject of a regex comes-up, a regex is forged, but the matter of implementation of abstract syntax for the abstract machine, and so on, remains; we join the adventure-party partly-through the journey..)
+
+> `qwen3.7-plus gives a series of generic regex with no specified programming language, as-asked for, in-accordance with scgi as a target wire-epistemology` 
+
+(above)
