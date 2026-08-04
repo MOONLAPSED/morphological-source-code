@@ -169,4 +169,6 @@ Phovos Aug., 2026
 
 > `qwen3.7-plus gives a series of generic regex with no specified programming language, as-asked for, in-accordance with scgi as a target wire-epistemology` 
 
+Phovos: Okay I love it, thanks. But now put on your red baseball cap, backwards, and if-needed totally rewrite this n-layer burrito into an n+t-layer burrito so to speak, because, I think an aggressive individual or an unbounded process (ie, fuzzing) could smash-up any scgi epistemological situation such as it were like a DDOS, at-least, possibly even more heinous stuff like cross-browser or cross-compiler or whatever you know, you do the thing wielder of the red lightsaber.
+
 (above)
